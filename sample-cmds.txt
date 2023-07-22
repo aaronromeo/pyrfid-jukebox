@@ -1,0 +1,37 @@
+  347  man cmus-remote
+  373  cmus-remote
+  375  cmus-remote
+  376  man cmus-remote
+  377  cmus-remote -u
+  378  man cmus-remote
+  379  cmus-remote -s
+  380  cmus-remote -u
+  381  man cmus-remote
+  383  cmus-remote -v -10
+  384  man cmus-remote
+  385  cmus-remote -v "-10"
+  387  cmus-remote -v -
+  388  cmus-remote -v total
+  390  cmus-remote -v +10
+  391  cmus-remote -v 10%
+  392  cmus-remote -v 100%
+  393  cmus-remote -v -10%
+  394  cmus-remote -v -10
+  395  cmus-remote -v -100
+  396  cmus-remote -v -10%
+  397  cmus-remote -v +10%
+  398  cmus-remote -v -10%
+  399  man cmus-remote
+  400  cmus-remote -C /mnt/media/DE/shares/Music/Formatted/RJD2/Deadringer/
+  401  cmus-remote -v +10%
+  402  cmus-remote -u
+  404  cmus-remote -C /mnt/media/DE/shares/Music/Formatted/RJD2/Deadringer
+  406  cmus-remote -C '/mnt/media/DE/shares/Music/Formatted/RJD2/Deadringer/'
+  408  cmus-remote -C '/RJD2/Deadringer/'
+  410  cmus-remote -C '/RJD2'
+  412  cmus-remote -C '/Rhye'
+  414  cmus-remote -C '/Beatles.*Let'
+  447  cmus-remote -s
+  448  cmus-remote -u
+  449  cmus-remote -s
+  460  history | grep "cmus-remote" > sample-cmds.txt
