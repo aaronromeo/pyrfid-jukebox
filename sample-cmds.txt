@@ -35,3 +35,4 @@
   448  cmus-remote -u
   449  cmus-remote -s
   460  history | grep "cmus-remote" > sample-cmds.txt
+  cmus-remote -C "add -q /home/pi/workspace/pyrfid-jukebox/music/card-551659120293"
