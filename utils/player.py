@@ -39,9 +39,11 @@ def music_is_playing():
 
 # Button callback functions
 def play_pause_callback(channel):
+    print("Play/pause button pressed")
     execute_cmus_command('-u')
 
 def next_track_callback(channel):
+    print("Next track button pressed")
     execute_cmus_command('-n')
 
 # Set up button event detection with debouncing
@@ -51,11 +53,16 @@ GPIO.add_event_detect(BUTTON_NEXT_TRACK, GPIO.FALLING, callback=next_track_callb
 
 # Main loop
 try:
+    print("Ready to read")
     while True:
         # Check for RFID card
         rfid_id, text = rfid_reader.read()
         folder_path = f"../music/card-{rfid_id}"
+        print("Received RFID card: %s" % rfid_id)
+        print("Looking for folder: %s" % folder_path)
+        
         if os.path.exists(folder_path):
+            print("Folder found")
             execute_cmus_command(f'-C "player-play {folder_path}"')
 
         # Update LED
