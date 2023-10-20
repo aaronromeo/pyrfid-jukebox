@@ -54,7 +54,7 @@ try:
     while True:
         # Check for RFID card
         rfid_id, text = rfid_reader.read()
-        folder_path = f"../music/{rfid_id}"  # Adjust the path as needed
+        folder_path = f"../music/card-{rfid_id}"
         if os.path.exists(folder_path):
             execute_cmus_command(f'-C "player-play {folder_path}"')
 
