@@ -3,7 +3,7 @@ import os
 import socket
 import time
 from mfrc522 import SimpleMFRC522
-from cmus_utils import execute_cmus_command
+from cmus_utils import execute_cmus_command, QUEUE_AND_PLAY_FOLDER, PLAY_PAUSE, NEXT
 
 # GPIO pin numbers
 BUTTON_PLAY_PAUSE = 17
@@ -40,11 +40,11 @@ def music_is_playing():
 # Button callback functions
 def play_pause_callback(channel):
     print("Play/pause button pressed")
-    execute_cmus_command('-u')
+    execute_cmus_command(QUEUE_AND_PLAY_FOLDER)
 
 def next_track_callback(channel):
     print("Next track button pressed")
-    execute_cmus_command('-n')
+    execute_cmus_command(PLAY_PAUSE)
 
 # Set up button event detection with debouncing
 DEBOUNCE_TIME = 200  # 200 milliseconds
@@ -57,13 +57,13 @@ try:
     while True:
         # Check for RFID card
         rfid_id, text = rfid_reader.read()
-        folder_path = f"../music/card-{rfid_id}"
+        folder_path = os.path.abspath(os.path.join('music',"card-%s" % rfid_id))
         print("Received RFID card: %s" % rfid_id)
         print("Looking for folder: %s" % folder_path)
         
         if os.path.exists(folder_path):
             print("Folder found")
-            execute_cmus_command(f'-C "player-play {folder_path}"')
+            execute_cmus_command(QUEUE_AND_PLAY_FOLDER, folder_path)
 
         # Update LED
         if music_is_playing():
