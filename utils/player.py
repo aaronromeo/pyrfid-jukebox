@@ -1,4 +1,4 @@
-from cmus_utils import execute_cmus_command, send_to_cmus_socket, QUEUE_AND_PLAY_FOLDER, PLAY_PAUSE, NEXT
+from cmus_utils import execute_cmus_command, music_is_playing, QUEUE_AND_PLAY_FOLDER, PLAY_PAUSE, NEXT
 import os
 from mfrc522 import SimpleMFRC522
 import RPi.GPIO as GPIO
@@ -10,9 +10,6 @@ BUTTON_PLAY_PAUSE = 17
 BUTTON_NEXT_TRACK = 27
 LED_PIN = 22
 
-# Determine mode of operation from environment variable
-USE_CMUS_SOCKET = os.environ.get("USE_CMUS_SOCKET", False)
-
 # Setup GPIO
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(BUTTON_PLAY_PAUSE, GPIO.IN, pull_up_down=GPIO.PUD_UP)
@@ -22,25 +19,14 @@ GPIO.setup(LED_PIN, GPIO.OUT)
 # Initialize RFID reader
 rfid_reader = SimpleMFRC522()
 
-def music_is_playing():
-    if USE_CMUS_SOCKET:
-        try:
-            status = send_to_cmus_socket(['status'])
-            print(status)
-            return b'status playing' in send_to_cmus_socket(['status'])
-        except:
-            return False
-    else:
-        return os.system('cmus-remote -Q | grep -q "status playing"') == 0
-
 # Button callback functions
 def play_pause_callback(channel):
     print("Play/pause button pressed")
-    execute_cmus_command(QUEUE_AND_PLAY_FOLDER)
+    execute_cmus_command(PLAY_PAUSE)
 
 def next_track_callback(channel):
     print("Next track button pressed")
-    execute_cmus_command(PLAY_PAUSE)
+    execute_cmus_command(NEXT)
 
 def led_update_loop():
     while not exit_event.is_set():
@@ -51,7 +37,7 @@ def led_update_loop():
         time.sleep(0.5)  # you can adjust the sleep time as needed
 
 # Set up button event detection with debouncing
-DEBOUNCE_TIME = 200  # 200 milliseconds
+DEBOUNCE_TIME = 750  # milliseconds
 GPIO.add_event_detect(BUTTON_PLAY_PAUSE, GPIO.FALLING, callback=play_pause_callback, bouncetime=DEBOUNCE_TIME)
 GPIO.add_event_detect(BUTTON_NEXT_TRACK, GPIO.FALLING, callback=next_track_callback, bouncetime=DEBOUNCE_TIME)
 

@@ -31,8 +31,7 @@ Connections for the SDA, SCK, MOSI, MISO, RST of the MFRC522 to the Raspberry Pi
 * RST (Reset) connected to any GPIO (e.g., GPIO25) - Pin 22 
 
 Additional buttons
-* Play/Pause Button: Connected to GPIO17 - Pin 11.
-* Next Track Button: Connected to GPIO27 - Pin 13.
-* LED connected to GPIO22 - Pin 15.
-
-
+* Play/Pause Button: Connected to GPIO17 - Pin 11
+* Next Track Button: Connected to GPIO27 - Pin 13
+* LED connected to GPIO22 - Pin 15
+* All are connected to the GND - Pin 14

@@ -2,22 +2,16 @@ import os
 import socket
 import time
 
-USE_CMUS_SOCKET = os.environ.get("USE_CMUS_SOCKET", False)
 QUEUE_AND_PLAY_FOLDER = 0
 PLAY_PAUSE = 1
 NEXT = 2
 STATUS = 3
-ACTION_COMMAND_MAP = {
-    QUEUE_AND_PLAY_FOLDER: '-s -c -f',
-    PLAY_PAUSE: '-u',
-    NEXT: '-n',
-    STATUS: '-Q'
-}
 
 def send_to_cmus_socket(commands):
     cmus_socket = os.path.join(os.environ.get("XDG_RUNTIME_DIR"), 'cmus-socket')
     for cmd in commands:
-        print(cmd)
+        if cmd != 'status':
+            print(cmd) 
         s = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
         s.connect(cmus_socket)
         s.send(cmd.encode() + b'\n')
@@ -26,51 +20,38 @@ def send_to_cmus_socket(commands):
         s.close()
     return data
 
+def music_is_playing():
+    try:
+        return b'status playing' in send_to_cmus_socket(['status'])
+    except:
+        return False
+
 def execute_cmus_command(action, path=None):
     """
     Executes the desired cmus command.
 
     Parameters:
-    - action (str): cmus action such as '-u', '-n' or '-s -c -f'.
+    - action (str): cmus action such as 'player-pause', 'player-next' or queue and play commands.
     - path (str, optional): Path to the music folder or file if needed for the action.
     """
     if action == QUEUE_AND_PLAY_FOLDER and path:
-        if USE_CMUS_SOCKET:
-            commands = [
-                'player-stop',
-                'clear'
-            ]
-            # For each file in path, add an 'add {}/filename' command
-            # For simplicity, let's assume all files in the directory are valid
-            # You might need additional error handling in a real-world scenario
-            for filename in sorted(os.listdir(path)):
-                if filename.endswith('.mp3'):  # or use a more comprehensive filter
-                    commands.append(f'add {os.path.join(path, filename)}')
-            commands.append('player-next')
-            commands.append('player-play')
-            send_to_cmus_socket(commands)
-        else:
-            cmd = f'cmus-remote {ACTION_COMMAND_MAP[action]} {path}/*'
-            os.system(cmd)
-    elif action == STATUS:
-        if USE_CMUS_SOCKET:
-            return b'status playing' in send_to_cmus_socket(['status'])
+        commands = [
+            'player-stop',
+            'clear'
+        ]
+        # For each file in path, add an 'add {}/filename' command
+        for filename in sorted(os.listdir(path)):
+            if filename.endswith('.mp3'):  # or use a more comprehensive filter
+                commands.append(f'add {os.path.join(path, filename)}')
+        commands.append('player-next')
+        commands.append('player-play')
+        send_to_cmus_socket(commands)
+    else:
+        send_to_cmus_socket([action_to_command(action)])
 
-# def execute_cmus_command(action, path=None):
-#     cmd = ''
-#     if action == QUEUE_AND_PLAY_FOLDER and path:
-#         cmd = f'{ACTION_COMMAND_MAP[action]} {path}/*'
-#     else:
-#         cmd = f'{ACTION_COMMAND_MAP[action]}'
-# 
-#     if USE_CMUS_SOCKET:
-#         cmus_socket = os.path.join(
-#                 os.environ.get("XDG_RUNTIME_DIR"), 'cmus-socket'
-#          )
-#         s = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-#         s.connect(cmus_socket)
-#         s.send(cmd.encode())
-#         s.close()
-#     else:
-#         os.system(f'cmus-remote {cmd}')
-
+def action_to_command(action):
+    return {
+        QUEUE_AND_PLAY_FOLDER: 'player-play',  # Assuming 'player-play' starts playing from the queue
+        PLAY_PAUSE: 'player-pause',
+        NEXT: 'player-next'
+    }[action]
