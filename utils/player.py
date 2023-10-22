@@ -1,4 +1,10 @@
-from cmus_utils import execute_cmus_command, music_is_playing, QUEUE_AND_PLAY_FOLDER, PLAY_PAUSE, NEXT
+from cmus_utils import (
+    execute_cmus_command,
+    music_is_playing,
+    QUEUE_AND_PLAY_FOLDER,
+    PLAY_PAUSE,
+    NEXT,
+)
 import os
 from mfrc522 import SimpleMFRC522
 import RPi.GPIO as GPIO
@@ -20,13 +26,17 @@ GPIO.setup(LED_PIN, GPIO.OUT)
 rfid_reader = SimpleMFRC522()
 
 # Button callback functions
+
+
 def play_pause_callback(channel):
     print("Play/pause button pressed")
     execute_cmus_command(PLAY_PAUSE)
 
+
 def next_track_callback(channel):
     print("Next track button pressed")
     execute_cmus_command(NEXT)
+
 
 def led_update_loop():
     while not exit_event.is_set():
@@ -36,10 +46,21 @@ def led_update_loop():
             GPIO.output(LED_PIN, GPIO.LOW)
         time.sleep(0.5)  # you can adjust the sleep time as needed
 
+
 # Set up button event detection with debouncing
 DEBOUNCE_TIME = 750  # milliseconds
-GPIO.add_event_detect(BUTTON_PLAY_PAUSE, GPIO.FALLING, callback=play_pause_callback, bouncetime=DEBOUNCE_TIME)
-GPIO.add_event_detect(BUTTON_NEXT_TRACK, GPIO.FALLING, callback=next_track_callback, bouncetime=DEBOUNCE_TIME)
+GPIO.add_event_detect(
+    BUTTON_PLAY_PAUSE,
+    GPIO.FALLING,
+    callback=play_pause_callback,
+    bouncetime=DEBOUNCE_TIME,
+)
+GPIO.add_event_detect(
+    BUTTON_NEXT_TRACK,
+    GPIO.FALLING,
+    callback=next_track_callback,
+    bouncetime=DEBOUNCE_TIME,
+)
 
 # Main loop
 try:
@@ -51,10 +72,12 @@ try:
     while True:
         # Check for RFID card
         rfid_id, text = rfid_reader.read()
-        folder_path = os.path.abspath(os.path.join('music', "card-%s" % rfid_id))
+        folder_path = os.path.abspath(
+            os.path.join("music", "card-%s" % rfid_id)
+        )
         print("Received RFID card: %s" % rfid_id)
         print("Looking for folder: %s" % folder_path)
-        
+
         if os.path.exists(folder_path):
             print("Folder found")
             execute_cmus_command(QUEUE_AND_PLAY_FOLDER, folder_path)
