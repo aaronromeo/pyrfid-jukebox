@@ -3,7 +3,7 @@ import os
 import socket
 import time
 from mfrc522 import SimpleMFRC522
-from cmus_utils import execute_cmus_command, QUEUE_AND_PLAY_FOLDER, PLAY_PAUSE, NEXT
+from cmus_utils import execute_cmus_command, send_to_cmus_socket, QUEUE_AND_PLAY_FOLDER, PLAY_PAUSE, NEXT
 
 # GPIO pin numbers
 BUTTON_PLAY_PAUSE = 17
@@ -25,13 +25,9 @@ rfid_reader = SimpleMFRC522()
 def music_is_playing():
     if USE_CMUS_SOCKET:
         try:
-            s = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-            s.connect("/home/pi/.config/cmus/socket")
-            s.send(b"status\n")
-            time.sleep(0.05)
-            data = s.recv(4096)
-            s.close()
-            return b'status playing' in data
+            status = send_to_cmus_socket(['status'])
+            print(status)
+            return b'status playing' in send_to_cmus_socket(['status'])
         except:
             return False
     else:

@@ -1,14 +1,17 @@
 import os
 import socket
+import time
 
 USE_CMUS_SOCKET = os.environ.get("USE_CMUS_SOCKET", False)
 QUEUE_AND_PLAY_FOLDER = 0
 PLAY_PAUSE = 1
 NEXT = 2
+STATUS = 3
 ACTION_COMMAND_MAP = {
     QUEUE_AND_PLAY_FOLDER: '-s -c -f',
     PLAY_PAUSE: '-u',
-    NEXT: '-n'
+    NEXT: '-n',
+    STATUS: '-Q'
 }
 
 def send_to_cmus_socket(commands):
@@ -18,7 +21,10 @@ def send_to_cmus_socket(commands):
         s = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
         s.connect(cmus_socket)
         s.send(cmd.encode() + b'\n')
+        time.sleep(0.05)
+        data = s.recv(4096)
         s.close()
+    return data
 
 def execute_cmus_command(action, path=None):
     """
@@ -40,11 +46,15 @@ def execute_cmus_command(action, path=None):
             for filename in sorted(os.listdir(path)):
                 if filename.endswith('.mp3'):  # or use a more comprehensive filter
                     commands.append(f'add {os.path.join(path, filename)}')
+            commands.append('player-next')
             commands.append('player-play')
             send_to_cmus_socket(commands)
         else:
             cmd = f'cmus-remote {ACTION_COMMAND_MAP[action]} {path}/*'
             os.system(cmd)
+    elif action == STATUS:
+        if USE_CMUS_SOCKET:
+            return b'status playing' in send_to_cmus_socket(['status'])
 
 # def execute_cmus_command(action, path=None):
 #     cmd = ''
