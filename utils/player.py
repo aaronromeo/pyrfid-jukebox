@@ -1,9 +1,9 @@
-import RPi.GPIO as GPIO
-import os
-import socket
-import time
-from mfrc522 import SimpleMFRC522
 from cmus_utils import execute_cmus_command, send_to_cmus_socket, QUEUE_AND_PLAY_FOLDER, PLAY_PAUSE, NEXT
+import os
+from mfrc522 import SimpleMFRC522
+import RPi.GPIO as GPIO
+import threading
+import time
 
 # GPIO pin numbers
 BUTTON_PLAY_PAUSE = 17
@@ -42,6 +42,14 @@ def next_track_callback(channel):
     print("Next track button pressed")
     execute_cmus_command(PLAY_PAUSE)
 
+def led_update_loop():
+    while not exit_event.is_set():
+        if music_is_playing():
+            GPIO.output(LED_PIN, GPIO.HIGH)
+        else:
+            GPIO.output(LED_PIN, GPIO.LOW)
+        time.sleep(0.5)  # you can adjust the sleep time as needed
+
 # Set up button event detection with debouncing
 DEBOUNCE_TIME = 200  # 200 milliseconds
 GPIO.add_event_detect(BUTTON_PLAY_PAUSE, GPIO.FALLING, callback=play_pause_callback, bouncetime=DEBOUNCE_TIME)
@@ -49,11 +57,15 @@ GPIO.add_event_detect(BUTTON_NEXT_TRACK, GPIO.FALLING, callback=next_track_callb
 
 # Main loop
 try:
+    exit_event = threading.Event()  # this is used to signal the thread to stop
+    led_thread = threading.Thread(target=led_update_loop)
+    led_thread.start()
+
     print("Ready to read")
     while True:
         # Check for RFID card
         rfid_id, text = rfid_reader.read()
-        folder_path = os.path.abspath(os.path.join('music',"card-%s" % rfid_id))
+        folder_path = os.path.abspath(os.path.join('music', "card-%s" % rfid_id))
         print("Received RFID card: %s" % rfid_id)
         print("Looking for folder: %s" % folder_path)
         
@@ -61,11 +73,7 @@ try:
             print("Folder found")
             execute_cmus_command(QUEUE_AND_PLAY_FOLDER, folder_path)
 
-        # Update LED
-        if music_is_playing():
-            GPIO.output(LED_PIN, GPIO.HIGH)
-        else:
-            GPIO.output(LED_PIN, GPIO.LOW)
-
 finally:
+    exit_event.set()  # signal the led_thread to stop
+    led_thread.join()  # wait for the led_thread to finish
     GPIO.cleanup()
