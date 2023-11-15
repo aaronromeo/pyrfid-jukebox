@@ -17,7 +17,7 @@
 ```bash
 sudo apt-get -y update
 sudo apt-get -y upgrade
-sudo apt-get install -y openssh-server python3 python3-pip cmus bluetooth bluez pi-bluetooth nodejs npm yarn
+sudo apt-get install -y openssh-server python3 python3-pip cmus bluetooth bluez pi-bluetooth nodejs npm yarn python3-apt
 sudo reboot now
 sudo apt-get install -y git vim tmux
 sudo apt-get install pulseaudio*
@@ -111,8 +111,17 @@ This script is executed at reboot using a crontab entry:
 @reboot rm /home/pi/btconnect.log && sleep 10 && /home/pi/btconnect.sh > /home/pi/btconnect.log 2>&1
 ```
 
-### 7. Project setup
+### 7. Enable RDIF
 
+- Enable SPI Interface:
+  - The SPI interface must be enabled on your Raspberry Pi for the mfrc522 module to communicate with the RFID reader. You can enable SPI using the raspi-config tool. Run sudo raspi-config, navigate to "Interfacing Options" > "SPI" and enable it. After enabling, reboot your Raspberry Pi.
+- Check SPI Device Files:
+  - After enabling SPI, check if the SPI device files exist. You should find device files like /dev/spidev0.0 or /dev/spidev0.1.You can check this by running ls /dev/spi* in the terminal.
+
+### 8. Project setup
+
+- Install virtual env
+  - `sudo apt-get install python3-venv`
 - Create a venv
   - `python -m venv env`
 - Activate venv

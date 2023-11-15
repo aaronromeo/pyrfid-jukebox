@@ -6,8 +6,12 @@ from mfrc522 import SimpleMFRC522
 reader = SimpleMFRC522()
 
 try:
+    print("Ready to read RFID tag")
     id, text = reader.read()
-    print(id)
-    print(text)
+    print("RFID tag detected")
+    print("ID:", id)
+    print("Text:", text)
+except Exception as e:
+    print("Error:", e)
 finally:
     GPIO.cleanup()
