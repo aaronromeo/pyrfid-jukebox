@@ -15,9 +15,7 @@ while True:
     try:
         print("Ready to read")
         id, _text = reader.read()
-        path = os.path.abspath(
-            os.path.join(ROOT_DIR, "card-%s" % str(id))
-        )
+        path = os.path.abspath(os.path.join(ROOT_DIR, "card-%s" % str(id)))
         cmd = CMS_PLAY_FOLDER.format(path)
         print(cmd)
         if os.system(cmd) == 0:

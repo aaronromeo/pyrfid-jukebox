@@ -1,4 +1,4 @@
-# RFID-Music
+# PyRFID Jukebox
 
 ## What does this tool do?
 
