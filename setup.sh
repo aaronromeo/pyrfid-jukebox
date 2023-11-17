@@ -14,8 +14,8 @@ cp system/supervisor/conf.d/* /etc/supervisor/conf.d/
 mkdir /home/pi/logs
 mkdir /home/pi/scripts
 
-cp -v system/scripts/btconnect.sh ~/scripts
-cp -v system/scripts/prepare_logs.sh ~/scripts
+cp -v system/scripts/btconnect.sh /home/pi/scripts
+cp -v system/scripts/prepare_logs.sh /home/pi/scripts
 
 chown -R pi:pi /home/pi/logs
 chown -R pi:pi /home/pi/scripts

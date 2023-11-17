@@ -178,7 +178,7 @@ This script is executed at reboot using a crontab entry:
 
 # TODO
 
-```
+```bash
 sudo supervisorctl reread
 sudo supervisorctl update
 
