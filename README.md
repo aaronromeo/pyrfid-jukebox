@@ -105,6 +105,10 @@ bluetoothctl connect <MAC Address>
 paplay -p --device=1 /usr/share/sounds/alsa/Front_Center.wav
 ```
 
+```bash
+chmod +x /home/pi/btconnect.sh
+```
+
 This script is executed at reboot using a crontab entry:
 
 ```bash
@@ -171,3 +175,17 @@ This script is executed at reboot using a crontab entry:
 - Next Track Button: Connected to GPIO27 - Pin 13
 - LED connected to GPIO22 - Pin 15
 - All buttons and the LED should have their other side connected to GND - Pin 9 or 14 (or any other available GND pin).
+
+sudo supervisorctl reread
+sudo supervisorctl update
+
+sudo supervisorctl start btconnect
+sudo supervisorctl stop btconnect
+sudo supervisorctl restart btconnect
+sudo supervisorctl status btconnect
+
+screen -r cmus
+screen -S cmus -X quit
+
+sudo cp system/supervisor/conf.d/* /etc/supervisor/conf.d/
+cp system/scripts/btconnect.sh ~

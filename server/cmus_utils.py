@@ -10,8 +10,8 @@ STATUS = 3
 
 def send_to_cmus_socket(commands):
     cmus_socket = os.path.join(
-        os.environ.get("XDG_RUNTIME_DIR"),
-        "cmus-socket")
+        os.environ.get("XDG_RUNTIME_DIR"), "cmus-socket"
+    )
     for cmd in commands:
         if cmd != "status":
             print(cmd)
