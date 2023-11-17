@@ -11,8 +11,8 @@ fi
 
 cp system/supervisor/conf.d/* /etc/supervisor/conf.d/
 
-mkdir /home/pi/logs
-mkdir /home/pi/scripts
+mkdir -p /home/pi/logs
+mkdir -p /home/pi/scripts
 
 cp -v system/scripts/btconnect.sh /home/pi/scripts
 cp -v system/scripts/prepare_logs.sh /home/pi/scripts
