@@ -176,6 +176,9 @@ This script is executed at reboot using a crontab entry:
 - LED connected to GPIO22 - Pin 15
 - All buttons and the LED should have their other side connected to GND - Pin 9 or 14 (or any other available GND pin).
 
+# TODO
+
+```
 sudo supervisorctl reread
 sudo supervisorctl update
 
@@ -189,3 +192,4 @@ screen -S cmus -X quit
 
 sudo cp system/supervisor/conf.d/* /etc/supervisor/conf.d/
 cp system/scripts/btconnect.sh ~
+```

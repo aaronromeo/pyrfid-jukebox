@@ -1,12 +1,14 @@
 #!/bin/bash
 
-set -euxo pipefail
+set -uo pipefail
 
 device="FC:58:FA:8C:E3:A8"
 
 connect_bluetooth() {
     if bluetoothctl connect "$device"; then
         echo "Connected successfully to $device."
+        pactl list sinks short
+        paplay -p --device=1 /usr/share/sounds/alsa/Front_Center.wav
     else
         echo "Failed to connect."
     fi
