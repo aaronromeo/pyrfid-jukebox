@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -euo pipefail
+set -xeuo pipefail
 
 touch /home/pi/btconnect.err.log
 touch /home/pi/btconnect.out.log
