@@ -16,3 +16,8 @@ touch /home/pi/pyrfid-jukebox.err.log
 touch /home/pi/pyrfid-jukebox.out.log
 chown pi:pi /home/pi/pyrfid-jukebox.err.log
 chown pi:pi /home/pi/pyrfid-jukebox.out.log
+
+touch /home/pi/gitpull.err.log
+touch /home/pi/gitpull.out.log
+chown pi:pi /home/pi/gitpull.err.log
+chown pi:pi /home/pi/gitpull.out.log
