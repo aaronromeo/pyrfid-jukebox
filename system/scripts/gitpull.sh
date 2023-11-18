@@ -18,7 +18,7 @@ if [ $(git rev-parse HEAD) != $(git rev-parse @{u}) ]; then
     bash setup.sh
 
     echo "Restarting pyrfid_jukebox"
-    supervisord restart "pyrfid_jukebox"
+    supervisorctl restart pyrfid_jukebox
 else
     echo "No updates found. Sleeping..."
     sleep 60 * 5
