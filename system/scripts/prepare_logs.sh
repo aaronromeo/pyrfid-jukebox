@@ -11,3 +11,8 @@ touch /home/pi/cmus.err.log
 touch /home/pi/cmus.out.log
 chown pi:pi /home/pi/cmus.err.log
 chown pi:pi /home/pi/cmus.out.log
+
+touch /home/pi/pyrfid-jukebox.err.log
+touch /home/pi/pyrfid-jukebox.out.log
+chown pi:pi /home/pi/pyrfid-jukebox.err.log
+chown pi:pi /home/pi/pyrfid-jukebox.out.log
