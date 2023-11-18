@@ -2,6 +2,7 @@
 
 set -xeuo pipefail
 
+echo "Checking for updates at $(date '+%Y-%m-%d %H:%M:%S')..."
 
 cd /home/pi/workspace/pyrfid-jukebox
 sudo -u pi git fetch
@@ -19,5 +20,6 @@ if [ $(git rev-parse HEAD) != $(git rev-parse @{u}) ]; then
     echo "Restarting pyrfid_jukebox"
     supervisord restart "pyrfid_jukebox"
 else
-    echo "No updates found."
+    echo "No updates found. Sleeping..."
+    sleep 60 * 5
 fi
