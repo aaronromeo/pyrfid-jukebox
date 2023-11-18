@@ -17,7 +17,7 @@
 ```bash
 sudo apt-get -y update
 sudo apt-get -y upgrade
-sudo apt-get install -y openssh-server python3 python3-pip cmus bluetooth bluez pi-bluetooth nodejs npm yarn python3-apt
+sudo apt-get install -y openssh-server python3 python3-pip cmus bluetooth bluez pi-bluetooth nodejs npm yarn python3-apt screen
 sudo reboot now
 sudo apt-get install -y git vim tmux
 sudo apt-get install pulseaudio*
@@ -176,20 +176,23 @@ This script is executed at reboot using a crontab entry:
 - LED connected to GPIO22 - Pin 15
 - All buttons and the LED should have their other side connected to GND - Pin 9 or 14 (or any other available GND pin).
 
-# TODO
+## Other helper commands config
 
-```bash
-sudo supervisorctl reread
-sudo supervisorctl update
+1. `supervisord` helpers
 
-sudo supervisorctl start btconnect
-sudo supervisorctl stop btconnect
-sudo supervisorctl restart btconnect
-sudo supervisorctl status btconnect
+    ```bash
+    sudo supervisorctl reread
+    sudo supervisorctl update
 
-screen -r cmus
-screen -S cmus -X quit
+    sudo supervisorctl start btconnect
+    sudo supervisorctl stop btconnect
+    sudo supervisorctl restart btconnect
+    sudo supervisorctl status btconnect
+    ```
 
-sudo cp system/supervisor/conf.d/* /etc/supervisor/conf.d/
-cp system/scripts/btconnect.sh ~
-```
+2. `cmus`  helpers
+
+    ```bash
+    screen -r cmus
+    screen -S cmus -X quit
+    ```
