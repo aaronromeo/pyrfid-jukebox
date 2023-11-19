@@ -15,6 +15,7 @@ mkdir -p /home/pi/logs
 mkdir -p /home/pi/scripts
 
 cp -v system/scripts/*.sh /home/pi/scripts
+chmod +x /home/pi/scripts/*.sh
 
 chown -R pi:pi /home/pi/logs
 chown -R pi:pi /home/pi/scripts
