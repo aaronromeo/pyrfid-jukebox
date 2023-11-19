@@ -2,22 +2,22 @@
 
 set -xeuo pipefail
 
-touch /home/pi/btconnect.err.log
-touch /home/pi/btconnect.out.log
-chown pi:pi /home/pi/btconnect.err.log
-chown pi:pi /home/pi/btconnect.out.log
+touch /home/pi/logs/btconnect.err.log
+touch /home/pi/logs/btconnect.out.log
+chown pi:pi /home/pi/logs/btconnect.err.log
+chown pi:pi /home/pi/logs/btconnect.out.log
 
-touch /home/pi/cmus.err.log
-touch /home/pi/cmus.out.log
-chown pi:pi /home/pi/cmus.err.log
-chown pi:pi /home/pi/cmus.out.log
+touch /home/pi/logs/cmus.err.log
+touch /home/pi/logs/cmus.out.log
+chown pi:pi /home/pi/logs/cmus.err.log
+chown pi:pi /home/pi/logs/cmus.out.log
 
-touch /home/pi/pyrfid-jukebox.err.log
-touch /home/pi/pyrfid-jukebox.out.log
-chown pi:pi /home/pi/pyrfid-jukebox.err.log
-chown pi:pi /home/pi/pyrfid-jukebox.out.log
+touch /home/pi/logs/pyrfid-jukebox.err.log
+touch /home/pi/logs/pyrfid-jukebox.out.log
+chown pi:pi /home/pi/logs/pyrfid-jukebox.err.log
+chown pi:pi /home/pi/logs/pyrfid-jukebox.out.log
 
-touch /home/pi/gitpull.err.log
-touch /home/pi/gitpull.out.log
-chown pi:pi /home/pi/gitpull.err.log
-chown pi:pi /home/pi/gitpull.out.log
+touch /home/pi/logs/gitpull.err.log
+touch /home/pi/logs/gitpull.out.log
+chown pi:pi /home/pi/logs/gitpull.err.log
+chown pi:pi /home/pi/logs/gitpull.out.log
