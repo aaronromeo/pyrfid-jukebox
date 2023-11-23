@@ -9,6 +9,7 @@ sudo -u pi git fetch
 
 pipinstall=false
 if ! git diff --quiet origin/main...HEAD -- requirements.txt; then
+    git diff origin/main...HEAD -- requirements.txt
     echo "New requirements available."
     pipinstall=true
 fi
