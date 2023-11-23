@@ -1,3 +1,4 @@
+import datetime
 import sys
 from cmus_utils import (
     execute_cmus_command,
@@ -24,16 +25,6 @@ script_dir = os.path.dirname(os.path.abspath(__file__))
 RFID_TO_MUSIC_MAP = os.path.join(script_dir, "rfid_map.json")
 LOCK_FILE = "/tmp/pyrfid_jukebox.lock"
 
-# Check if the lock file already exists
-if os.path.exists(LOCK_FILE):
-    print("Another instance of the script is already running.")
-    sys.exit(1)
-
-# Create a lock file to signal that the script is running
-with open(LOCK_FILE, "w") as lock_file:
-    GPIO.cleanup()
-    lock_file.write("")
-
 # Setup GPIO
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(BUTTON_PLAY_PAUSE, GPIO.IN, pull_up_down=GPIO.PUD_UP)
@@ -43,6 +34,45 @@ GPIO.setup(LED_PIN, GPIO.OUT)
 # Initialize RFID reader
 rfid_reader = SimpleMFRC522()
 
+# Process lock
+
+
+def is_process_running(pid):
+    # Check if a process with the given PID is currently running.
+    try:
+        os.kill(pid, 0)
+    except OSError:
+        return False
+    else:
+        return True
+
+
+def acquire_lock():
+    # Acquire the lock if possible, and return the lock file handle.
+    lock_file = open(LOCK_FILE, "a+")
+    lock_file.seek(0)
+    pid_str = lock_file.read().strip()
+
+    # Check if the PID from the lock file is still running
+    if pid_str and is_process_running(int(pid_str)):
+        print(f"{datetime.now()} - Script is already running.")
+        sys.exit(1)
+    else:
+        # Write the current PID to the lock file
+        lock_file.seek(0)
+        lock_file.truncate()
+        lock_file.write(str(os.getpid()))
+        lock_file.flush()
+        GPIO.cleanup()
+        return lock_file
+
+
+def data_to_map(data):
+    with open(RFID_TO_MUSIC_MAP, "w") as file:
+        json.dump(data, file, indent=4)
+
+
+####
 # Button callback functions
 
 
@@ -79,6 +109,9 @@ def led_update_loop():
         time.sleep(0.5)  # you can adjust the sleep time as needed
 
 
+####
+
+
 # Set up button event detection with debouncing
 DEBOUNCE_TIME = 750  # milliseconds
 GPIO.add_event_detect(
@@ -95,14 +128,12 @@ GPIO.add_event_detect(
 )
 
 # Main loop
-
-
-def data_to_map(data):
-    with open(RFID_TO_MUSIC_MAP, "w") as file:
-        json.dump(data, file, indent=4)
-
-
 try:
+    # Attempt to acquire the lock
+    lock_file = acquire_lock()
+
+    print(f"{datetime.now()} - Script started")
+
     exit_event = threading.Event()  # this is used to signal the thread to stop
     led_thread = threading.Thread(target=led_update_loop)
     led_thread.start()
@@ -155,4 +186,6 @@ finally:
     exit_event.set()  # signal the led_thread to stop
     led_thread.join()  # wait for the led_thread to finish
     GPIO.cleanup()
-    os.remove(LOCK_FILE)
+    if lock_file:
+        lock_file.close()
+        os.remove(LOCK_FILE)
