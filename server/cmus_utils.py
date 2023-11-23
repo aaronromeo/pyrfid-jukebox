@@ -43,6 +43,16 @@ def send_to_cmus_socket(commands):
     return None
 
 
+def ensure_is_cmus_running():
+    cmus_socket_path = os.path.join(
+        os.environ.get("XDG_RUNTIME_DIR", "/run/user/1000"), "cmus-socket"
+    )
+
+    if not os.path.exists(cmus_socket_path):
+        print("cmus is not running.")
+        raise FileNotFoundError(f"Socket file '{cmus_socket_path}' not found.")
+
+
 def cmus_status():
     try:
         status_output = send_to_cmus_socket(["status"])

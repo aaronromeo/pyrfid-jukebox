@@ -2,6 +2,7 @@ from datetime import datetime
 import sys
 from cmus_utils import (
     execute_cmus_command,
+    ensure_is_cmus_running,
     cmus_status,
     QUEUE_AND_PLAY_FOLDER,
     PLAY_PAUSE,
@@ -58,18 +59,13 @@ def acquire_lock():
         print(f"{datetime.now()} - Script is already running.")
         sys.exit(1)
     else:
+        print(f"{datetime.now()} - Aquiring lock file.")
         # Write the current PID to the lock file
         lock_file.seek(0)
         lock_file.truncate()
         lock_file.write(str(os.getpid()))
         lock_file.flush()
         return lock_file
-
-
-def ensure_is_cmus_running():
-    if cmus_status is None:
-        print("cmus is not running")
-        sys.exit(1)
 
 
 def data_to_map(data):
