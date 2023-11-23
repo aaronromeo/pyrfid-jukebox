@@ -66,6 +66,12 @@ def acquire_lock():
         return lock_file
 
 
+def ensure_is_cmus_running():
+    if cmus_status is None:
+        print("cmus is not running")
+        sys.exit(1)
+
+
 def data_to_map(data):
     with open(RFID_TO_MUSIC_MAP, "w") as file:
         json.dump(data, file, indent=4)
@@ -132,6 +138,9 @@ try:
 
     # Attempt to acquire the lock
     lock_file = acquire_lock()
+
+    # Ensure cmus is running
+    ensure_is_cmus_running()
 
     exit_event = threading.Event()  # this is used to signal the thread to stop
 
