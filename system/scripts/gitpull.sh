@@ -29,5 +29,5 @@ if [ $(git rev-parse HEAD) != $(git rev-parse @{u}) ]; then
     supervisorctl restart pyrfid_jukebox
 else
     echo "No updates found. Sleeping..."
-    sleep 60 * 5
+    sleep 300
 fi
