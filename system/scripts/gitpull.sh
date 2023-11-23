@@ -32,7 +32,7 @@ fi
 sudo -u pi touch /home/pi/scripts/setup.sh
 if diff -q setup.sh /home/pi/scripts/setup.sh; then
     echo "Running setup"
-    bash setup.sh
+    sudo bash setup.sh
     sudo -u pi cp setup.sh /home/pi/scripts/setup.sh
 fi
 
