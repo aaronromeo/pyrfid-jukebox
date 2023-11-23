@@ -19,18 +19,12 @@ else
     echo "No new requirements in requirements.txt"
 fi
 
-if [ $(git rev-parse HEAD) != $(git rev-parse @{u}) ]; then
+repodiffs=$(git rev-parse HEAD) != $(git rev-parse @{u})
+
+if [ "$repodiffs" = true ]; then
     echo "New version available. Updating..."
     sudo -u pi git reset --hard origin/main
     sudo -u pi git pull
-
-    if [ "$pipinstall" = true ]; then
-        echo "Installing requirements"
-        sudo -u pi pip3 install -r requirements.txt
-    fi
-
-    echo "Restarting pyrfid_jukebox"
-    supervisorctl restart pyrfid_jukebox
 else
     echo "No updates found."
 fi
@@ -40,6 +34,16 @@ if ! diff -q setup.sh /home/pi/scripts/setup.sh; then
     echo "Running setup"
     sudo bash setup.sh
     sudo -u pi cp setup.sh /home/pi/scripts/setup.sh
+fi
+
+if [ "$pipinstall" = true ]; then
+    echo "Installing requirements"
+    sudo -u pi pip3 install -r requirements.txt
+fi
+
+if [ "$repodiffs" = true ]; then
+    echo "Restarting pyrfid_jukebox"
+    supervisorctl restart pyrfid_jukebox
 fi
 
 echo "Sleeping for 5 minutes..."
