@@ -19,7 +19,8 @@ BUTTON_PLAY_PAUSE = 17
 BUTTON_NEXT_TRACK = 27
 LED_PIN = 22
 
-RFID_TO_MUSIC_MAP = "rfid_map.json"
+script_dir = os.path.dirname(os.path.abspath(__file__))
+RFID_TO_MUSIC_MAP = os.path.join(script_dir, "rfid_map.json")
 
 # Setup GPIO
 GPIO.setmode(GPIO.BCM)
@@ -82,6 +83,13 @@ GPIO.add_event_detect(
 )
 
 # Main loop
+
+
+def data_to_map(data):
+    with open(RFID_TO_MUSIC_MAP, "w") as file:
+        json.dump(data, file, indent=4)
+
+
 try:
     exit_event = threading.Event()  # this is used to signal the thread to stop
     led_thread = threading.Thread(target=led_update_loop)
@@ -93,8 +101,7 @@ try:
 
         # Create map file if it doesn't exist
         if not os.path.exists(RFID_TO_MUSIC_MAP):
-            with open(RFID_TO_MUSIC_MAP, "w") as file:
-                json.dump(data, file, indent=4)
+            data_to_map(data)
 
         try:
             # Check for RFID card
@@ -127,8 +134,7 @@ try:
                 print("RFID ID not in mapping or mapped to an empty path.")
 
             if update_map:
-                with open(RFID_TO_MUSIC_MAP, "w") as file:
-                    json.dump(data, file, indent=4)
+                data_to_map(data)
 
         except Exception as e:
             print(f"An error occurred: {e}")
