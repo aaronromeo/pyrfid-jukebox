@@ -29,6 +29,8 @@ def send_to_cmus_socket(commands):
 def cmus_status():
     try:
         status_output = send_to_cmus_socket(["status"])
+        print("Status output:")
+        print(status_output)
         is_playing = b"status playing" in status_output
         is_shuffle = b"set shuffle true" in status_output
         is_repeat = b"set repeat true" in status_output
