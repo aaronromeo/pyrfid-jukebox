@@ -21,12 +21,12 @@ else
     echo "No new requirements in requirements.txt"
 fi
 
-repodiffs=$(git rev-parse HEAD) != $(git rev-parse @{u})
-
-if [ "$repodiffs" = true ]; then
+repodiffs=false
+if [ $(sudo -u pi git rev-parse HEAD) != $(sudo -u pi git rev-parse @{u}) ]; then
     echo "New version available. Updating..."
     sudo -u pi git reset --hard origin/main
     sudo -u pi git pull
+    repodiffs=true
 else
     echo "No updates found."
 fi
