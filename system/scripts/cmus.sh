@@ -19,7 +19,7 @@ set -e  # Re-enable 'exit on error'
 
 if [ $screen_exit_status -ne 0 ] || [ -z "$screen_session" ]; then
     echo "Starting cmus..."
-    /usr/bin/screen -dmS cmus /usr/bin/cmus
+    /usr/bin/screen -dmS cmus /usr/bin/cmus 2> /home/pi/logs/process_cmus_error.log > /home/pi/logs/process_cmus_output.log
 else
     echo "cmus already running."
 fi
