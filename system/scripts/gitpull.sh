@@ -25,13 +25,13 @@ if [ $(git rev-parse HEAD) != $(git rev-parse @{u}) ]; then
     echo "Restarting pyrfid_jukebox"
     supervisorctl restart pyrfid_jukebox
 else
-    echo "No updates found. Sleeping..."
+    echo "No updates found. Sleeping for 5 minutes..."
     sleep 300
 fi
 
-touch /home/pi/scripts/setup.sh
+sudo -u pi touch /home/pi/scripts/setup.sh
 if diff -q setup.sh /home/pi/scripts/setup.sh; then
     echo "Running setup"
     bash setup.sh
-    cp setup.sh /home/pi/scripts/setup.sh
+    sudo -u pi cp setup.sh /home/pi/scripts/setup.sh
 fi
