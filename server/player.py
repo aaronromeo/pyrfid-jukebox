@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime
 import sys
 from cmus_utils import (
     execute_cmus_command,
