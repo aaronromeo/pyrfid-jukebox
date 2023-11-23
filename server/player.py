@@ -57,7 +57,7 @@ def acquire_lock():
     # Check if the PID from the lock file is still running
     if pid_str and is_process_running(int(pid_str)):
         print(f"{datetime.now()} - Script is already running.")
-        sys.exit(1)
+        raise RuntimeError("Script is already running.")
     else:
         print(f"{datetime.now()} - Aquiring lock file.")
         # Write the current PID to the lock file
@@ -128,6 +128,8 @@ GPIO.add_event_detect(
     bouncetime=DEBOUNCE_TIME,
 )
 
+has_error = False
+
 # Main loop
 try:
     print(f"{datetime.now()} - Script started")
@@ -186,6 +188,11 @@ try:
 
         except Exception as e:
             print(f"An error occurred: {e}")
+            has_error = True
+
+except Exception as e:
+    print(f"An error occurred: {e}")
+    has_error = True
 
 finally:
     exit_event.set()  # signal the led_thread to stop
@@ -195,3 +202,7 @@ finally:
     if lock_file:
         lock_file.close()
         os.remove(LOCK_FILE)
+
+    if has_error:
+        print("Exiting with error")
+        sys.exit(1)

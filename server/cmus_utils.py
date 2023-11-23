@@ -36,11 +36,10 @@ def send_to_cmus_socket(commands):
 
     except socket.error as e:
         print(f"Socket error occurred: {e}")
-    except FileNotFoundError as e:
-        print(e)
+        raise e
     except Exception as e:
         print(f"An unexpected error occurred: {e}")
-    return None
+        raise e
 
 
 def ensure_is_cmus_running():
@@ -54,16 +53,11 @@ def ensure_is_cmus_running():
 
 
 def cmus_status():
-    try:
-        status_output = send_to_cmus_socket(["status"])
-        is_playing = b"status playing" in status_output
-        is_shuffle = b"set shuffle true" in status_output
-        is_repeat = b"set repeat true" in status_output
-        return is_playing, is_shuffle, is_repeat
-    except BaseException as e:
-        print("Could not get cmus status")
-        print(e)
-        return False, False, False
+    status_output = send_to_cmus_socket(["status"])
+    is_playing = b"status playing" in status_output
+    is_shuffle = b"set shuffle true" in status_output
+    is_repeat = b"set repeat true" in status_output
+    return is_playing, is_shuffle, is_repeat
 
 
 def execute_cmus_command(action, path=None):
