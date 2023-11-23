@@ -16,6 +16,7 @@ fi
 if [ $(git rev-parse HEAD) != $(git rev-parse @{u}) ]; then
     echo "New version available. Updating..."
     sudo -u pi git reset --hard origin/main
+    sudo -u pi git pull
 
     if [ "$pipinstall" = true ]; then
         echo "Installing requirements"
@@ -25,8 +26,7 @@ if [ $(git rev-parse HEAD) != $(git rev-parse @{u}) ]; then
     echo "Restarting pyrfid_jukebox"
     supervisorctl restart pyrfid_jukebox
 else
-    echo "No updates found. Sleeping for 5 minutes..."
-    sleep 300
+    echo "No updates found."
 fi
 
 sudo -u pi touch /home/pi/scripts/setup.sh
@@ -35,3 +35,6 @@ if diff -q setup.sh /home/pi/scripts/setup.sh; then
     bash setup.sh
     sudo -u pi cp setup.sh /home/pi/scripts/setup.sh
 fi
+
+echo "No updates found. Sleeping for 5 minutes..."
+sleep 5m
