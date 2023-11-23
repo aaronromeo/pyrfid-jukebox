@@ -24,6 +24,13 @@ chown pi:pi /home/pi/logs/cmus.out.log
 echo "Created cmus logs." >> /home/pi/logs/cmus.out.log
 echo "Created cmus err." >> /home/pi/logs/cmus.err.log
 
+touch /home/pi/logs/cmus_manager.err.log
+touch /home/pi/logs/cmus_manager.out.log
+chown pi:pi /home/pi/logs/cmus_manager.err.log
+chown pi:pi /home/pi/logs/cmus_manager.out.log
+echo "Created cmus_manager logs." >> /home/pi/logs/cmus_manager.out.log
+echo "Created cmus_manager err." >> /home/pi/logs/cmus_manager.err.log
+
 touch /home/pi/logs/pyrfid-jukebox.err.log
 touch /home/pi/logs/pyrfid-jukebox.out.log
 chown pi:pi /home/pi/logs/pyrfid-jukebox.err.log
@@ -37,3 +44,6 @@ chown pi:pi /home/pi/logs/gitpull.err.log
 chown pi:pi /home/pi/logs/gitpull.out.log
 echo "Created gitpull logs." >> /home/pi/logs/gitpull.out.log
 echo "Created gitpull err." >> /home/pi/logs/gitpull.err.log
+
+sudo supervisorctl start gitpull
+sudo supervisorctl start cmus_manager

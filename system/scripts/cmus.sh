@@ -23,3 +23,5 @@ if [ $screen_exit_status -ne 0 ] || [ -z "$screen_session" ]; then
 else
     echo "cmus already running."
 fi
+
+sudo supervisorctl start pyrfid_jukebox
