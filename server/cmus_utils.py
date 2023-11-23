@@ -33,8 +33,10 @@ def cmus_status():
         is_shuffle = b"set shuffle true" in status_output
         is_repeat = b"set repeat true" in status_output
         return is_playing, is_shuffle, is_repeat
-    except BaseException:
-        return False
+    except BaseException as e:
+        print("Could not get cmus status")
+        print(e)
+        return False, False, False
 
 
 def execute_cmus_command(action, path=None):
