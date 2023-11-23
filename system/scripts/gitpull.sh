@@ -8,7 +8,7 @@ cd /home/pi/workspace/pyrfid-jukebox
 sudo -u pi git fetch
 
 pipinstall=false
-if [ $(git log -n 1 --pretty=format:"%H" -- requirements.txt) != $(git log -n 1 --pretty=format:"%H" origin/main -- requirements.txt) ]; then
+if ! git diff --quiet origin/main...HEAD -- requirements.txt; then
     echo "New requirements available."
     pipinstall=true
 fi
