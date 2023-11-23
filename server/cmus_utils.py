@@ -11,23 +11,41 @@ REPEAT = 5
 
 
 def send_to_cmus_socket(commands):
-    cmus_socket = os.path.join(
-        os.environ.get("XDG_RUNTIME_DIR"), "cmus-socket"
-    )
-    for cmd in commands:
-        if cmd != "status":
-            print(cmd)
-        s = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-        s.connect(cmus_socket)
-        s.send(cmd.encode() + b"\n")
-        time.sleep(0.05)
-        data = s.recv(4096)
-        s.close()
-    return data
+    try:
+        cmus_socket_path = os.path.join(
+            os.environ.get("XDG_RUNTIME_DIR", "/run/user/1000"), "cmus-socket"
+        )
+
+        if not os.path.exists(cmus_socket_path):
+            raise FileNotFoundError(
+                f"Socket file '{cmus_socket_path}' not found."
+            )
+
+        data = b""
+        for cmd in commands:
+            if cmd != "status":
+                print(f"Sending command: {cmd}")
+
+            with socket.socket(socket.AF_UNIX, socket.SOCK_STREAM) as s:
+                s.connect(cmus_socket_path)
+                s.send(cmd.encode() + b"\n")
+                time.sleep(0.05)
+                data = s.recv(4096)
+
+        return data
+
+    except socket.error as e:
+        print(f"Socket error occurred: {e}")
+    except FileNotFoundError as e:
+        print(e)
+    except Exception as e:
+        print(f"An unexpected error occurred: {e}")
+    return None
 
 
 def cmus_status():
     try:
+        print("Trying to get the status:")
         status_output = send_to_cmus_socket(["status"])
         print("Status output:")
         print(status_output)
