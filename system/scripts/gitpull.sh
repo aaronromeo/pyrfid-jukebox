@@ -15,7 +15,7 @@ fi
 
 if [ $(git rev-parse HEAD) != $(git rev-parse @{u}) ]; then
     echo "New version available. Updating..."
-    sudo -u pi git pull
+    sudo -u pi git reset --hard origin/main
 
     if [ "$pipinstall" = true ]; then
         echo "Installing requirements"
