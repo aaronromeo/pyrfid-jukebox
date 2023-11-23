@@ -36,5 +36,5 @@ if ! diff -q setup.sh /home/pi/scripts/setup.sh; then
     sudo -u pi cp setup.sh /home/pi/scripts/setup.sh
 fi
 
-echo "No updates found. Sleeping for 5 minutes..."
+echo "Sleeping for 5 minutes..."
 sleep 5m

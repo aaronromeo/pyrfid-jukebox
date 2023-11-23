@@ -55,9 +55,7 @@ def toggle_repeat_callback(channel):
 
 
 def music_is_playing():
-    print("Debugging")
-    print(cmus_status())
-    return False
+    return cmus_status()[0]
 
 
 def led_update_loop():
