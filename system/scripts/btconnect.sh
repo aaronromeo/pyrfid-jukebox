@@ -2,6 +2,8 @@
 
 set -uo pipefail
 
+echo "$(date '+%Y-%m-%d %H:%M:%S') - Script started"
+
 device="FC:58:FA:8C:E3:A8"
 
 connect_bluetooth() {

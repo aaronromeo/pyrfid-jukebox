@@ -1,5 +1,7 @@
 #!/bin/bash
 
+echo "$(date '+%Y-%m-%d %H:%M:%S') - Script started"
+
 # Define the lock file and the Python script paths
 LOCK_FILE="/tmp/pyrfid_jukebox.lock"
 PYTHON_SCRIPT="/home/pi/workspace/pyrfid-jukebox/server/player.py"

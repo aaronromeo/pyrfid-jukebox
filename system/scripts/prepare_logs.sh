@@ -2,6 +2,8 @@
 
 set -xeuo pipefail
 
+echo "$(date '+%Y-%m-%d %H:%M:%S') - Script started"
+
 touch /home/pi/logs/btconnect.err.log
 touch /home/pi/logs/btconnect.out.log
 chown pi:pi /home/pi/logs/btconnect.err.log

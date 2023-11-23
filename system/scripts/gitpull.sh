@@ -2,6 +2,8 @@
 
 set -xeuo pipefail
 
+echo "$(date '+%Y-%m-%d %H:%M:%S') - Script started"
+
 cd /home/pi/workspace/pyrfid-jukebox
 echo "Current directory: $(pwd)"
 echo "Listing remote branches:"

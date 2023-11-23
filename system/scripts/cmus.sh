@@ -2,6 +2,8 @@
 
 set -xeuo pipefail
 
+echo "$(date '+%Y-%m-%d %H:%M:%S') - Script started"
+
 export XDG_RUNTIME_DIR="/run/user/$(id -u pi)"
 
 if ! grep -q "XDG_RUNTIME_DIR" ~/.bashrc; then
