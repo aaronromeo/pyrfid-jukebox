@@ -2,6 +2,7 @@
 
 set -xeuo pipefail
 
+echo
 echo "$(date '+%Y-%m-%d %H:%M:%S') - Script started"
 
 cd /home/pi/workspace/pyrfid-jukebox

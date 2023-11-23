@@ -2,6 +2,7 @@
 
 set -xeuo pipefail
 
+echo
 echo "$(date '+%Y-%m-%d %H:%M:%S') - Script started"
 
 export XDG_RUNTIME_DIR="/run/user/$(id -u pi)"
@@ -20,6 +21,5 @@ if [ $screen_exit_status -ne 0 ] || [ -z "$screen_session" ]; then
     echo "Starting cmus..."
     /usr/bin/screen -dmS cmus /usr/bin/cmus
 else
-    echo "cmus already running. Sleeping for 15 minutes..."
-    sleep 15m
+    echo "cmus already running."
 fi
