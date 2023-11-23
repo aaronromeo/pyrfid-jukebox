@@ -2,3 +2,4 @@ env
 music/card-*
 __pycache__
 .vscode
+server/rfid_map.json

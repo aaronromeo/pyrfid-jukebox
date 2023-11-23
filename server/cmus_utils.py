@@ -6,6 +6,8 @@ QUEUE_AND_PLAY_FOLDER = 0
 PLAY_PAUSE = 1
 NEXT = 2
 STATUS = 3
+SHUFFLE = 4
+REPEAT = 5
 
 
 def send_to_cmus_socket(commands):
@@ -24,9 +26,13 @@ def send_to_cmus_socket(commands):
     return data
 
 
-def music_is_playing():
+def cmus_status():
     try:
-        return b"status playing" in send_to_cmus_socket(["status"])
+        status_output = send_to_cmus_socket(["status"])
+        is_playing = b"status playing" in status_output
+        is_shuffle = b"set shuffle true" in status_output
+        is_repeat = b"set repeat true" in status_output
+        return is_playing, is_shuffle, is_repeat
     except BaseException:
         return False
 
@@ -60,4 +66,6 @@ def action_to_command(action):
         QUEUE_AND_PLAY_FOLDER: "player-play",
         PLAY_PAUSE: "player-pause",
         NEXT: "player-next",
+        SHUFFLE: "set shuffle",
+        REPEAT: "set repeat",
     }[action]
