@@ -11,9 +11,12 @@ if ! grep -q "XDG_RUNTIME_DIR" ~/.bashrc; then
 fi
 
 # Check if the cmus screen session exists
-cmus_session=$(screen -list | grep "cmus")
+set +e
+screen_session=$(screen -list | grep "cmus")
+screen_exit_status=$?
+set -e  # Re-enable 'exit on error'
 
-if [ -z "$cmus_session" ]; then
+if [ $screen_exit_status -ne 0 ] || [ -z "$screen_session" ]; then
     echo "Starting cmus..."
     /usr/bin/screen -dmS cmus /usr/bin/cmus
 else

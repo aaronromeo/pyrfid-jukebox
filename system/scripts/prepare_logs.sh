@@ -2,6 +2,11 @@
 
 set -xeuo pipefail
 
+pushd /home/pi/workspace/pyrfid-jukebox
+sudo -u pi git reset --hard origin/main
+sudo bash setup.sh
+popd
+
 echo "$(date '+%Y-%m-%d %H:%M:%S') - Script started"
 
 touch /home/pi/logs/btconnect.err.log
