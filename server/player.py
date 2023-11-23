@@ -129,12 +129,13 @@ GPIO.add_event_detect(
 
 # Main loop
 try:
+    exit_event = threading.Event()  # this is used to signal the thread to stop
+
     # Attempt to acquire the lock
     lock_file = acquire_lock()
 
     print(f"{datetime.now()} - Script started")
 
-    exit_event = threading.Event()  # this is used to signal the thread to stop
     led_thread = threading.Thread(target=led_update_loop)
     led_thread.start()
 
