@@ -2,16 +2,21 @@
 
 set -xeuo pipefail
 
-echo "Checking for updates at $(date '+%Y-%m-%d %H:%M:%S')..."
-
 cd /home/pi/workspace/pyrfid-jukebox
+echo "Current directory: $(pwd)"
+echo "Listing remote branches:"
+sudo -u pi git branch -r
+
+echo "Fetching from remote..."
 sudo -u pi git fetch
 
 pipinstall=false
-if ! git diff --quiet origin/main...HEAD -- requirements.txt; then
-    git diff origin/main...HEAD -- requirements.txt
-    echo "New requirements available."
+echo "Checking for updates in requirements.txt..."
+if ! sudo -u pi git diff --quiet origin/main...HEAD -- requirements.txt; then
+    echo "New requirements found in requirements.txt"
     pipinstall=true
+else
+    echo "No new requirements in requirements.txt"
 fi
 
 if [ $(git rev-parse HEAD) != $(git rev-parse @{u}) ]; then
