@@ -10,7 +10,10 @@ if ! grep -q "XDG_RUNTIME_DIR" ~/.bashrc; then
   echo 'export XDG_RUNTIME_DIR="/run/user/$(id -u pi)"' >> ~/.bashrc
 fi
 
-if ! screen -list | grep -q "cmus"; then
+# Check if the cmus screen session exists
+cmus_session=$(screen -list | grep "cmus")
+
+if [ -z "$cmus_session" ]; then
     echo "Starting cmus..."
     /usr/bin/screen -dmS cmus /usr/bin/cmus
 else
