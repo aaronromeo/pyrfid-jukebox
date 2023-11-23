@@ -1,3 +1,4 @@
+import sys
 from cmus_utils import (
     execute_cmus_command,
     cmus_status,
@@ -21,6 +22,17 @@ LED_PIN = 22
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
 RFID_TO_MUSIC_MAP = os.path.join(script_dir, "rfid_map.json")
+LOCK_FILE = "/tmp/pyrfid_jukebox.lock"
+
+# Check if the lock file already exists
+if os.path.exists(LOCK_FILE):
+    print("Another instance of the script is already running.")
+    sys.exit(1)
+
+# Create a lock file to signal that the script is running
+with open(LOCK_FILE, "w") as lock_file:
+    GPIO.cleanup()
+    lock_file.write("")
 
 # Setup GPIO
 GPIO.setmode(GPIO.BCM)
@@ -143,3 +155,4 @@ finally:
     exit_event.set()  # signal the led_thread to stop
     led_thread.join()  # wait for the led_thread to finish
     GPIO.cleanup()
+    os.remove(LOCK_FILE)
