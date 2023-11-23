@@ -22,18 +22,11 @@ BUTTON_PLAY_PAUSE = 17
 BUTTON_NEXT_TRACK = 27
 LED_PIN = 22
 
+BUTTON_DEBOUNCE_TIME = 750  # milliseconds
+
 script_dir = os.path.dirname(os.path.abspath(__file__))
 RFID_TO_MUSIC_MAP = os.path.join(script_dir, "rfid_map.json")
 LOCK_FILE = "/tmp/pyrfid_jukebox.lock"
-
-# Setup GPIO
-GPIO.setmode(GPIO.BCM)
-GPIO.setup(BUTTON_PLAY_PAUSE, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-GPIO.setup(BUTTON_NEXT_TRACK, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-GPIO.setup(LED_PIN, GPIO.OUT)
-
-# Initialize RFID reader
-rfid_reader = SimpleMFRC522()
 
 # Process lock
 
@@ -114,25 +107,34 @@ def led_update_loop():
 
 
 # Set up button event detection with debouncing
-DEBOUNCE_TIME = 750  # milliseconds
-GPIO.add_event_detect(
-    BUTTON_PLAY_PAUSE,
-    GPIO.FALLING,
-    callback=play_pause_callback,
-    bouncetime=DEBOUNCE_TIME,
-)
-GPIO.add_event_detect(
-    BUTTON_NEXT_TRACK,
-    GPIO.FALLING,
-    callback=next_track_callback,
-    bouncetime=DEBOUNCE_TIME,
-)
-
 has_error = False
 
 # Main loop
 try:
     print(f"{datetime.now()} - Script started")
+
+    # Setup GPIO
+    print("GPIO setup")
+    GPIO.setmode(GPIO.BCM)
+    GPIO.setup(BUTTON_PLAY_PAUSE, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+    GPIO.setup(BUTTON_NEXT_TRACK, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+    GPIO.setup(LED_PIN, GPIO.OUT)
+    GPIO.add_event_detect(
+        BUTTON_PLAY_PAUSE,
+        GPIO.FALLING,
+        callback=play_pause_callback,
+        bouncetime=BUTTON_DEBOUNCE_TIME,
+    )
+    GPIO.add_event_detect(
+        BUTTON_NEXT_TRACK,
+        GPIO.FALLING,
+        callback=next_track_callback,
+        bouncetime=BUTTON_DEBOUNCE_TIME,
+    )
+
+    # Initialize RFID reader
+    print("Initialize RFID reader")
+    rfid_reader = SimpleMFRC522()
 
     # Attempt to acquire the lock
     lock_file = acquire_lock()
@@ -190,11 +192,17 @@ except Exception as e:
     has_error = True
 
 finally:
+    print("signal the led_thread to stop")
     exit_event.set()  # signal the led_thread to stop
+
+    print("wait for the led_thread to finish")
     led_thread.join()  # wait for the led_thread to finish
+
+    print("GPIO cleanup")
     GPIO.cleanup()
 
     if lock_file:
+        print("Removing lock file")
         lock_file.close()
         os.remove(LOCK_FILE)
 
