@@ -63,7 +63,6 @@ def acquire_lock():
         lock_file.truncate()
         lock_file.write(str(os.getpid()))
         lock_file.flush()
-        GPIO.cleanup()
         return lock_file
 
 
@@ -129,12 +128,12 @@ GPIO.add_event_detect(
 
 # Main loop
 try:
-    exit_event = threading.Event()  # this is used to signal the thread to stop
+    print(f"{datetime.now()} - Script started")
 
     # Attempt to acquire the lock
     lock_file = acquire_lock()
 
-    print(f"{datetime.now()} - Script started")
+    exit_event = threading.Event()  # this is used to signal the thread to stop
 
     led_thread = threading.Thread(target=led_update_loop)
     led_thread.start()
@@ -187,6 +186,7 @@ finally:
     exit_event.set()  # signal the led_thread to stop
     led_thread.join()  # wait for the led_thread to finish
     GPIO.cleanup()
+
     if lock_file:
         lock_file.close()
         os.remove(LOCK_FILE)
