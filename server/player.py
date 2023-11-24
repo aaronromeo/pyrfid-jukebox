@@ -155,40 +155,47 @@ try:
         if not os.path.exists(RFID_TO_MUSIC_MAP):
             data_to_map(data)
 
-        # Check for RFID card
-        rfid_id, text = rfid_reader.read()
-        print("Received RFID card: %s" % rfid_id)
+        try:
+            # Check for RFID card
+            rfid_id, text = rfid_reader.read()
+            print("Received RFID card: %s" % rfid_id)
 
-        update_map = False
+            update_map = False
 
-        # Load existing map file
-        with open(RFID_TO_MUSIC_MAP, "r") as file:
-            data = json.load(file)
+            # Load existing map file
+            with open(RFID_TO_MUSIC_MAP, "r") as file:
+                data = json.load(file)
 
-        folder_path = data.get(rfid_id, "")
-        if folder_path:
-            folder_path = os.path.abspath(data[rfid_id])
+            folder_path = data.get(rfid_id, "")
+            if folder_path:
+                folder_path = os.path.abspath(data[rfid_id])
 
-            print("Looking for folder: %s" % folder_path)
+                print("Looking for folder: %s" % folder_path)
 
-            # If folder exists, execute the command
-            if os.path.isdir(folder_path):
-                print("Folder found")
-                execute_cmus_command(QUEUE_AND_PLAY_FOLDER, folder_path)
+                # If folder exists, execute the command
+                if os.path.isdir(folder_path):
+                    print("Folder found")
+                    execute_cmus_command(QUEUE_AND_PLAY_FOLDER, folder_path)
+                else:
+                    print("Folder not found")
+
+                    if rfid_id in data:
+                        update_map = True
+                        data[rfid_id] = ""
             else:
-                print("Folder not found")
+                print("RFID ID not in mapping or mapped to an empty path.")
 
-                if rfid_id in data:
-                    update_map = True
-                    data[rfid_id] = ""
-        else:
-            print("RFID ID not in mapping or mapped to an empty path.")
+            if update_map:
+                data_to_map(data)
+        except Exception as e:
+            print(f"Error during RFID read or processing: {e}")
+            raise e
 
-        if update_map:
-            data_to_map(data)
+except KeyboardInterrupt:
+    print("Script interrupted by user")
 
 except Exception as e:
-    print(f"An error occurred: {e}")
+    print(f"Unhandled exception: {e}")
     has_error = True
 
 finally:
