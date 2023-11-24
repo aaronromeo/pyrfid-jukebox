@@ -18,25 +18,25 @@ screen_exit_status=$?
 set -e  # Re-enable 'exit on error'
 
 if ! test -f $XDG_RUNTIME_DIR && ([ $screen_exit_status -ne 0 ] || [ -z "$screen_session" ]); then
-    echo "Socket file does not exist but screen is active."
+    echo "$(date '+%Y-%m-%d %H:%M:%S') Socket file does not exist but screen is active."
     set +e
     screen -S cmus -X quit # Kill the screen
     set -e  # Re-enable 'exit on error'
 fi
 
 if [ $screen_exit_status -ne 0 ] || [ -z "$screen_session" ]; then
-    echo "Starting cmus..."
+    echo "$(date '+%Y-%m-%d %H:%M:%S') Starting cmus..."
     /usr/bin/screen -dmS cmus /usr/bin/cmus 2> /home/pi/logs/process_cmus_error.log > /home/pi/logs/process_cmus_output.log
 else
-    echo "cmus already running."
+    echo "$(date '+%Y-%m-%d %H:%M:%S') cmus already running."
 fi
 
 lsof -V $XDG_RUNTIME_DIR
 
 status=$(sudo supervisorctl status pyrfid_jukebox | awk '{print $2}')
 if [[ $status != "RUNNING" && $status != "STARTING" ]]; then
-    echo "pyrfid_jukebox is not running or starting. Starting it now..."
+    echo "$(date '+%Y-%m-%d %H:%M:%S') pyrfid_jukebox is not running or starting. Starting it now..."
     sudo supervisorctl start pyrfid_jukebox
 else
-    echo "pyrfid_jukebox is already running or starting."
+    echo "$(date '+%Y-%m-%d %H:%M:%S') pyrfid_jukebox is already running or starting."
 fi

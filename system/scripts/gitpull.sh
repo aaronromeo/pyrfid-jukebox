@@ -6,48 +6,48 @@ echo
 echo "$(date '+%Y-%m-%d %H:%M:%S') - Script started"
 
 cd /home/pi/workspace/pyrfid-jukebox
-echo "Current directory: $(pwd)"
-echo "Listing remote branches:"
+echo "$(date '+%Y-%m-%d %H:%M:%S') Current directory: $(pwd)"
+echo "$(date '+%Y-%m-%d %H:%M:%S') Listing remote branches:"
 sudo -u pi git branch -r
 
-echo "Fetching from remote..."
+echo "$(date '+%Y-%m-%d %H:%M:%S') Fetching from remote..."
 sudo -u pi git fetch
 
 pipinstall=false
-echo "Checking for updates in requirements.txt..."
+echo "$(date '+%Y-%m-%d %H:%M:%S') Checking for updates in requirements.txt..."
 if ! sudo -u pi git diff --quiet origin/main...HEAD -- requirements.txt; then
-    echo "New requirements found in requirements.txt"
+    echo "$(date '+%Y-%m-%d %H:%M:%S') New requirements found in requirements.txt"
     pipinstall=true
 else
-    echo "No new requirements in requirements.txt"
+    echo "$(date '+%Y-%m-%d %H:%M:%S') No new requirements in requirements.txt"
 fi
 
 repodiffs=false
 if [ $(sudo -u pi git rev-parse HEAD) != $(sudo -u pi git rev-parse @{u}) ]; then
-    echo "New version available. Updating..."
+    echo "$(date '+%Y-%m-%d %H:%M:%S') New version available. Updating..."
     sudo -u pi git reset --hard origin/main
     sudo -u pi git pull
     repodiffs=true
 else
-    echo "No updates found."
+    echo "$(date '+%Y-%m-%d %H:%M:%S') No updates found."
 fi
 
-echo "Checking variables $repodiffs $pipinstall"
+echo "$(date '+%Y-%m-%d %H:%M:%S') Checking variables $repodiffs $pipinstall"
 
 if [ "$repodiffs" = true ]; then
-    echo "Running setup"
+    echo "$(date '+%Y-%m-%d %H:%M:%S') Running setup"
     sudo bash setup.sh
 fi
 
 if [ "$pipinstall" = true ]; then
-    echo "Installing requirements"
+    echo "$(date '+%Y-%m-%d %H:%M:%S') Installing requirements"
     sudo -u pi pip3 install -r requirements.txt
 fi
 
 if [ "$repodiffs" = true ]; then
-    echo "Restarting pyrfid_jukebox"
+    echo "$(date '+%Y-%m-%d %H:%M:%S') Restarting pyrfid_jukebox"
     supervisorctl restart pyrfid_jukebox
 fi
 
-echo "Sleeping for 5 minutes..."
+echo "$(date '+%Y-%m-%d %H:%M:%S') Sleeping for 5 minutes..."
 sleep 5m

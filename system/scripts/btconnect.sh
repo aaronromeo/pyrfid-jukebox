@@ -22,7 +22,7 @@ while true; do
     # Check if already connected
     current_connection=$(bluetoothctl info "$device" | grep -c "Connected: yes")
     if [ "$current_connection" -eq 0 ]; then
-        echo "Attempting to connect to $device..."
+        echo "$(date '+%Y-%m-%d %H:%M:%S') Attempting to connect to $device..."
 
         # Start PulseAudio if not running
         pulseaudio --check || pulseaudio --start
@@ -37,7 +37,7 @@ while true; do
         # Try to connect
         connect_bluetooth
     else
-        echo "Already connected to $device."
+        echo "$(date '+%Y-%m-%d %H:%M:%S') Already connected to $device. Sleeping for 1 minute."
     fi
 
     # Wait before checking again
