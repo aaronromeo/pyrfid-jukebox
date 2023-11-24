@@ -16,8 +16,10 @@ import RPi.GPIO as GPIO
 import threading
 import time
 import json
+import warnings
 
 print(f"{datetime.now()} - Script started")
+warnings.simplefilter("error")
 
 # GPIO pin numbers
 BUTTON_PLAY_PAUSE = 17
