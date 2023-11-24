@@ -12,7 +12,7 @@ import threading
 import json
 import warnings
 
-from server.peripheral_helpers import (
+from peripheral_helpers import (
     BUTTON_DEBOUNCE_TIME,
     BUTTON_NEXT_TRACK,
     BUTTON_PLAY_PAUSE,
