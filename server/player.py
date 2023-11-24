@@ -124,6 +124,7 @@ try:
         try:
             # Check for RFID card
             rfid_id, text = rfid_reader.read()
+            rfid_id = str(rfid_id)
             print("Received RFID card: %s" % rfid_id)
 
             update_map = False
