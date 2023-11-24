@@ -32,6 +32,8 @@ else
     echo "No updates found."
 fi
 
+echo "Checking variables $repodiffs $pipinstall"
+
 if [ "$repodiffs" = true ]; then
     echo "Running setup"
     sudo bash setup.sh
