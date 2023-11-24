@@ -65,6 +65,7 @@ def acquire_lock():
 
 def data_to_map(data):
     with open(RFID_TO_MUSIC_MAP, "w") as file:
+        print(f"Writing to map file {RFID_TO_MUSIC_MAP}")
         json.dump(data, file, indent=4)
 
 
