@@ -24,4 +24,4 @@ else
     echo "cmus already running."
 fi
 
-sudo supervisorctl start pyrfid_jukebox
+# sudo supervisorctl start pyrfid_jukebox
