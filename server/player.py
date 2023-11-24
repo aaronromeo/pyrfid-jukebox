@@ -17,6 +17,8 @@ import threading
 import time
 import json
 
+print(f"{datetime.now()} - Script started")
+
 # GPIO pin numbers
 BUTTON_PLAY_PAUSE = 17
 BUTTON_NEXT_TRACK = 27
@@ -111,8 +113,6 @@ has_error = False
 
 # Main loop
 try:
-    print(f"{datetime.now()} - Script started")
-
     # Setup GPIO
     print("GPIO setup")
     GPIO.setmode(GPIO.BCM)
