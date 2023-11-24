@@ -191,8 +191,16 @@ This script is executed at reboot using a crontab entry:
     ```
 
 2. `cmus`  helpers
+    - Switch to the `cmus` screen
 
-    ```bash
-    screen -r cmus
-    screen -S cmus -X quit
-    ```
+        ```bash
+        screen -r cmus
+        ```
+
+    - Kill the `cmus` screen
+
+        ```bash
+        screen -S cmus -X quit
+        ```
+
+    - Disable `mpris` by setting the key in `~/.config/cmus/autosave` to `false`.
