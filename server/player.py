@@ -111,6 +111,10 @@ def led_update_loop():
 # Set up button event detection with debouncing
 has_error = False
 
+# Variables for the final cleanup
+exit_event = None
+led_thread = None
+
 # Main loop
 try:
     # Setup GPIO
@@ -199,11 +203,13 @@ except Exception as e:
     has_error = True
 
 finally:
-    print("signal the led_thread to stop")
-    exit_event.set()  # signal the led_thread to stop
+    if exit_event is not None:
+        print("signal the led_thread to stop")
+        exit_event.set()  # signal the led_thread to stop
 
-    print("wait for the led_thread to finish")
-    led_thread.join()  # wait for the led_thread to finish
+    if led_thread is not None:
+        print("wait for the led_thread to finish")
+        led_thread.join()  # wait for the led_thread to finish
 
     print("GPIO cleanup")
     GPIO.cleanup()
