@@ -132,6 +132,7 @@ try:
             with open(RFID_TO_MUSIC_MAP, "r") as file:
                 data = json.load(file)
 
+            print(data)
             folder_path = data.get(rfid_id, "")
             if folder_path:
                 folder_path = os.path.abspath(data[rfid_id])
