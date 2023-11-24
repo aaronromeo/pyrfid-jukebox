@@ -32,7 +32,7 @@ else
     echo "No updates found."
 fi
 
-if [ "$repodiffs" = true ] then
+if [ "$repodiffs" = true ]; then
     echo "Running setup"
     sudo bash setup.sh
 fi
