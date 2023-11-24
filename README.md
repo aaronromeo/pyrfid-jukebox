@@ -17,7 +17,7 @@
 ```bash
 sudo apt-get -y update
 sudo apt-get -y upgrade
-sudo apt-get install -y openssh-server python3 python3-pip cmus bluetooth bluez pi-bluetooth nodejs npm yarn python3-apt screen
+sudo apt-get install -y openssh-server python3 python3-pip cmus bluetooth bluez pi-bluetooth nodejs npm yarn python3-apt screen lsof
 sudo reboot now
 sudo apt-get install -y git vim tmux
 sudo apt-get install pulseaudio*

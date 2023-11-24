@@ -17,11 +17,20 @@ screen_session=$(screen -list | grep "cmus")
 screen_exit_status=$?
 set -e  # Re-enable 'exit on error'
 
+if ! test -f $XDG_RUNTIME_DIR && ([ $screen_exit_status -ne 0 ] || [ -z "$screen_session" ]); then
+    echo "Socket file does not exist but screen is active."
+    set +e
+    screen -S cmus -X quit # Kill the screen
+    set -e  # Re-enable 'exit on error'
+fi
+
 if [ $screen_exit_status -ne 0 ] || [ -z "$screen_session" ]; then
     echo "Starting cmus..."
     /usr/bin/screen -dmS cmus /usr/bin/cmus 2> /home/pi/logs/process_cmus_error.log > /home/pi/logs/process_cmus_output.log
 else
     echo "cmus already running."
 fi
+
+lsof -V $XDG_RUNTIME_DIR
 
 sudo supervisorctl start pyrfid_jukebox
