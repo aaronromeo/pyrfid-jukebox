@@ -33,4 +33,10 @@ fi
 
 lsof -V $XDG_RUNTIME_DIR
 
-sudo supervisorctl start pyrfid_jukebox
+status=$(sudo supervisorctl status pyrfid_jukebox | awk '{print $2}')
+if [[ $status != "RUNNING" && $status != "STARTING" ]]; then
+    echo "pyrfid_jukebox is not running or starting. Starting it now..."
+    sudo supervisorctl start pyrfid_jukebox
+else
+    echo "pyrfid_jukebox is already running or starting."
+fi
