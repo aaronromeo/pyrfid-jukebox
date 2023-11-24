@@ -146,9 +146,9 @@ try:
                 else:
                     print("Folder not found")
 
-                    # Resetting the data value since the folder is not found
-                    update_map = True
-                    data[rfid_id] = ""
+                    # # Resetting the data value since the folder is not found
+                    # update_map = True
+                    # data[rfid_id] = ""
             else:
                 print("RFID ID not in mapping or mapped to an empty path.")
 
