@@ -146,9 +146,6 @@ try:
     # Attempt to acquire the lock
     lock_file = acquire_lock()
 
-    # Ensure cmus is running
-    ensure_is_cmus_running()
-
     exit_event = threading.Event()  # this is used to signal the thread to stop
 
     led_thread = threading.Thread(target=led_update_loop)
@@ -156,6 +153,9 @@ try:
 
     print("Ready to read")
     while True:
+        # Ensure cmus is running
+        ensure_is_cmus_running()
+
         data = {}
 
         print(f"Loading map file {RFID_TO_MUSIC_MAP}")
