@@ -155,6 +155,8 @@ try:
     while True:
         data = {}
 
+        print(f"Loading map file {RFID_TO_MUSIC_MAP}")
+
         # Create map file if it doesn't exist
         if not os.path.exists(RFID_TO_MUSIC_MAP):
             data_to_map(data)
