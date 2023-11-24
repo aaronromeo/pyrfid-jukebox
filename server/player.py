@@ -74,6 +74,7 @@ has_error = False
 # Variables for the final cleanup
 exit_event = None
 led_thread = None
+lock_file = None
 
 # Main loop
 try:
