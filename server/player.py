@@ -3,30 +3,27 @@ import sys
 from cmus_utils import (
     execute_cmus_command,
     ensure_is_cmus_running,
-    cmus_status,
     QUEUE_AND_PLAY_FOLDER,
-    PLAY_PAUSE,
-    NEXT,
-    SHUFFLE,
-    REPEAT,
 )
 import os
 from mfrc522 import SimpleMFRC522
 import RPi.GPIO as GPIO
 import threading
-import time
 import json
 import warnings
 
+from server.peripheral_helpers import (
+    BUTTON_DEBOUNCE_TIME,
+    BUTTON_NEXT_TRACK,
+    BUTTON_PLAY_PAUSE,
+    LED_PIN,
+    led_update_loop_factory,
+    next_track_callback,
+    play_pause_callback,
+)
+
 print(f"{datetime.now()} - Script started")
 warnings.simplefilter("error")
-
-# GPIO pin numbers
-BUTTON_PLAY_PAUSE = 17
-BUTTON_NEXT_TRACK = 27
-LED_PIN = 22
-
-BUTTON_DEBOUNCE_TIME = 750  # milliseconds
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
 RFID_TO_MUSIC_MAP = os.path.join(script_dir, "rfid_map.json")
@@ -71,46 +68,6 @@ def data_to_map(data):
         json.dump(data, file, indent=4)
 
 
-####
-# Button callback functions
-
-
-def play_pause_callback(channel):
-    print("Play/pause button pressed")
-    execute_cmus_command(PLAY_PAUSE)
-
-
-def next_track_callback(channel):
-    print("Next track button pressed")
-    execute_cmus_command(NEXT)
-
-
-def toggle_shuffle_callback(channel):
-    print("Toggle shuffle")
-    execute_cmus_command(SHUFFLE)
-
-
-def toggle_repeat_callback(channel):
-    print("Toggle repeat")
-    execute_cmus_command(REPEAT)
-
-
-def music_is_playing():
-    return cmus_status()[0]
-
-
-def led_update_loop():
-    while not exit_event.is_set():
-        if music_is_playing():
-            GPIO.output(LED_PIN, GPIO.HIGH)
-        else:
-            GPIO.output(LED_PIN, GPIO.LOW)
-        time.sleep(0.5)  # you can adjust the sleep time as needed
-
-
-####
-
-
 # Set up button event detection with debouncing
 has_error = False
 
@@ -148,7 +105,7 @@ try:
 
     exit_event = threading.Event()  # this is used to signal the thread to stop
 
-    led_thread = threading.Thread(target=led_update_loop)
+    led_thread = threading.Thread(target=led_update_loop_factory(exit_event))
     led_thread.start()
 
     print("Ready to read")
