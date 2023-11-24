@@ -32,11 +32,9 @@ else
     echo "No updates found."
 fi
 
-sudo -u pi touch /home/pi/scripts/setup.sh
-if ! diff -q setup.sh /home/pi/scripts/setup.sh; then
+if [ "$repodiffs" = true ] then
     echo "Running setup"
     sudo bash setup.sh
-    sudo -u pi cp setup.sh /home/pi/scripts/setup.sh
 fi
 
 if [ "$pipinstall" = true ]; then
