@@ -17,11 +17,13 @@
 ```bash
 sudo apt-get -y update
 sudo apt-get -y upgrade
-sudo apt-get install -y openssh-server python3 python3-pip cmus bluetooth bluez pi-bluetooth nodejs npm yarn python3-apt screen lsof
+sudo xargs -a docs/packages_list.txt apt install
+sudo apt purge pulseaudio*
 sudo reboot now
 sudo apt-get install -y git vim tmux
-sudo apt-get install pulseaudio*
 ```
+
+** The step to remove `pulseaudio` might not be necessary (as it might not be installed by the [packages_list.txt](docs/packages_list))
 
 ### 3. Bluetooth Configuration
 
@@ -29,6 +31,7 @@ sudo apt-get install pulseaudio*
 
   ```bash
   sudo usermod -a -G lp pi
+  sudo usermod -aG pulse,pulse-access pi
   ```
 
 - Once installed, follow these next steps to pair with your Bluetooth keyboard:
@@ -93,36 +96,41 @@ sudo apt-get install pulseaudio*
 
 3. Now you can SSH into your Raspberry Pi without entering a password.
 
-### 6. Bluetooth Auto-connect on Reboot
+### 6. BlueALSA
 
-To automatically establish a Bluetooth connection on reboot, the following script named `btconnect.sh` is present in the home directory:
+**A few notes for context.**
 
-```bash
-#!/bin/bash
-pulseaudio --start
-bluetoothctl power on
-bluetoothctl connect <MAC Address>
-paplay -p --device=1 /usr/share/sounds/alsa/Front_Center.wav
-```
+- Raspbian installs with PulseAudio. However it wasn't the easiest to get working. This is partially because it is setup to run by a non-root user
+- BlueALSA is not bundled with Bullseye (Raspbian 11)
 
-```bash
-chmod +x /home/pi/btconnect.sh
-```
+1. `git clone git@github.com:arkq/bluez-alsa.git`
+2. Follow the [instructions](https://github.com/arkq/bluez-alsa/blob/master/INSTALL.md)
+3. `configure` was run with the flags `--enable-systemd` and `--enable-manpages`
+4. Enable the `bluealsa` service on startup via `sudo systemctl enable bluealsa`
+5. Confirm it is configured with `sudo systemctl is-enabled bluealsa`
 
-This script is executed at reboot using a crontab entry:
+### 7. Configure CMUS to use BlueALSA
 
-```bash
-@reboot rm /home/pi/btconnect.log && sleep 10 && /home/pi/btconnect.sh > /home/pi/btconnect.log 2>&1
-```
+1. Get the current bluetooth device from `bluealsa-aplay -L`
+2. In `~/.config/cmus/autosave` update the following values
 
-### 7. Enable RDIF
+    ```txt
+      set dsp.alsa.device=bluealsa:DEV=FC:58:FA:8C:E3:A8,PROFILE=a2dp,SRV=org.bluealsa
+      set output_plugin=alsa
+    ```
+
+### 8. Bluetooth Auto-connect on Reboot
+
+To automatically establish a Bluetooth connection on reboot, the script named [`btconnect.sh`](system/scripts/btconnect.sh) is present in the home directory.
+
+### 9. Enable RDIF
 
 - Enable SPI Interface:
   - The SPI interface must be enabled on your Raspberry Pi for the mfrc522 module to communicate with the RFID reader. You can enable SPI using the raspi-config tool. Run sudo raspi-config, navigate to "Interfacing Options" > "SPI" and enable it. After enabling, reboot your Raspberry Pi.
 - Check SPI Device Files:
   - After enabling SPI, check if the SPI device files exist. You should find device files like /dev/spidev0.0 or /dev/spidev0.1.You can check this by running ls /dev/spi* in the terminal.
 
-### 8. Project setup
+### 10. Project setup
 
 - Install virtual env
   - `sudo apt-get install python3-venv`
@@ -190,7 +198,7 @@ This script is executed at reboot using a crontab entry:
     sudo supervisorctl status btconnect
     ```
 
-2. `cmus`  helpers
+2. `cmus`/`screen`  helpers
     - Switch to the `cmus` screen
 
         ```bash
