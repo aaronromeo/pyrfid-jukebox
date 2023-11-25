@@ -11,6 +11,7 @@ import RPi.GPIO as GPIO
 import threading
 import json
 import warnings
+import pyttsx3
 
 from peripheral_helpers import (
     BUTTON_DEBOUNCE_TIME,
@@ -66,6 +67,12 @@ def data_to_map(data):
     with open(RFID_TO_MUSIC_MAP, "w") as file:
         print(f"Writing to map file {RFID_TO_MUSIC_MAP}")
         json.dump(data, file, indent=4)
+
+
+def speak(text):
+    engine = pyttsx3.init()
+    engine.say(text)
+    engine.runAndWait()
 
 
 # Set up button event detection with debouncing
@@ -147,6 +154,7 @@ try:
                     execute_cmus_command(QUEUE_AND_PLAY_FOLDER, folder_path)
                 else:
                     print("Folder not found")
+                    speak("Folder not found")
 
                     # # Resetting the data value since the folder is not found
                     # update_map = True
