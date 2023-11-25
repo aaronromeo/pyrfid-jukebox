@@ -10,8 +10,8 @@ device="FC:58:FA:8C:E3:A8"
 connect_bluetooth() {
     if bluetoothctl connect "$device"; then
         echo "Connected successfully to $device."
-        pactl list sinks short
-        paplay -p --device=1 /usr/share/sounds/alsa/Front_Center.wav
+        aplay -D bluealsa /usr/share/sounds/alsa/Front_Center.wav
+        bluealsa-aplay -l
     else
         echo "Failed to connect."
     fi
@@ -21,11 +21,14 @@ connect_bluetooth() {
 while true; do
     # Check if already connected
     current_connection=$(bluetoothctl info "$device" | grep -c "Connected: yes")
+    current_alsa_status=$(sudo service bluealsa status | grep -c "active (running)")
     if [ "$current_connection" -eq 0 ]; then
         echo "$(date '+%Y-%m-%d %H:%M:%S') Attempting to connect to $device..."
 
-        # Start PulseAudio if not running
-        pulseaudio --check || pulseaudio --start
+        # Start BlueALSA if not running
+        if [ "$current_alsa_status" -eq 0 ]; then
+            sudo service bluealsa start
+        fi
 
         # Ensure Bluetooth is powered on
         powered=$(bluetoothctl show | grep "Powered:" | cut -d ' ' -f 2)
