@@ -31,7 +31,10 @@ else
     echo "$(date '+%Y-%m-%d %H:%M:%S') cmus already running."
 fi
 
-lsof -V $XDG_RUNTIME_DIR
+set +e
+# Debugging possible file system usage of the CMUS lock file
+lsof -V $XDG_RUNTIME_DIR/cmus-socket
+set -e  # Re-enable 'exit on error'
 
 status=$(sudo supervisorctl status pyrfid_jukebox | awk '{print $2}')
 if [[ $status != "RUNNING" && $status != "STARTING" ]]; then
