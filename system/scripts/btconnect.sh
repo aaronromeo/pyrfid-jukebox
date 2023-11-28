@@ -8,9 +8,10 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') - Script started"
 device="FC:58:FA:8C:E3:A8"
 
 connect_bluetooth() {
+    sudo modprobe snd-aloop
     if bluetoothctl connect "$device"; then
         echo "Connected successfully to $device."
-        aplay -D bluealsa /usr/share/sounds/alsa/Front_Center.wav
+
         bluealsa-aplay -l
     else
         echo "Failed to connect."
@@ -40,9 +41,17 @@ while true; do
         # Try to connect
         connect_bluetooth
     else
-        echo "$(date '+%Y-%m-%d %H:%M:%S') Already connected to $device. Sleeping for 1 minute."
+        status=$(sudo supervisorctl status alsaloop | awk '{print $2}')
+        if [[ $status != "RUNNING" && $status != "STARTING" ]]; then
+            echo "$(date '+%Y-%m-%d %H:%M:%S') alsaloop is not running or starting. Starting it now..."
+            sudo supervisorctl start alsaloop
+        else
+            echo "$(date '+%Y-%m-%d %H:%M:%S') alsaloop is already running or starting."
+        fi
+
+        echo "$(date '+%Y-%m-%d %H:%M:%S') Already connected to $device. Sleeping for 30 seconds."
     fi
 
     # Wait before checking again
-    sleep 60
+    sleep 30
 done
