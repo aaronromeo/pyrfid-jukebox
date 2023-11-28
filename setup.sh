@@ -12,10 +12,8 @@ fi
 cp system/supervisor/conf.d/* /etc/supervisor/conf.d/
 
 mkdir -p /home/pi/logs
-mkdir -p /home/pi/scripts
 
 chown -R pi:pi /home/pi/logs
-chown -R pi:pi /home/pi/scripts
 
 supervisorctl reread
 supervisorctl update
