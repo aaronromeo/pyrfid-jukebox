@@ -110,6 +110,9 @@ try:
     led_thread.start()
 
     print("Ready to read")
+    os.popen(
+        'espeak "Ready to play something awesome!" --stdout | aplay -D loopback0 2>/dev/null'  # noqa: E501
+    )
     while True:
         # Ensure cmus is running
         ensure_is_cmus_running()
@@ -147,12 +150,18 @@ try:
                     execute_cmus_command(QUEUE_AND_PLAY_FOLDER, folder_path)
                 else:
                     print("Folder not found")
+                    os.popen(
+                        'espeak "I know that card but I cannot find the data!" --stdout | aplay -D loopback0 2>/dev/null'  # noqa: E501
+                    )
 
                     # # Resetting the data value since the folder is not found
                     # update_map = True
                     # data[rfid_id] = ""
             else:
                 print("RFID ID not in mapping or mapped to an empty path.")
+                os.popen(
+                    'espeak "I do not know that card!" --stdout | aplay -D loopback0 2>/dev/null'  # noqa: E501
+                )
 
                 update_map = True
                 data[rfid_id] = ""
