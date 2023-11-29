@@ -8,6 +8,7 @@ NEXT = 2
 STATUS = 3
 SHUFFLE = 4
 REPEAT = 5
+STOP = 6
 
 
 def send_to_cmus_socket(commands):
@@ -91,4 +92,5 @@ def action_to_command(action):
         NEXT: "player-next",
         SHUFFLE: "set shuffle",
         REPEAT: "set repeat",
+        STOP: "player-stop",
     }[action]

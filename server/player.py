@@ -16,10 +16,18 @@ from peripheral_helpers import (
     BUTTON_DEBOUNCE_TIME,
     BUTTON_NEXT_TRACK,
     BUTTON_PLAY_PAUSE,
-    LED_PIN,
+    BUTTON_STOP_TRACK,
+    BUTTON_REPEAT_TRACK,
+    BUTTON_SHUFFLE_TRACK,
+    PLAY_LED_PIN,
+    SHUFFLE_LED_PIN,
+    REPEAT_LED_PIN,
     led_update_loop_factory,
     next_track_callback,
     play_pause_callback,
+    stop_track_callback,
+    toggle_repeat_callback,
+    toggle_shuffle_callback,
 )
 
 print(f"{datetime.now()} - Script started")
@@ -90,7 +98,12 @@ try:
     GPIO.setmode(GPIO.BCM)
     GPIO.setup(BUTTON_PLAY_PAUSE, GPIO.IN, pull_up_down=GPIO.PUD_UP)
     GPIO.setup(BUTTON_NEXT_TRACK, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-    GPIO.setup(LED_PIN, GPIO.OUT)
+    GPIO.setup(BUTTON_STOP_TRACK, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+    GPIO.setup(BUTTON_REPEAT_TRACK, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+    GPIO.setup(BUTTON_SHUFFLE_TRACK, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+    GPIO.setup(PLAY_LED_PIN, GPIO.OUT)
+    GPIO.setup(SHUFFLE_LED_PIN, GPIO.OUT)
+    GPIO.setup(REPEAT_LED_PIN, GPIO.OUT)
     GPIO.add_event_detect(
         BUTTON_PLAY_PAUSE,
         GPIO.FALLING,
@@ -101,6 +114,24 @@ try:
         BUTTON_NEXT_TRACK,
         GPIO.FALLING,
         callback=next_track_callback,
+        bouncetime=BUTTON_DEBOUNCE_TIME,
+    )
+    GPIO.add_event_detect(
+        BUTTON_STOP_TRACK,
+        GPIO.FALLING,
+        callback=stop_track_callback,
+        bouncetime=BUTTON_DEBOUNCE_TIME,
+    )
+    GPIO.add_event_detect(
+        BUTTON_REPEAT_TRACK,
+        GPIO.FALLING,
+        callback=toggle_repeat_callback,
+        bouncetime=BUTTON_DEBOUNCE_TIME,
+    )
+    GPIO.add_event_detect(
+        BUTTON_SHUFFLE_TRACK,
+        GPIO.FALLING,
+        callback=toggle_shuffle_callback,
         bouncetime=BUTTON_DEBOUNCE_TIME,
     )
 
