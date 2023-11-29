@@ -22,6 +22,8 @@ from peripheral_helpers import (
     PLAY_LED_PIN,
     SHUFFLE_LED_PIN,
     REPEAT_LED_PIN,
+    blink_leds_row_once,
+    blink_red_leds_once,
     led_update_loop_factory,
     next_track_callback,
     play_pause_callback,
@@ -148,6 +150,7 @@ try:
 
     print("Ready to read")
     speak("Ready to play something awesome!")
+
     while True:
         # Ensure cmus is running
         ensure_is_cmus_running()
@@ -182,10 +185,13 @@ try:
                 # If folder exists, execute the command
                 if os.path.isdir(folder_path):
                     print("Folder found")
+                    blink_leds_row_once()
                     execute_cmus_command(QUEUE_AND_PLAY_FOLDER, folder_path)
                 else:
                     print("Folder not found")
                     speak("I know that card but I cannot find the data!")
+                    blink_red_leds_once()
+                    blink_red_leds_once()
 
                     # # Resetting the data value since the folder is not found
                     # update_map = True
@@ -193,6 +199,8 @@ try:
             else:
                 print("RFID ID not in mapping or mapped to an empty path.")
                 speak("I do not know that card!")
+                blink_red_leds_once()
+                blink_red_leds_once()
 
                 update_map = True
                 data[rfid_id] = ""
