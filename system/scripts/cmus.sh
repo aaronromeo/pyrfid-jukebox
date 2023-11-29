@@ -29,14 +29,18 @@ while true; do
     if [ $screen_exit_status -ne 0 ] || [ -z "$screen_session" ]; then
         echo "$(date '+%Y-%m-%d %H:%M:%S') Starting cmus..."
         /usr/bin/screen -dmS cmus /usr/bin/cmus 2> /home/pi/logs/process_cmus_error.log > /home/pi/logs/process_cmus_output.log
+
+        sleep 5  # Wait a bit for CMUS to start and create the socket file
+
         checkCount=60
         while [ $checkCount -gt 0 ]; do
-            if ! test -f $socket_file; then
+            if ! test -f "$socket_file"; then
                 echo "$socket_file is still gone, checking in 2 seconds"
                 sleep 2 # Allow CMUS to start up
                 checkCount=$((checkCount - 1))
             else
-                checkCount = 0
+                echo "$socket_file has been created"
+                break
             fi
         done
     else
