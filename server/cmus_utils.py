@@ -52,6 +52,8 @@ def ensure_is_cmus_running():
         print("cmus is not running.")
         raise FileNotFoundError(f"Socket file '{cmus_socket_path}' not found.")
 
+    return True
+
 
 def cmus_status():
     status_output = send_to_cmus_socket(["status"])
