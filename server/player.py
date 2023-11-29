@@ -148,13 +148,12 @@ try:
     led_thread = threading.Thread(target=led_update_loop_factory(exit_event))
     led_thread.start()
 
-    print("Ready to read")
-    speak("Ready!")
+    # Ensure cmus is running
+    if ensure_is_cmus_running():
+        print("Ready to read")
+        speak("Ready!")
 
-    while True:
-        # Ensure cmus is running
-        ensure_is_cmus_running()
-
+    while ensure_is_cmus_running():
         data = {}
 
         print(f"Loading map file {RFID_TO_MUSIC_MAP}")

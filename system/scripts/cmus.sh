@@ -47,4 +47,4 @@ while true; do
     fi
 
     sleep 1 # Avoiding the `Exited too quickly (process log may have details)` error
-end
+done
