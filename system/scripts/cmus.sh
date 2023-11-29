@@ -18,7 +18,7 @@ while true; do
     screen_exit_status=$?
     set -e  # Re-enable 'exit on error'
 
-    if ! test -f $socket_file && [ -n "$screen_session" ]; then
+    if ! test -S $socket_file && [ -n "$screen_session" ]; then
         echo "$(date '+%Y-%m-%d %H:%M:%S') $socket_file does not exist but screen is active."
         set +e
         screen -S cmus -X quit # Kill the screen
@@ -34,13 +34,13 @@ while true; do
 
         checkCount=60
         while [ $checkCount -gt 0 ]; do
-            if ! test -f "$socket_file"; then
-                echo "$socket_file is still gone, checking in 2 seconds"
-                sleep 2 # Allow CMUS to start up
-                checkCount=$((checkCount - 1))
-            else
+            sync
+            if test -S "$socket_file"; then
                 echo "$socket_file has been created"
                 break
+            else
+                echo "$socket_file is still gone, checking in 2 seconds"
+                checkCount=$((checkCount - 1))
             fi
         done
     else
@@ -49,7 +49,7 @@ while true; do
 
     set +e
     # Debugging possible file system usage of the CMUS lock file
-    if ! test -f $socket_file; then
+    if ! test -S $socket_file; then
         echo "$socket_file is still gone"
     else
         lsof -V $socket_file
