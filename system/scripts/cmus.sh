@@ -5,7 +5,7 @@ set -xeuo pipefail
 echo
 echo "$(date '+%Y-%m-%d %H:%M:%S') - Script started"
 
-export XDG_RUNTIME_DIR="/run/user/$(id -u pi)"
+export XDG_RUNTIME_DIR="/home/pi"
 socket_file=$XDG_RUNTIME_DIR/cmus-socket
 
 if ! grep -q "XDG_RUNTIME_DIR" ~/.bashrc; then

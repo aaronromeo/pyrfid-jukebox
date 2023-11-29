@@ -14,7 +14,7 @@ STOP = 6
 def send_to_cmus_socket(commands):
     try:
         cmus_socket_path = os.path.join(
-            os.environ.get("XDG_RUNTIME_DIR", "/run/user/1000"), "cmus-socket"
+            os.environ.get("XDG_RUNTIME_DIR", "/home/pi"), "cmus-socket"
         )
 
         if not os.path.exists(cmus_socket_path):
@@ -45,7 +45,7 @@ def send_to_cmus_socket(commands):
 
 def ensure_is_cmus_running():
     cmus_socket_path = os.path.join(
-        os.environ.get("XDG_RUNTIME_DIR", "/run/user/1000"), "cmus-socket"
+        os.environ.get("XDG_RUNTIME_DIR", "/home/pi"), "cmus-socket"
     )
 
     if not os.path.exists(cmus_socket_path):
