@@ -28,13 +28,27 @@ while true; do
     if [ $screen_exit_status -ne 0 ] || [ -z "$screen_session" ]; then
         echo "$(date '+%Y-%m-%d %H:%M:%S') Starting cmus..."
         /usr/bin/screen -dmS cmus /usr/bin/cmus 2> /home/pi/logs/process_cmus_error.log > /home/pi/logs/process_cmus_output.log
+        checkCount=60
+        while [ $checkCount -gt 0 ]; do
+            if ! test -f $XDG_RUNTIME_DIR/cmus-socket; then
+                echo "Socket file is still gone, checking in 2 seconds"
+                sleep 2 # Allow CMUS to start up
+                checkCount=$((checkCount - 1))
+            else
+                checkCount = 0
+            fi
+        done
     else
         echo "$(date '+%Y-%m-%d %H:%M:%S') cmus already running."
     fi
 
     set +e
     # Debugging possible file system usage of the CMUS lock file
-    lsof -V $XDG_RUNTIME_DIR/cmus-socket
+    if ! test -f $XDG_RUNTIME_DIR/cmus-socket; then
+        echo "Socket file is still gone"
+    else
+        lsof -V $XDG_RUNTIME_DIR/cmus-socket
+    fi
     set -e  # Re-enable 'exit on error'
 
     set +e

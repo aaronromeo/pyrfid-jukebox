@@ -9,6 +9,7 @@ import os
 from mfrc522 import SimpleMFRC522
 import RPi.GPIO as GPIO
 import threading
+import subprocess
 import json
 import warnings
 
@@ -79,9 +80,16 @@ def data_to_map(data):
 
 
 def speak(message):
-    os.popen(
-        f'espeak "{message}" --stdout | aplay -D loopback0 2>/dev/null',
-    )
+    try:
+        # Use the subprocess module to send the speech output to aplay
+        subprocess.run(
+            ["espeak", message, "--stdout"], stdout=subprocess.PIPE, check=True
+        ) | subprocess.run(
+            ["aplay", "-D", "loopback0"], stdin=subprocess.PIPE, check=True
+        )
+    except subprocess.CalledProcessError as e:
+        # Handle the error
+        print(f"An error occurred in speak: {e}")
 
 
 # Set up button event detection with debouncing
