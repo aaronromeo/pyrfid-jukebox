@@ -81,12 +81,18 @@ def data_to_map(data):
 
 def speak(message):
     try:
-        # Use the subprocess module to send the speech output to aplay
-        subprocess.run(
-            ["espeak", message, "--stdout"], stdout=subprocess.PIPE, check=True
-        ) | subprocess.run(
-            ["aplay", "-D", "loopback0"], stdin=subprocess.PIPE, check=True
+        # Run espeak and capture its stdout
+        espeak_process = subprocess.Popen(
+            ["espeak", message, "--stdout"], stdout=subprocess.PIPE
         )
+
+        # Run aplay and pass espeak's output to its stdin
+        aplay_process = subprocess.Popen(
+            ["aplay", "-D", "loopback0"], stdin=espeak_process.stdout
+        )
+
+        # Wait for the process to complete
+        aplay_process.wait()
     except subprocess.CalledProcessError as e:
         # Handle the error
         print(f"An error occurred in speak: {e}")
