@@ -6,9 +6,10 @@ echo
 echo "$(date '+%Y-%m-%d %H:%M:%S') - Script started"
 
 export XDG_RUNTIME_DIR="/run/user/$(id -u pi)"
+socket_file=$XDG_RUNTIME_DIR/cmus-socket
 
 if ! grep -q "XDG_RUNTIME_DIR" ~/.bashrc; then
-  echo 'export XDG_RUNTIME_DIR="/run/user/$(id -u pi)"' >> ~/.bashrc
+  echo "export XDG_RUNTIME_DIR=\"$XDG_RUNTIME_DIR\"" >> ~/.bashrc
 fi
 while true; do
     # Check if the cmus screen session exists
@@ -17,8 +18,8 @@ while true; do
     screen_exit_status=$?
     set -e  # Re-enable 'exit on error'
 
-    if ! test -f $XDG_RUNTIME_DIR/cmus-socket && [ -n "$screen_session" ]; then
-        echo "$(date '+%Y-%m-%d %H:%M:%S') Socket file does not exist but screen is active."
+    if ! test -f $socket_file && [ -n "$screen_session" ]; then
+        echo "$(date '+%Y-%m-%d %H:%M:%S') $socket_file does not exist but screen is active."
         set +e
         screen -S cmus -X quit # Kill the screen
         screen_session=""
@@ -30,8 +31,8 @@ while true; do
         /usr/bin/screen -dmS cmus /usr/bin/cmus 2> /home/pi/logs/process_cmus_error.log > /home/pi/logs/process_cmus_output.log
         checkCount=60
         while [ $checkCount -gt 0 ]; do
-            if ! test -f $XDG_RUNTIME_DIR/cmus-socket; then
-                echo "Socket file is still gone, checking in 2 seconds"
+            if ! test -f $socket_file; then
+                echo "$socket_file is still gone, checking in 2 seconds"
                 sleep 2 # Allow CMUS to start up
                 checkCount=$((checkCount - 1))
             else
@@ -44,10 +45,10 @@ while true; do
 
     set +e
     # Debugging possible file system usage of the CMUS lock file
-    if ! test -f $XDG_RUNTIME_DIR/cmus-socket; then
-        echo "Socket file is still gone"
+    if ! test -f $socket_file; then
+        echo "$socket_file is still gone"
     else
-        lsof -V $XDG_RUNTIME_DIR/cmus-socket
+        lsof -V $socket_file
     fi
     set -e  # Re-enable 'exit on error'
 
