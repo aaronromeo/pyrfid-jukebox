@@ -82,10 +82,10 @@ def execute_cmus_command(action, path=None):
         send_to_cmus_socket(commands)
     elif action == SHUFFLE:
         toggle = cmus_status()[1]
-        send_to_cmus_socket(["action_to_command(action)=%s" % toggle])
+        send_to_cmus_socket([f"{action_to_command(action)}={toggle}"])
     elif action == REPEAT:
         toggle = cmus_status()[2]
-        send_to_cmus_socket(["action_to_command(action)=%s" % toggle])
+        send_to_cmus_socket([f"{action_to_command(action)}={toggle}"])
     else:
         send_to_cmus_socket([action_to_command(action)])
 
