@@ -89,7 +89,6 @@ def led_update_loop_factory(exit_event):
     def led_update_loop():
         while not exit_event.is_set():
             try:
-                print("In LED Loop...")
                 if music_is_playing():
                     GPIO.output(PLAY_LED_PIN, GPIO.HIGH)
                     time.sleep(0.5)  # LED is on for 0.5 seconds
