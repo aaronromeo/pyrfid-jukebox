@@ -17,7 +17,7 @@ while true; do
     screen_exit_status=$?
     set -e  # Re-enable 'exit on error'
 
-    if ! test -f $XDG_RUNTIME_DIR/cmus-socket && ([ $screen_exit_status -ne 0 ] || [ -z "$screen_session" ]); then
+    if ! test -f $XDG_RUNTIME_DIR/cmus-socket && [ -n "$screen_session" ]; then
         echo "$(date '+%Y-%m-%d %H:%M:%S') Socket file does not exist but screen is active."
         set +e
         screen -S cmus -X quit # Kill the screen
