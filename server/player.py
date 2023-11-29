@@ -151,7 +151,7 @@ try:
     # Ensure cmus is running
     if ensure_is_cmus_running():
         print("Ready to read")
-        speak("Ready!")
+        speak("Ready to play music!")
 
     while ensure_is_cmus_running():
         data = {}
