@@ -63,23 +63,23 @@ def music_is_repeating():
 def blink_red_leds_once():
     GPIO.output(SHUFFLE_LED_PIN, GPIO.HIGH)
     GPIO.output(REPEAT_LED_PIN, GPIO.HIGH)
-    time.sleep(0.5)  # LED is on for 0.5 seconds
+    time.sleep(0.2)  # LED is on for 0.5 seconds
     GPIO.output(SHUFFLE_LED_PIN, GPIO.LOW)
     GPIO.output(REPEAT_LED_PIN, GPIO.LOW)
-    time.sleep(0.5)  # LED is off for 0.5 seconds
+    time.sleep(0.2)  # LED is off for 0.5 seconds
 
 
 def blink_leds_row_once():
     GPIO.output(PLAY_LED_PIN, GPIO.HIGH)
-    time.sleep(0.2)
+    time.sleep(0.3)
     GPIO.output(SHUFFLE_LED_PIN, GPIO.HIGH)
-    time.sleep(0.2)
+    time.sleep(0.3)
     GPIO.output(REPEAT_LED_PIN, GPIO.HIGH)
-    time.sleep(0.2)
+    time.sleep(0.5)
     GPIO.output(REPEAT_LED_PIN, GPIO.LOW)
-    time.sleep(0.2)
+    time.sleep(0.3)
     GPIO.output(SHUFFLE_LED_PIN, GPIO.LOW)
-    time.sleep(0.2)
+    time.sleep(0.3)
     GPIO.output(PLAY_LED_PIN, GPIO.LOW)
     time.sleep(0.2)
 

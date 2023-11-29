@@ -80,6 +80,12 @@ def execute_cmus_command(action, path=None):
         commands.append("player-next")
         commands.append("player-play")
         send_to_cmus_socket(commands)
+    elif action == SHUFFLE:
+        toggle = cmus_status()[1]
+        send_to_cmus_socket(["action_to_command(action)=%s" % toggle])
+    elif action == REPEAT:
+        toggle = cmus_status()[2]
+        send_to_cmus_socket(["action_to_command(action)=%s" % toggle])
     else:
         send_to_cmus_socket([action_to_command(action)])
 

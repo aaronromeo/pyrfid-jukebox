@@ -149,7 +149,7 @@ try:
     led_thread.start()
 
     print("Ready to read")
-    speak("Ready to play something awesome!")
+    speak("Ready!")
 
     while True:
         # Ensure cmus is running
