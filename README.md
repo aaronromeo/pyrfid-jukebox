@@ -109,6 +109,28 @@ sudo apt-get install -y git vim tmux
 4. Enable the `bluealsa` service on startup via `sudo systemctl enable bluealsa`
 5. Confirm it is configured with `sudo systemctl is-enabled bluealsa`
 
+### 7. Setup the loopback
+
+1. Edit the Modules Configuration File `etc/modules`
+
+    ```bash
+    sudo vi /etc/modules
+    ```
+
+2. Add a line at the end of the file with snd-aloop. The file should look something like this:
+
+    ```bash
+
+    # /etc/modules: kernel modules to load at boot time.
+    #
+    # This file contains the names of kernel modules that should be loaded
+    # at boot time, one per line. Lines beginning with "#" are ignored.
+
+    snd-aloop
+    ```
+
+3. Reboot your Raspberry Pi to apply the changes.
+
 ### 7. Configure CMUS to use BlueALSA
 
 1. Get the current bluetooth device from `bluealsa-aplay -L`

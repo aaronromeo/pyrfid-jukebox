@@ -11,7 +11,6 @@ import RPi.GPIO as GPIO
 import threading
 import json
 import warnings
-import pyttsx3
 
 from peripheral_helpers import (
     BUTTON_DEBOUNCE_TIME,
@@ -69,10 +68,11 @@ def data_to_map(data):
         json.dump(data, file, indent=4)
 
 
-def speak(text):
-    engine = pyttsx3.init()
-    engine.say(text)
-    engine.runAndWait()
+def speak(message):
+    os.popen(
+        'espeak "%s" --stdout | aplay -D loopback0 2>/dev/null',  # noqa: E501
+        message,
+    )
 
 
 # Set up button event detection with debouncing
@@ -117,6 +117,7 @@ try:
     led_thread.start()
 
     print("Ready to read")
+    speak("Ready to play something awesome!")
     while True:
         # Ensure cmus is running
         ensure_is_cmus_running()
@@ -154,14 +155,14 @@ try:
                     execute_cmus_command(QUEUE_AND_PLAY_FOLDER, folder_path)
                 else:
                     print("Folder not found")
-                    speak("I know that card, but I can't find the music")
+                    speak("I know that card but I cannot find the data!")
 
                     # # Resetting the data value since the folder is not found
                     # update_map = True
                     # data[rfid_id] = ""
             else:
                 print("RFID ID not in mapping or mapped to an empty path.")
-                speak("I don't know that card")
+                speak("I do not know that card!")
 
                 update_map = True
                 data[rfid_id] = ""

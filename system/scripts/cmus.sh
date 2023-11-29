@@ -43,3 +43,6 @@ if [[ $status != "RUNNING" && $status != "STARTING" ]]; then
 else
     echo "$(date '+%Y-%m-%d %H:%M:%S') pyrfid_jukebox is already running or starting."
 fi
+
+sleep 1 # Avoiding the `Exited too quickly (process log may have details)` error
+exit 0
