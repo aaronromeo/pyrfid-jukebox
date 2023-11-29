@@ -21,6 +21,7 @@ while true; do
         echo "$(date '+%Y-%m-%d %H:%M:%S') Socket file does not exist but screen is active."
         set +e
         screen -S cmus -X quit # Kill the screen
+        screen_session=""
         set -e  # Re-enable 'exit on error'
     fi
 
