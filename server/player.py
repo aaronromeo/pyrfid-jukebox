@@ -80,7 +80,7 @@ def data_to_map(data):
 
 def speak(message):
     os.popen(
-        'espeak "%s" --stdout | aplay -D loopback0 2>/dev/null' % message,
+        f'espeak "{message}" --stdout | aplay -D loopback0 2>/dev/null',
     )
 
 
