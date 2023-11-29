@@ -88,30 +88,33 @@ def blink_leds_row_once():
 def led_update_loop_factory(exit_event):
     def led_update_loop():
         while not exit_event.is_set():
-            print("In LED Loop")
-            if music_is_playing():
-                print("In LED Loop - music_is_playing")
-                GPIO.output(PLAY_LED_PIN, GPIO.HIGH)
-                time.sleep(0.5)  # LED is on for 0.5 seconds
-                GPIO.output(PLAY_LED_PIN, GPIO.LOW)
-                time.sleep(0.5)  # LED is off for 0.5 seconds
-            elif ensure_is_cmus_running():
-                print("In LED Loop - ensure_is_cmus_running")
-                GPIO.output(PLAY_LED_PIN, GPIO.HIGH)
-            else:
-                print("In LED Loop - else")
-                GPIO.output(PLAY_LED_PIN, GPIO.LOW)
+            try:
+                print("In LED Loop...")
+                if music_is_playing():
+                    print("In LED Loop - music_is_playing")
+                    GPIO.output(PLAY_LED_PIN, GPIO.HIGH)
+                    time.sleep(0.5)  # LED is on for 0.5 seconds
+                    GPIO.output(PLAY_LED_PIN, GPIO.LOW)
+                    time.sleep(0.5)  # LED is off for 0.5 seconds
+                elif ensure_is_cmus_running():
+                    print("In LED Loop - ensure_is_cmus_running")
+                    GPIO.output(PLAY_LED_PIN, GPIO.HIGH)
+                else:
+                    print("In LED Loop - else")
+                    GPIO.output(PLAY_LED_PIN, GPIO.LOW)
 
-            if music_is_shuffling():
-                GPIO.output(SHUFFLE_LED_PIN, GPIO.HIGH)
-            else:
-                GPIO.output(SHUFFLE_LED_PIN, GPIO.LOW)
+                if music_is_shuffling():
+                    GPIO.output(SHUFFLE_LED_PIN, GPIO.HIGH)
+                else:
+                    GPIO.output(SHUFFLE_LED_PIN, GPIO.LOW)
 
-            if music_is_repeating():
-                GPIO.output(REPEAT_LED_PIN, GPIO.HIGH)
-            else:
-                GPIO.output(REPEAT_LED_PIN, GPIO.LOW)
+                if music_is_repeating():
+                    GPIO.output(REPEAT_LED_PIN, GPIO.HIGH)
+                else:
+                    GPIO.output(REPEAT_LED_PIN, GPIO.LOW)
 
-            time.sleep(0.5)  # you can adjust the sleep time as needed
+                time.sleep(0.5)  # you can adjust the sleep time as needed
+            except Exception as e:
+                print(f"Error in LED Loop: {e}")
 
     return led_update_loop
