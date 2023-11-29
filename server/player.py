@@ -9,7 +9,6 @@ import os
 from mfrc522 import SimpleMFRC522
 import RPi.GPIO as GPIO
 import threading
-import subprocess
 import json
 import warnings
 
@@ -76,25 +75,6 @@ def data_to_map(data):
     with open(RFID_TO_MUSIC_MAP, "w") as file:
         print(f"Writing to map file {RFID_TO_MUSIC_MAP}")
         json.dump(data, file, indent=4)
-
-
-def speak(message):
-    try:
-        # Run espeak and capture its stdout
-        espeak_process = subprocess.Popen(
-            ["espeak", message, "--stdout"], stdout=subprocess.PIPE
-        )
-
-        # Run aplay and pass espeak's output to its stdin
-        aplay_process = subprocess.Popen(
-            ["aplay", "-D", "loopback0"], stdin=espeak_process.stdout
-        )
-
-        # Wait for the process to complete
-        aplay_process.wait()
-    except subprocess.CalledProcessError as e:
-        # Handle the error
-        print(f"An error occurred in speak: {e}")
 
 
 # Set up button event detection with debouncing
@@ -193,12 +173,10 @@ try:
                 # If folder exists, execute the command
                 if os.path.isdir(folder_path):
                     print("Folder found")
-                    speak("Playing!")
                     blink_leds_row_once()
                     execute_cmus_command(QUEUE_AND_PLAY_FOLDER, folder_path)
                 else:
                     print("Folder not found")
-                    speak("I know that card but I cannot find the data!")
                     blink_red_leds_once()
                     blink_red_leds_once()
 
@@ -207,7 +185,6 @@ try:
                     # data[rfid_id] = ""
             else:
                 print("RFID ID not in mapping or mapped to an empty path.")
-                speak("I do not know that card!")
                 blink_red_leds_once()
                 blink_red_leds_once()
 
