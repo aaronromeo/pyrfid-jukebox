@@ -158,7 +158,7 @@ try:
 
     played_ready_message = False
     # Ensure cmus is running and LED thread is alive
-    while ensure_is_cmus_running() and not led_thread.is_alive():
+    while ensure_is_cmus_running() and led_thread.is_alive():
         if not played_ready_message:
             print("Ready to read")
             played_ready_message = True
