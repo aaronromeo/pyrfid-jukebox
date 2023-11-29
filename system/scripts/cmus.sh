@@ -36,7 +36,9 @@ set +e
 lsof -V $XDG_RUNTIME_DIR/cmus-socket
 set -e  # Re-enable 'exit on error'
 
+set +e
 status=$(sudo supervisorctl status pyrfid_jukebox | awk '{print $2}')
+set -e  # Re-enable 'exit on error'
 if [[ $status != "RUNNING" && $status != "STARTING" ]]; then
     echo "$(date '+%Y-%m-%d %H:%M:%S') pyrfid_jukebox is not running or starting. Starting it now..."
     sudo supervisorctl start pyrfid_jukebox
