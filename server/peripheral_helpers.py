@@ -25,28 +25,58 @@ SHUFFLE_LED_PIN = 6
 
 
 def play_pause_callback(channel):
-    print("Play/pause button pressed")
-    execute_cmus_command(PLAY_PAUSE)
+    # Wait for a short period to filter out noise
+    time.sleep(BUTTON_DEBOUNCE_TIME)
+
+    # Check if the button is still pressed after the debounce time
+    # Assuming a pull-up resistor configuration
+    if GPIO.input(BUTTON_PLAY_PAUSE) == GPIO.LOW:
+        print("Play/pause button pressed")
+        execute_cmus_command(PLAY_PAUSE)
 
 
 def next_track_callback(channel):
-    print("Next track button pressed")
-    execute_cmus_command(NEXT)
+    # Wait for a short period to filter out noise
+    time.sleep(BUTTON_DEBOUNCE_TIME)
+
+    # Check if the button is still pressed after the debounce time
+    # Assuming a pull-up resistor configuration
+    if GPIO.input(BUTTON_NEXT_TRACK) == GPIO.LOW:
+        print("Next track button pressed")
+        execute_cmus_command(NEXT)
 
 
 def stop_track_callback(channel):
-    print("Stop track button pressed")
-    execute_cmus_command(STOP)
+    # Wait for a short period to filter out noise
+    time.sleep(BUTTON_DEBOUNCE_TIME)
+
+    # Check if the button is still pressed after the debounce time
+    # Assuming a pull-up resistor configuration
+    if GPIO.input(BUTTON_STOP_TRACK) == GPIO.LOW:
+        print("Stop track button pressed")
+        execute_cmus_command(STOP)
 
 
 def toggle_shuffle_callback(channel):
-    print("Toggle shuffle")
-    execute_cmus_command(SHUFFLE)
+    # Wait for a short period to filter out noise
+    time.sleep(BUTTON_DEBOUNCE_TIME)
+
+    # Check if the button is still pressed after the debounce time
+    # Assuming a pull-up resistor configuration
+    if GPIO.input(BUTTON_SHUFFLE_TRACK) == GPIO.LOW:
+        print("Toggle shuffle")
+        execute_cmus_command(SHUFFLE)
 
 
 def toggle_repeat_callback(channel):
-    print("Toggle repeat")
-    execute_cmus_command(REPEAT)
+    # Wait for a short period to filter out noise
+    time.sleep(BUTTON_DEBOUNCE_TIME)
+
+    # Check if the button is still pressed after the debounce time
+    # Assuming a pull-up resistor configuration
+    if GPIO.input(BUTTON_REPEAT_TRACK) == GPIO.LOW:
+        print("Toggle repeat")
+        execute_cmus_command(REPEAT)
 
 
 def music_is_playing():
