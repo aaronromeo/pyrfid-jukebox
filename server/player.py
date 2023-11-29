@@ -148,12 +148,13 @@ try:
     led_thread = threading.Thread(target=led_update_loop_factory(exit_event))
     led_thread.start()
 
-    # Ensure cmus is running
-    if ensure_is_cmus_running():
-        print("Ready to read")
-        speak("Ready to play music!")
-
+    played_ready_message = False
+    # Ensure cmus is running and LED thread is alive
     while ensure_is_cmus_running() and not led_thread.is_alive():
+        if not played_ready_message:
+            print("Ready to read")
+            played_ready_message = True
+
         data = {}
 
         print(f"Loading map file {RFID_TO_MUSIC_MAP}")
@@ -184,6 +185,7 @@ try:
                 # If folder exists, execute the command
                 if os.path.isdir(folder_path):
                     print("Folder found")
+                    speak("Playing!")
                     blink_leds_row_once()
                     execute_cmus_command(QUEUE_AND_PLAY_FOLDER, folder_path)
                 else:
