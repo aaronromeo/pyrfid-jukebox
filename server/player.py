@@ -153,7 +153,7 @@ try:
         print("Ready to read")
         speak("Ready to play music!")
 
-    while ensure_is_cmus_running():
+    while ensure_is_cmus_running() and not led_thread.is_alive():
         data = {}
 
         print(f"Loading map file {RFID_TO_MUSIC_MAP}")

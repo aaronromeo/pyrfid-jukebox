@@ -91,16 +91,13 @@ def led_update_loop_factory(exit_event):
             try:
                 print("In LED Loop...")
                 if music_is_playing():
-                    print("In LED Loop - music_is_playing")
                     GPIO.output(PLAY_LED_PIN, GPIO.HIGH)
                     time.sleep(0.5)  # LED is on for 0.5 seconds
                     GPIO.output(PLAY_LED_PIN, GPIO.LOW)
                     time.sleep(0.5)  # LED is off for 0.5 seconds
                 elif ensure_is_cmus_running():
-                    print("In LED Loop - ensure_is_cmus_running")
                     GPIO.output(PLAY_LED_PIN, GPIO.HIGH)
                 else:
-                    print("In LED Loop - else")
                     GPIO.output(PLAY_LED_PIN, GPIO.LOW)
 
                 if music_is_shuffling():
@@ -116,5 +113,6 @@ def led_update_loop_factory(exit_event):
                 time.sleep(0.5)  # you can adjust the sleep time as needed
             except Exception as e:
                 print(f"Error in LED Loop: {e}")
+                raise e
 
     return led_update_loop
