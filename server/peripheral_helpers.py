@@ -22,6 +22,10 @@ PLAY_LED_PIN = 22
 REPEAT_LED_PIN = 5
 SHUFFLE_LED_PIN = 6
 
+play_led = LED(PLAY_LED_PIN)
+shuffle_led = LED(SHUFFLE_LED_PIN)
+repeat_led = LED(REPEAT_LED_PIN)
+
 
 def play_pause_callback():
     print("Play/pause button pressed")
@@ -88,26 +92,26 @@ def init_buttons():
 
 
 def blink_red_leds_once():
-    LED(SHUFFLE_LED_PIN).on()
-    LED(REPEAT_LED_PIN).on()
+    shuffle_led.on()
+    repeat_led.on()
     time.sleep(0.2)  # LED is on for 0.5 seconds
-    LED(SHUFFLE_LED_PIN).off()
-    LED(REPEAT_LED_PIN).off()
+    shuffle_led.off()
+    repeat_led.off()
     time.sleep(0.2)  # LED is off for 0.5 seconds
 
 
 def blink_leds_row_once():
-    LED(PLAY_LED_PIN).on()
+    play_led.on()
     time.sleep(0.3)
-    LED(SHUFFLE_LED_PIN).on()
+    shuffle_led.on()
     time.sleep(0.3)
-    LED(REPEAT_LED_PIN).on()
+    repeat_led.on()
     time.sleep(0.5)
-    LED(REPEAT_LED_PIN).off()
+    repeat_led.off()
     time.sleep(0.3)
-    LED(SHUFFLE_LED_PIN).off()
+    shuffle_led.off()
     time.sleep(0.3)
-    LED(PLAY_LED_PIN).off()
+    play_led.off()
     time.sleep(0.2)
 
 
@@ -116,21 +120,21 @@ def led_update_loop_factory(exit_event):
         while not exit_event.is_set():
             try:
                 if music_is_playing():
-                    LED(PLAY_LED_PIN).blink()
+                    play_led.blink()
                 elif ensure_is_cmus_running():
-                    LED(PLAY_LED_PIN).on()
+                    play_led.on()
                 else:
-                    LED(PLAY_LED_PIN).off()
+                    play_led.off()
 
                 if music_is_shuffling():
-                    LED(SHUFFLE_LED_PIN).on()
+                    shuffle_led.on()
                 else:
-                    LED(SHUFFLE_LED_PIN).off()
+                    shuffle_led.off()
 
                 if music_is_repeating():
-                    LED(REPEAT_LED_PIN).on()
+                    repeat_led.on()
                 else:
-                    LED(REPEAT_LED_PIN).off()
+                    repeat_led.off()
 
                 time.sleep(0.5)  # you can adjust the sleep time as needed
             except Exception as e:
