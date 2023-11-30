@@ -104,12 +104,12 @@ try:
         BUTTON_PLAY_PAUSE
         # , bounce_time=BUTTON_DEBOUNCE_TIME, pull_up=True
     )
-    btn_play_pause.when_pressed = play_pause_callback
+    btn_play_pause.when_released = play_pause_callback
 
     btn_next = Button(
         BUTTON_NEXT_TRACK, bounce_time=BUTTON_DEBOUNCE_TIME, pull_up=True
     )
-    btn_next.when_pressed = next_track_callback
+    btn_next.when_released = next_track_callback
 
     btn_stop = Button(
         BUTTON_STOP_TRACK, bounce_time=BUTTON_DEBOUNCE_TIME, pull_up=True
