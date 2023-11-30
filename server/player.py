@@ -7,29 +7,15 @@ from cmus_utils import (
 )
 import os
 from mfrc522 import SimpleMFRC522
-import RPi.GPIO as GPIO
 import threading
 import json
 import warnings
 
 from peripheral_helpers import (
-    BUTTON_DEBOUNCE_TIME,
-    BUTTON_NEXT_TRACK,
-    BUTTON_PLAY_PAUSE,
-    BUTTON_STOP_TRACK,
-    BUTTON_REPEAT_TRACK,
-    BUTTON_SHUFFLE_TRACK,
-    PLAY_LED_PIN,
-    SHUFFLE_LED_PIN,
-    REPEAT_LED_PIN,
     blink_leds_row_once,
     blink_red_leds_once,
     led_update_loop_factory,
-    next_track_callback,
-    play_pause_callback,
-    stop_track_callback,
-    toggle_repeat_callback,
-    toggle_shuffle_callback,
+    init_buttons,
 )
 
 print(f"{datetime.now()} - Script started")
@@ -90,45 +76,7 @@ lock_file = None
 try:
     # Setup GPIO
     print("GPIO setup")
-    GPIO.setmode(GPIO.BCM)
-    GPIO.setup(BUTTON_PLAY_PAUSE, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-    GPIO.setup(BUTTON_NEXT_TRACK, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-    GPIO.setup(BUTTON_STOP_TRACK, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-    GPIO.setup(BUTTON_REPEAT_TRACK, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-    GPIO.setup(BUTTON_SHUFFLE_TRACK, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-    GPIO.setup(PLAY_LED_PIN, GPIO.OUT)
-    GPIO.setup(SHUFFLE_LED_PIN, GPIO.OUT)
-    GPIO.setup(REPEAT_LED_PIN, GPIO.OUT)
-    GPIO.add_event_detect(
-        BUTTON_PLAY_PAUSE,
-        GPIO.RISING,
-        callback=play_pause_callback,
-        bouncetime=BUTTON_DEBOUNCE_TIME,
-    )
-    GPIO.add_event_detect(
-        BUTTON_NEXT_TRACK,
-        GPIO.RISING,
-        callback=next_track_callback,
-        bouncetime=BUTTON_DEBOUNCE_TIME,
-    )
-    GPIO.add_event_detect(
-        BUTTON_STOP_TRACK,
-        GPIO.RISING,
-        callback=stop_track_callback,
-        bouncetime=BUTTON_DEBOUNCE_TIME,
-    )
-    GPIO.add_event_detect(
-        BUTTON_REPEAT_TRACK,
-        GPIO.RISING,
-        callback=toggle_repeat_callback,
-        bouncetime=BUTTON_DEBOUNCE_TIME,
-    )
-    GPIO.add_event_detect(
-        BUTTON_SHUFFLE_TRACK,
-        GPIO.RISING,
-        callback=toggle_shuffle_callback,
-        bouncetime=BUTTON_DEBOUNCE_TIME,
-    )
+    init_buttons()
 
     # Initialize RFID reader
     print("Initialize RFID reader")
@@ -220,7 +168,6 @@ finally:
         led_thread.join()  # wait for the led_thread to finish
 
     print("GPIO cleanup")
-    GPIO.cleanup()
 
     if lock_file:
         print("Removing lock file")
