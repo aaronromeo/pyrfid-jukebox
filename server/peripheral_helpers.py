@@ -1,4 +1,4 @@
-from gpiozero import Button, LED
+from gpiozero import LED
 import time
 from cmus_utils import (
     execute_cmus_command,
@@ -64,33 +64,6 @@ def music_is_repeating():
     return cmus_status()[2]
 
 
-def init_buttons():
-    btn_play_pause = Button(
-        BUTTON_PLAY_PAUSE, bounce_time=BUTTON_DEBOUNCE_TIME, pull_up=True
-    )
-    btn_play_pause.when_pressed = play_pause_callback
-
-    btn_next = Button(
-        BUTTON_NEXT_TRACK, bounce_time=BUTTON_DEBOUNCE_TIME, pull_up=True
-    )
-    btn_next.when_pressed = next_track_callback
-
-    btn_stop = Button(
-        BUTTON_STOP_TRACK, bounce_time=BUTTON_DEBOUNCE_TIME, pull_up=True
-    )
-    btn_stop.when_pressed = stop_track_callback
-
-    btn_repeat = Button(
-        BUTTON_REPEAT_TRACK, bounce_time=BUTTON_DEBOUNCE_TIME, pull_up=True
-    )
-    btn_repeat.when_pressed = toggle_repeat_callback
-
-    btn_shuffle = Button(
-        BUTTON_SHUFFLE_TRACK, bounce_time=BUTTON_DEBOUNCE_TIME, pull_up=True
-    )
-    btn_shuffle.when_pressed = toggle_shuffle_callback
-
-
 def blink_red_leds_once():
     shuffle_led.on()
     repeat_led.on()
@@ -117,7 +90,9 @@ def blink_leds_row_once():
 
 def led_update_loop_factory(exit_event):
     def led_update_loop():
+        print("in led_update_loop")
         while not exit_event.is_set():
+            print("not exit_event.is_set")
             try:
                 if music_is_playing():
                     play_led.blink()

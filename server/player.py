@@ -10,12 +10,22 @@ from mfrc522 import SimpleMFRC522
 import threading
 import json
 import warnings
-
+from gpiozero import Button
 from peripheral_helpers import (
+    BUTTON_DEBOUNCE_TIME,
+    BUTTON_NEXT_TRACK,
+    BUTTON_PLAY_PAUSE,
+    BUTTON_STOP_TRACK,
+    BUTTON_REPEAT_TRACK,
+    BUTTON_SHUFFLE_TRACK,
     blink_leds_row_once,
     blink_red_leds_once,
     led_update_loop_factory,
-    init_buttons,
+    next_track_callback,
+    play_pause_callback,
+    stop_track_callback,
+    toggle_repeat_callback,
+    toggle_shuffle_callback,
 )
 
 print(f"{datetime.now()} - Script started")
@@ -76,7 +86,7 @@ lock_file = None
 try:
     # Setup GPIO
     print("GPIO setup")
-    init_buttons()
+    # init_buttons()
 
     # Initialize RFID reader
     print("Initialize RFID reader")
@@ -89,6 +99,32 @@ try:
 
     led_thread = threading.Thread(target=led_update_loop_factory(exit_event))
     led_thread.start()
+
+    btn_play_pause = Button(
+        BUTTON_PLAY_PAUSE
+        # , bounce_time=BUTTON_DEBOUNCE_TIME, pull_up=True
+    )
+    btn_play_pause.when_pressed = play_pause_callback
+
+    btn_next = Button(
+        BUTTON_NEXT_TRACK, bounce_time=BUTTON_DEBOUNCE_TIME, pull_up=True
+    )
+    btn_next.when_pressed = next_track_callback
+
+    btn_stop = Button(
+        BUTTON_STOP_TRACK, bounce_time=BUTTON_DEBOUNCE_TIME, pull_up=True
+    )
+    btn_stop.when_pressed = stop_track_callback
+
+    btn_repeat = Button(
+        BUTTON_REPEAT_TRACK, bounce_time=BUTTON_DEBOUNCE_TIME, pull_up=True
+    )
+    btn_repeat.when_pressed = toggle_repeat_callback
+
+    btn_shuffle = Button(
+        BUTTON_SHUFFLE_TRACK, bounce_time=BUTTON_DEBOUNCE_TIME, pull_up=True
+    )
+    btn_shuffle.when_pressed = toggle_shuffle_callback
 
     played_ready_message = False
     # Ensure cmus is running and LED thread is alive
