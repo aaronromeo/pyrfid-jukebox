@@ -42,11 +42,43 @@ def stop_track_callback(channel):
 def toggle_shuffle_callback(channel):
     print("Toggle shuffle")
     execute_cmus_command(SHUFFLE)
+    GPIO.output(SHUFFLE_LED_PIN, GPIO.HIGH)
+    time.sleep(0.1)
+    GPIO.output(SHUFFLE_LED_PIN, GPIO.LOW)
+    time.sleep(0.1)
+    GPIO.output(SHUFFLE_LED_PIN, GPIO.HIGH)
+    time.sleep(0.1)
+    GPIO.output(SHUFFLE_LED_PIN, GPIO.LOW)
+    time.sleep(0.1)
+    GPIO.output(SHUFFLE_LED_PIN, GPIO.HIGH)
+    time.sleep(0.1)
+    GPIO.output(SHUFFLE_LED_PIN, GPIO.LOW)
+    time.sleep(0.1)
+    GPIO.output(SHUFFLE_LED_PIN, GPIO.HIGH)
+    time.sleep(0.1)
+    GPIO.output(SHUFFLE_LED_PIN, GPIO.LOW)
+    time.sleep(0.1)
 
 
 def toggle_repeat_callback(channel):
     print("Toggle repeat")
     execute_cmus_command(REPEAT)
+    GPIO.output(REPEAT_LED_PIN, GPIO.HIGH)
+    time.sleep(0.1)
+    GPIO.output(REPEAT_LED_PIN, GPIO.LOW)
+    time.sleep(0.1)
+    GPIO.output(REPEAT_LED_PIN, GPIO.HIGH)
+    time.sleep(0.1)
+    GPIO.output(REPEAT_LED_PIN, GPIO.LOW)
+    time.sleep(0.1)
+    GPIO.output(REPEAT_LED_PIN, GPIO.HIGH)
+    time.sleep(0.1)
+    GPIO.output(REPEAT_LED_PIN, GPIO.LOW)
+    time.sleep(0.1)
+    GPIO.output(REPEAT_LED_PIN, GPIO.HIGH)
+    time.sleep(0.1)
+    GPIO.output(REPEAT_LED_PIN, GPIO.LOW)
+    time.sleep(0.1)
 
 
 def music_is_playing():
@@ -59,6 +91,14 @@ def music_is_shuffling():
 
 def music_is_repeating():
     return cmus_status()[2]
+
+
+def blink_play(times):
+    for x in range(times):
+        GPIO.output(PLAY_LED_PIN, GPIO.HIGH)
+        time.sleep(0.1)
+        GPIO.output(PLAY_LED_PIN, GPIO.LOW)
+        time.sleep(0.1)
 
 
 def blink_red_leds_once():

@@ -22,6 +22,7 @@ from peripheral_helpers import (
     PLAY_LED_PIN,
     SHUFFLE_LED_PIN,
     REPEAT_LED_PIN,
+    blink_play,
     blink_leds_row_once,
     blink_red_leds_once,
     led_update_loop_factory,
@@ -180,6 +181,7 @@ try:
                 if os.path.isdir(folder_path):
                     print("Folder found")
                     blink_leds_row_once()
+                    blink_play(30)
                     execute_cmus_command(QUEUE_AND_PLAY_FOLDER, folder_path)
                 else:
                     print("Folder not found")
