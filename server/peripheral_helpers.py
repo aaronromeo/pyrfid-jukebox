@@ -92,10 +92,12 @@ def led_update_loop_factory(exit_event):
     def led_update_loop():
         print("in led_update_loop")
         while not exit_event.is_set():
-            print("not exit_event.is_set")
             try:
                 if music_is_playing():
-                    play_led.blink()
+                    play_led.on()
+                    time.sleep(0.1)
+                    play_led.off()
+                    time.sleep(0.1)
                 elif ensure_is_cmus_running():
                     play_led.on()
                 else:
