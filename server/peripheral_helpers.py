@@ -57,7 +57,7 @@ def next_track_callback(pin):
 def stop_track_callback(pin):
     print(
         f"In stop_track_callback {pin} {GPIO.input(pin)} {GPIO.LOW} "
-        + f"{inspect.stack()[1][3]}"
+        + f"{inspect.stack()}"
     )
     if not low_check(pin):
         return True
