@@ -105,37 +105,38 @@ try:
     GPIO.setup(SHUFFLE_LED_PIN, GPIO.OUT)
     GPIO.setup(REPEAT_LED_PIN, GPIO.OUT)
 
-    # Related to the comment above about the GPIO pin reading LOW when the button is pressed,
-    # In this case, the event detected is FALLING (detecting a HIGH to LOW) as the
-    # first button pressed action. An alternative is to detect a RISING event (LOW to HIGH) which
-    # would occur when the button is released. Another alternative is to detect BOTH.
+    # Related to the comment above about the GPIO pin reading LOW when the
+    # button is pressed. In this case, the event detected is FALLING (detecting
+    # a HIGH to LOW) as the first button pressed action. An alternative is to
+    # detect a RISING event (LOW to HIGH) which would occur when the button is
+    # released. Another alternative is to detect BOTH.
     GPIO.add_event_detect(
         BUTTON_PLAY_PAUSE,
-        GPIO.FALLING,
+        GPIO.BOTH,
         callback=play_pause_callback,
         bouncetime=BUTTON_DEBOUNCE_TIME,
     )
     GPIO.add_event_detect(
         BUTTON_NEXT_TRACK,
-        GPIO.FALLING,
+        GPIO.BOTH,
         callback=next_track_callback,
         bouncetime=BUTTON_DEBOUNCE_TIME,
     )
     GPIO.add_event_detect(
         BUTTON_STOP_TRACK,
-        GPIO.FALLING,
+        GPIO.BOTH,
         callback=stop_track_callback,
-        bouncetime=BUTTON_DEBOUNCE_TIME,
+        # bouncetime=0,
     )
     GPIO.add_event_detect(
         BUTTON_REPEAT_TRACK,
-        GPIO.FALLING,
+        GPIO.BOTH,
         callback=toggle_repeat_callback,
         bouncetime=BUTTON_DEBOUNCE_TIME,
     )
     GPIO.add_event_detect(
         BUTTON_SHUFFLE_TRACK,
-        GPIO.FALLING,
+        GPIO.BOTH,
         callback=toggle_shuffle_callback,
         bouncetime=BUTTON_DEBOUNCE_TIME,
     )
