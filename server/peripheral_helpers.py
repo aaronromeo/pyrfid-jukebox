@@ -1,3 +1,4 @@
+import inspect
 import RPi.GPIO as GPIO
 import time
 from cmus_utils import (
@@ -25,7 +26,12 @@ SHUFFLE_LED_PIN = 6
 
 
 def low_check(pin):
+    print(
+        f"In low_check before sleep {pin} {GPIO.input(pin)} {GPIO.LOW} "
+        + f"{inspect.stack()[1][3]}"
+    )
     time.sleep(0.01)
+    print(f"In low_check after sleep {pin} {GPIO.input(pin)} {GPIO.LOW}")
     if GPIO.input(pin) == GPIO.LOW:
         return True
     else:
@@ -129,6 +135,7 @@ def blink_leds_row_once():
 def led_update_loop_factory(exit_event):
     def led_update_loop():
         while not exit_event.is_set():
+            # print(f"LED update loop 18 {GPIO.input(18)} ")
             try:
                 if music_is_playing():
                     GPIO.output(PLAY_LED_PIN, GPIO.HIGH)
