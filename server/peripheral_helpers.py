@@ -28,7 +28,7 @@ SHUFFLE_LED_PIN = 6
 def low_check(pin):
     print(
         f"In low_check before sleep {pin} {GPIO.input(pin)} {GPIO.LOW} "
-        + f"{inspect.stack()[1][3]}"
+        + f"{inspect.stack()}"
     )
     time.sleep(0.01)
     print(f"In low_check after sleep {pin} {GPIO.input(pin)} {GPIO.LOW}")
