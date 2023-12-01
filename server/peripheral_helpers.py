@@ -24,61 +24,62 @@ REPEAT_LED_PIN = 5
 SHUFFLE_LED_PIN = 6
 
 
-def play_pause_callback(channel):
+def low_check(pin):
+    time.sleep(0.01)
+    if GPIO.input(pin) == GPIO.LOW:
+        return True
+    else:
+        return False
+
+
+def play_pause_callback(pin):
+    if not low_check(pin):
+        return True
+
     print("Play/pause button pressed")
     execute_cmus_command(PLAY_PAUSE)
 
 
-def next_track_callback(channel):
+def next_track_callback(pin):
+    if not low_check(pin):
+        return True
+
     print("Next track button pressed")
     execute_cmus_command(NEXT)
 
 
-def stop_track_callback(channel):
+def stop_track_callback(pin):
+    if not low_check(pin):
+        return True
+
     print("Stop track button pressed")
     execute_cmus_command(STOP)
 
 
-def toggle_shuffle_callback(channel):
+def toggle_shuffle_callback(pin):
+    if not low_check(pin):
+        return True
+
     print("Toggle shuffle")
     execute_cmus_command(SHUFFLE)
-    GPIO.output(SHUFFLE_LED_PIN, GPIO.HIGH)
-    time.sleep(0.1)
-    GPIO.output(SHUFFLE_LED_PIN, GPIO.LOW)
-    time.sleep(0.1)
-    GPIO.output(SHUFFLE_LED_PIN, GPIO.HIGH)
-    time.sleep(0.1)
-    GPIO.output(SHUFFLE_LED_PIN, GPIO.LOW)
-    time.sleep(0.1)
-    GPIO.output(SHUFFLE_LED_PIN, GPIO.HIGH)
-    time.sleep(0.1)
-    GPIO.output(SHUFFLE_LED_PIN, GPIO.LOW)
-    time.sleep(0.1)
-    GPIO.output(SHUFFLE_LED_PIN, GPIO.HIGH)
-    time.sleep(0.1)
-    GPIO.output(SHUFFLE_LED_PIN, GPIO.LOW)
-    time.sleep(0.1)
+    for x in range(20):
+        GPIO.output(SHUFFLE_LED_PIN, GPIO.HIGH)
+        time.sleep(0.1)
+        GPIO.output(SHUFFLE_LED_PIN, GPIO.LOW)
+        time.sleep(0.1)
 
 
-def toggle_repeat_callback(channel):
+def toggle_repeat_callback(pin):
+    if not low_check(pin):
+        return True
+
     print("Toggle repeat")
     execute_cmus_command(REPEAT)
-    GPIO.output(REPEAT_LED_PIN, GPIO.HIGH)
-    time.sleep(0.1)
-    GPIO.output(REPEAT_LED_PIN, GPIO.LOW)
-    time.sleep(0.1)
-    GPIO.output(REPEAT_LED_PIN, GPIO.HIGH)
-    time.sleep(0.1)
-    GPIO.output(REPEAT_LED_PIN, GPIO.LOW)
-    time.sleep(0.1)
-    GPIO.output(REPEAT_LED_PIN, GPIO.HIGH)
-    time.sleep(0.1)
-    GPIO.output(REPEAT_LED_PIN, GPIO.LOW)
-    time.sleep(0.1)
-    GPIO.output(REPEAT_LED_PIN, GPIO.HIGH)
-    time.sleep(0.1)
-    GPIO.output(REPEAT_LED_PIN, GPIO.LOW)
-    time.sleep(0.1)
+    for x in range(20):
+        GPIO.output(REPEAT_LED_PIN, GPIO.HIGH)
+        time.sleep(0.1)
+        GPIO.output(REPEAT_LED_PIN, GPIO.LOW)
+        time.sleep(0.1)
 
 
 def music_is_playing():
