@@ -1,4 +1,4 @@
-import inspect
+# import inspect
 import RPi.GPIO as GPIO
 import time
 from cmus_utils import (
@@ -28,7 +28,7 @@ SHUFFLE_LED_PIN = 6
 def low_check(pin):
     print(
         f"In low_check before sleep {pin} {GPIO.input(pin)} {GPIO.LOW} "
-        + f"{inspect.stack()}"
+        # + f"{inspect.stack()}"
     )
     time.sleep(0.01)
     print(f"In low_check after sleep {pin} {GPIO.input(pin)} {GPIO.LOW}")
@@ -57,7 +57,7 @@ def next_track_callback(pin):
 def stop_track_callback(pin):
     print(
         f"In stop_track_callback {pin} {GPIO.input(pin)} {GPIO.LOW} "
-        + f"{inspect.stack()}"
+        # + f"{inspect.stack()}"
     )
     if not low_check(pin):
         return True
