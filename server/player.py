@@ -99,8 +99,16 @@ try:
     GPIO.setup(BUTTON_PLAY_PAUSE, GPIO.IN, pull_up_down=GPIO.PUD_UP)
     GPIO.setup(BUTTON_NEXT_TRACK, GPIO.IN, pull_up_down=GPIO.PUD_UP)
     GPIO.setup(BUTTON_STOP_TRACK, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-    GPIO.setup(BUTTON_REPEAT_TRACK, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-    GPIO.setup(BUTTON_SHUFFLE_TRACK, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+    GPIO.setup(
+        BUTTON_REPEAT_TRACK,
+        GPIO.IN,
+        #    pull_up_down=GPIO.PUD_UP
+    )
+    GPIO.setup(
+        BUTTON_SHUFFLE_TRACK,
+        GPIO.IN,
+        #    pull_up_down=GPIO.PUD_UP
+    )
     GPIO.setup(PLAY_LED_PIN, GPIO.OUT)
     GPIO.setup(SHUFFLE_LED_PIN, GPIO.OUT)
     GPIO.setup(REPEAT_LED_PIN, GPIO.OUT)
@@ -126,7 +134,7 @@ try:
         BUTTON_STOP_TRACK,
         GPIO.BOTH,
         callback=stop_track_callback,
-        # bouncetime=0,
+        bouncetime=BUTTON_DEBOUNCE_TIME,
     )
     GPIO.add_event_detect(
         BUTTON_REPEAT_TRACK,
