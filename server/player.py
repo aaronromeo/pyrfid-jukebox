@@ -13,7 +13,7 @@ import json
 import warnings
 
 from peripheral_helpers import (
-    BUTTON_DEBOUNCE_TIME,
+    # BUTTON_DEBOUNCE_TIME,
     BUTTON_NEXT_TRACK,
     BUTTON_PLAY_PAUSE,
     BUTTON_STOP_TRACK,
@@ -122,31 +122,31 @@ try:
         BUTTON_PLAY_PAUSE,
         GPIO.BOTH,
         callback=play_pause_callback,
-        bouncetime=BUTTON_DEBOUNCE_TIME,
+        # bouncetime=BUTTON_DEBOUNCE_TIME,
     )
     GPIO.add_event_detect(
         BUTTON_NEXT_TRACK,
         GPIO.BOTH,
         callback=next_track_callback,
-        bouncetime=BUTTON_DEBOUNCE_TIME,
+        # bouncetime=BUTTON_DEBOUNCE_TIME,
     )
     GPIO.add_event_detect(
         BUTTON_STOP_TRACK,
         GPIO.BOTH,
         callback=stop_track_callback,
-        bouncetime=BUTTON_DEBOUNCE_TIME,
+        # bouncetime=BUTTON_DEBOUNCE_TIME,
     )
     GPIO.add_event_detect(
         BUTTON_REPEAT_TRACK,
         GPIO.BOTH,
         callback=toggle_repeat_callback,
-        bouncetime=BUTTON_DEBOUNCE_TIME,
+        # bouncetime=BUTTON_DEBOUNCE_TIME,
     )
     GPIO.add_event_detect(
         BUTTON_SHUFFLE_TRACK,
         GPIO.BOTH,
         callback=toggle_shuffle_callback,
-        bouncetime=BUTTON_DEBOUNCE_TIME,
+        # bouncetime=BUTTON_DEBOUNCE_TIME,
     )
 
     # Initialize RFID reader
