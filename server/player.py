@@ -120,31 +120,31 @@ try:
     # released. Another alternative is to detect BOTH.
     GPIO.add_event_detect(
         BUTTON_PLAY_PAUSE,
-        GPIO.BOTH,
+        GPIO.RISING,
         callback=play_pause_callback,
         # bouncetime=BUTTON_DEBOUNCE_TIME,
     )
     GPIO.add_event_detect(
         BUTTON_NEXT_TRACK,
-        GPIO.BOTH,
+        GPIO.RISING,
         callback=next_track_callback,
         # bouncetime=BUTTON_DEBOUNCE_TIME,
     )
     GPIO.add_event_detect(
         BUTTON_STOP_TRACK,
-        GPIO.BOTH,
+        GPIO.RISING,
         callback=stop_track_callback,
         # bouncetime=BUTTON_DEBOUNCE_TIME,
     )
     GPIO.add_event_detect(
         BUTTON_REPEAT_TRACK,
-        GPIO.BOTH,
+        GPIO.RISING,
         callback=toggle_repeat_callback,
         # bouncetime=BUTTON_DEBOUNCE_TIME,
     )
     GPIO.add_event_detect(
         BUTTON_SHUFFLE_TRACK,
-        GPIO.BOTH,
+        GPIO.RISING,
         callback=toggle_shuffle_callback,
         # bouncetime=BUTTON_DEBOUNCE_TIME,
     )
