@@ -96,9 +96,21 @@ try:
     # The current connections are between the GPIO pin and GND when closed.
     # This means the GPIO will read LOW when the button is pressed
     # Adding in the `GPIO.PUD_UP` adds an Internal Pull-Up Resistor
-    GPIO.setup(BUTTON_PLAY_PAUSE, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-    GPIO.setup(BUTTON_NEXT_TRACK, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-    GPIO.setup(BUTTON_STOP_TRACK, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+    GPIO.setup(
+        BUTTON_PLAY_PAUSE,
+        GPIO.IN,
+        # pull_up_down=GPIO.PUD_UP
+    )
+    GPIO.setup(
+        BUTTON_NEXT_TRACK,
+        GPIO.IN,
+        # pull_up_down=GPIO.PUD_UP
+    )
+    GPIO.setup(
+        BUTTON_STOP_TRACK,
+        GPIO.IN,
+        # pull_up_down=GPIO.PUD_UP
+    )
     GPIO.setup(
         BUTTON_REPEAT_TRACK,
         GPIO.IN,
@@ -120,31 +132,31 @@ try:
     # released. Another alternative is to detect BOTH.
     GPIO.add_event_detect(
         BUTTON_PLAY_PAUSE,
-        GPIO.FALLING,
+        GPIO.BOTH,
         callback=play_pause_callback,
         # bouncetime=BUTTON_DEBOUNCE_TIME,
     )
     GPIO.add_event_detect(
         BUTTON_NEXT_TRACK,
-        GPIO.FALLING,
+        GPIO.BOTH,
         callback=next_track_callback,
         # bouncetime=BUTTON_DEBOUNCE_TIME,
     )
     GPIO.add_event_detect(
         BUTTON_STOP_TRACK,
-        GPIO.FALLING,
+        GPIO.BOTH,
         callback=stop_track_callback,
         # bouncetime=BUTTON_DEBOUNCE_TIME,
     )
     GPIO.add_event_detect(
         BUTTON_REPEAT_TRACK,
-        GPIO.FALLING,
+        GPIO.BOTH,
         callback=toggle_repeat_callback,
         # bouncetime=BUTTON_DEBOUNCE_TIME,
     )
     GPIO.add_event_detect(
         BUTTON_SHUFFLE_TRACK,
-        GPIO.FALLING,
+        GPIO.BOTH,
         callback=toggle_shuffle_callback,
         # bouncetime=BUTTON_DEBOUNCE_TIME,
     )
