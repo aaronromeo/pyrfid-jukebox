@@ -1,24 +1,36 @@
-import RPi.GPIO as GPIO  # Import Raspberry Pi GPIO library
+import RPi.GPIO as GPIO
+import time
 
-# GPIO.setwarnings(False) # Ignore warning for now
-GPIO.setmode(GPIO.BOARD)  # Use physical pin numbering
-# Set pin 10 to be an input pin and set initial value to be pulled low (off)
-GPIO.setup(37, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+# Replace with your actual GPIO pin number
+BUTTON_PIN = 17
 
+# Set up the GPIO using BCM numbering
+GPIO.setmode(GPIO.BCM)
 
-def button_callback(channel):
-    print("Button 37 was pushed!")
+# Set up the GPIO pin as an input. Assuming you have an external pull-down resistor.
+GPIO.setup(BUTTON_PIN, GPIO.IN)
 
+last_state = None
 
 try:
-    while True:  # Run forever
-        if GPIO.input(37) == GPIO.HIGH:
-            print("Button 37 was pushed!")
-    # GPIO.add_event_detect(37,GPIO.RISING,callback=button_callback) # Setup
-    # event on pin 10 rising edge
+    while True:
+        # Read the state of the GPIO pin
+        current_state = GPIO.input(BUTTON_PIN)
 
-    # input("Ready!\n")
-except Exception:
-    print("Error")
-finally:
+        # Check if the state has changed
+        if current_state != last_state:
+            last_state = current_state
+            timestamp = time.time()
+            state_str = 'High' if current_state else 'Low'
+            print(f"Time: {timestamp} - Button State: {state_str}")
+
+        # Wait a little while before checking again
+        time.sleep(0.01)  # 10ms for debouncing
+
+except KeyboardInterrupt:
+    # Clean up the GPIO on CTRL+C exit
     GPIO.cleanup()
+
+# Clean up the GPIO on normal exit
+GPIO.cleanup()
+
