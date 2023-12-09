@@ -60,5 +60,7 @@ echo "
 
 $(date '+%Y-%m-%d %H:%M:%S') - Created gitpull err." >> /home/pi/logs/gitpull.err.log
 
+chmod 666 /home/pi/logs/*
+
 sudo supervisorctl start gitpull
 sudo supervisorctl start cmus_manager
