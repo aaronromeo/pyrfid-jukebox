@@ -99,6 +99,7 @@ try:
     GPIO.setup(
         BUTTON_PLAY_PAUSE,
         GPIO.IN,
+        initial=GPIO.HIGH,
         # pull_up_down=GPIO.PUD_UP
     )
     GPIO.setup(
