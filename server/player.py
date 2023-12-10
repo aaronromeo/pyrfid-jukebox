@@ -156,7 +156,7 @@ try:
     )
     GPIO.add_event_detect(
         BUTTON_SHUFFLE_TRACK,
-        GPIO.BOTH,
+        GPIO.RISING,
         callback=toggle_shuffle_callback,
         # bouncetime=BUTTON_DEBOUNCE_TIME,
     )

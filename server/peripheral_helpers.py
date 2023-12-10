@@ -67,10 +67,11 @@ def stop_track_callback(pin):
 
 
 def toggle_shuffle_callback(pin):
-    if not low_check(pin):
-        return True
-
     print("Toggle shuffle")
+    print(
+        f"In low_check before sleep {pin} {GPIO.input(pin)} {GPIO.HIGH} "
+        # + f"{inspect.stack()}"
+    )
     execute_cmus_command(SHUFFLE)
     for x in range(20):
         GPIO.output(SHUFFLE_LED_PIN, GPIO.HIGH)
