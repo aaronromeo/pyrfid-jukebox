@@ -26,10 +26,10 @@ from peripheral_helpers import (
     blink_leds_row_once,
     blink_red_leds_once,
     led_update_loop_factory,
-    next_track_callback,
-    play_pause_callback,
-    stop_track_callback,
-    toggle_repeat_callback,
+    # next_track_callback,
+    # play_pause_callback,
+    # stop_track_callback,
+    # toggle_repeat_callback,
     toggle_shuffle_callback,
 )
 
@@ -130,30 +130,30 @@ try:
     # a HIGH to LOW) as the first button pressed action. An alternative is to
     # detect a RISING event (LOW to HIGH) which would occur when the button is
     # released. Another alternative is to detect BOTH.
-    GPIO.add_event_detect(
-        BUTTON_PLAY_PAUSE,
-        GPIO.BOTH,
-        callback=play_pause_callback,
-        # bouncetime=BUTTON_DEBOUNCE_TIME,
-    )
-    GPIO.add_event_detect(
-        BUTTON_NEXT_TRACK,
-        GPIO.BOTH,
-        callback=next_track_callback,
-        # bouncetime=BUTTON_DEBOUNCE_TIME,
-    )
-    GPIO.add_event_detect(
-        BUTTON_STOP_TRACK,
-        GPIO.BOTH,
-        callback=stop_track_callback,
-        # bouncetime=BUTTON_DEBOUNCE_TIME,
-    )
-    GPIO.add_event_detect(
-        BUTTON_REPEAT_TRACK,
-        GPIO.BOTH,
-        callback=toggle_repeat_callback,
-        # bouncetime=BUTTON_DEBOUNCE_TIME,
-    )
+    # GPIO.add_event_detect(
+    #     BUTTON_PLAY_PAUSE,
+    #     GPIO.BOTH,
+    #     callback=play_pause_callback,
+    #     # bouncetime=BUTTON_DEBOUNCE_TIME,
+    # )
+    # GPIO.add_event_detect(
+    #     BUTTON_NEXT_TRACK,
+    #     GPIO.BOTH,
+    #     callback=next_track_callback,
+    #     # bouncetime=BUTTON_DEBOUNCE_TIME,
+    # )
+    # GPIO.add_event_detect(
+    #     BUTTON_STOP_TRACK,
+    #     GPIO.BOTH,
+    #     callback=stop_track_callback,
+    #     # bouncetime=BUTTON_DEBOUNCE_TIME,
+    # )
+    # GPIO.add_event_detect(
+    #     BUTTON_REPEAT_TRACK,
+    #     GPIO.BOTH,
+    #     callback=toggle_repeat_callback,
+    #     # bouncetime=BUTTON_DEBOUNCE_TIME,
+    # )
     GPIO.add_event_detect(
         BUTTON_SHUFFLE_TRACK,
         GPIO.RISING,
