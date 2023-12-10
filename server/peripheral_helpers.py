@@ -38,6 +38,19 @@ def low_check(pin):
         return False
 
 
+def high_check(pin):
+    print(
+        f"In high_check before sleep {pin} {GPIO.input(pin)} {GPIO.HIGH} "
+        # + f"{inspect.stack()}"
+    )
+    time.sleep(0.01)
+    print(f"In high_check after sleep {pin} {GPIO.input(pin)} {GPIO.HIGH}")
+    if GPIO.input(pin) == GPIO.HIGH:
+        return True
+    else:
+        return False
+
+
 def play_pause_callback(pin):
     if not low_check(pin):
         return True
@@ -71,6 +84,8 @@ def toggle_shuffle_callback(pin):
         f"In toggle_shuffle_callback {pin} {GPIO.input(pin)} {GPIO.HIGH} "
         # + f"{inspect.stack()}"
     )
+    if not high_check(pin):
+        return True
     print("Toggle shuffle")
     execute_cmus_command(SHUFFLE)
     for x in range(20):
