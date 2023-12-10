@@ -17,7 +17,7 @@ BUTTON_PLAY_PAUSE = 17
 BUTTON_NEXT_TRACK = 27
 BUTTON_STOP_TRACK = 18
 BUTTON_REPEAT_TRACK = 13
-BUTTON_SHUFFLE_TRACK = 3
+BUTTON_SHUFFLE_TRACK = 19
 
 # BUTTON_DEBOUNCE_TIME = 250  # milliseconds
 PLAY_LED_PIN = 22
@@ -67,11 +67,11 @@ def stop_track_callback(pin):
 
 
 def toggle_shuffle_callback(pin):
-    print("Toggle shuffle")
     print(
-        f"In low_check before sleep {pin} {GPIO.input(pin)} {GPIO.HIGH} "
+        f"In toggle_shuffle_callback {pin} {GPIO.input(pin)} {GPIO.HIGH} "
         # + f"{inspect.stack()}"
     )
+    print("Toggle shuffle")
     execute_cmus_command(SHUFFLE)
     for x in range(20):
         GPIO.output(SHUFFLE_LED_PIN, GPIO.HIGH)
