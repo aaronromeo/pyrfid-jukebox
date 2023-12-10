@@ -2,30 +2,38 @@ import RPi.GPIO as GPIO
 import time
 
 # Replace with your actual GPIO pin number
-BUTTON_PIN = 17
+BUTTON_PINS = [
+        13,
+        19
+]
 
 # Set up the GPIO using BCM numbering
 GPIO.setmode(GPIO.BCM)
 
 # Set up the GPIO pin as an input. Assuming you have an external pull-down resistor.
-GPIO.setup(BUTTON_PIN, GPIO.IN)
+for pin in BUTTON_PINS:
+    GPIO.setup(pin, GPIO.IN)
 
-last_state = None
+last_state = {}
+
+def toggle_callback(pin):
+    current_state = GPIO.input(pin)
+    if  not (pin in last_state) or last_state[pin] != current_state:
+        last_state[pin] = current_state
+        timestamp = time.time()
+        state_str = 'High' if current_state else 'Low'
+        print(f"Time: {timestamp} - Button {pin}State: {state_str}")
 
 try:
+    # Read the state of the GPIO pin
+    for pin in BUTTON_PINS:
+        GPIO.add_event_detect(
+            pin,
+            GPIO.BOTH,
+            callback=toggle_callback,
+        )
     while True:
-        # Read the state of the GPIO pin
-        current_state = GPIO.input(BUTTON_PIN)
-
-        # Check if the state has changed
-        if current_state != last_state:
-            last_state = current_state
-            timestamp = time.time()
-            state_str = 'High' if current_state else 'Low'
-            print(f"Time: {timestamp} - Button State: {state_str}")
-
-        # Wait a little while before checking again
-        time.sleep(0.01)  # 10ms for debouncing
+        True
 
 except KeyboardInterrupt:
     # Clean up the GPIO on CTRL+C exit
