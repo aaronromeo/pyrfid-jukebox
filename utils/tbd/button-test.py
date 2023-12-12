@@ -3,6 +3,9 @@ import time
 
 # Replace with your actual GPIO pin number
 BUTTON_PINS = [
+        17,
+        27,
+        18,
         13,
         19
 ]
