@@ -13,24 +13,13 @@ import json
 import warnings
 
 from peripheral_helpers import (
-    # BUTTON_DEBOUNCE_TIME,
-    BUTTON_NEXT_TRACK,
-    BUTTON_PLAY_PAUSE,
-    BUTTON_STOP_TRACK,
-    BUTTON_REPEAT_TRACK,
-    BUTTON_SHUFFLE_TRACK,
-    PLAY_LED_PIN,
-    SHUFFLE_LED_PIN,
-    REPEAT_LED_PIN,
     blink_play,
     blink_leds_row_once,
     blink_red_leds_once,
     led_update_loop_factory,
-    # next_track_callback,
-    # play_pause_callback,
-    # stop_track_callback,
-    # toggle_repeat_callback,
-    toggle_shuffle_callback,
+    add_button_detections,
+    led_setup,
+    button_setup,
 )
 
 print(f"{datetime.now()} - Script started")
@@ -96,70 +85,15 @@ try:
     # The current connections are between the GPIO pin and GND when closed.
     # This means the GPIO will read LOW when the button is pressed
     # Adding in the `GPIO.PUD_UP` adds an Internal Pull-Up Resistor
-    GPIO.setup(
-        BUTTON_PLAY_PAUSE,
-        GPIO.IN,
-        # pull_up_down=GPIO.PUD_UP
-    )
-    GPIO.setup(
-        BUTTON_NEXT_TRACK,
-        GPIO.IN,
-        # pull_up_down=GPIO.PUD_UP
-    )
-    GPIO.setup(
-        BUTTON_STOP_TRACK,
-        GPIO.IN,
-        # pull_up_down=GPIO.PUD_UP
-    )
-    GPIO.setup(
-        BUTTON_REPEAT_TRACK,
-        GPIO.IN,
-        #    pull_up_down=GPIO.PUD_UP
-    )
-    GPIO.setup(
-        BUTTON_SHUFFLE_TRACK,
-        GPIO.IN,
-        #    pull_up_down=GPIO.PUD_UP
-    )
-    GPIO.setup(PLAY_LED_PIN, GPIO.OUT)
-    GPIO.setup(SHUFFLE_LED_PIN, GPIO.OUT)
-    GPIO.setup(REPEAT_LED_PIN, GPIO.OUT)
+    button_setup()
+    led_setup()
 
     # Related to the comment above about the GPIO pin reading LOW when the
     # button is pressed. In this case, the event detected is FALLING (detecting
     # a HIGH to LOW) as the first button pressed action. An alternative is to
     # detect a RISING event (LOW to HIGH) which would occur when the button is
     # released. Another alternative is to detect BOTH.
-    # GPIO.add_event_detect(
-    #     BUTTON_PLAY_PAUSE,
-    #     GPIO.BOTH,
-    #     callback=play_pause_callback,
-    #     # bouncetime=BUTTON_DEBOUNCE_TIME,
-    # )
-    # GPIO.add_event_detect(
-    #     BUTTON_NEXT_TRACK,
-    #     GPIO.BOTH,
-    #     callback=next_track_callback,
-    #     # bouncetime=BUTTON_DEBOUNCE_TIME,
-    # )
-    # GPIO.add_event_detect(
-    #     BUTTON_STOP_TRACK,
-    #     GPIO.BOTH,
-    #     callback=stop_track_callback,
-    #     # bouncetime=BUTTON_DEBOUNCE_TIME,
-    # )
-    # GPIO.add_event_detect(
-    #     BUTTON_REPEAT_TRACK,
-    #     GPIO.BOTH,
-    #     callback=toggle_repeat_callback,
-    #     # bouncetime=BUTTON_DEBOUNCE_TIME,
-    # )
-    GPIO.add_event_detect(
-        BUTTON_SHUFFLE_TRACK,
-        GPIO.RISING,
-        callback=toggle_shuffle_callback,
-        # bouncetime=BUTTON_DEBOUNCE_TIME,
-    )
+    add_button_detections()
 
     # Initialize RFID reader
     print("Initialize RFID reader")

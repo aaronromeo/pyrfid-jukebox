@@ -108,6 +108,40 @@ def toggle_repeat_callback(pin):
         time.sleep(0.1)
 
 
+BUTTON_TO_FUNCTION_MAP = {
+    BUTTON_PLAY_PAUSE: play_pause_callback,
+    BUTTON_NEXT_TRACK: next_track_callback,
+    BUTTON_STOP_TRACK: stop_track_callback,
+    BUTTON_REPEAT_TRACK: toggle_repeat_callback,
+    BUTTON_SHUFFLE_TRACK: toggle_shuffle_callback,
+}
+
+
+def add_button_detections():
+    for button in range(BUTTON_TO_FUNCTION_MAP):
+        GPIO.add_event_detect(
+            button,
+            GPIO.RISING,
+            callback=BUTTON_TO_FUNCTION_MAP[button],
+            # bouncetime=BUTTON_DEBOUNCE_TIME,
+        )
+
+
+def button_setup():
+    for button in range(BUTTON_TO_FUNCTION_MAP):
+        GPIO.setup(
+            button,
+            GPIO.IN,
+            # pull_up_down=GPIO.PUD_UP
+        )
+
+
+def led_setup():
+    GPIO.setup(PLAY_LED_PIN, GPIO.OUT)
+    GPIO.setup(SHUFFLE_LED_PIN, GPIO.OUT)
+    GPIO.setup(REPEAT_LED_PIN, GPIO.OUT)
+
+
 def music_is_playing():
     return cmus_status()[0]
 
