@@ -118,7 +118,7 @@ BUTTON_TO_FUNCTION_MAP = {
 
 
 def add_button_detections():
-    for button in range(BUTTON_TO_FUNCTION_MAP):
+    for button in BUTTON_TO_FUNCTION_MAP:
         GPIO.add_event_detect(
             button,
             GPIO.RISING,
@@ -128,7 +128,7 @@ def add_button_detections():
 
 
 def button_setup():
-    for button in range(BUTTON_TO_FUNCTION_MAP):
+    for button in BUTTON_TO_FUNCTION_MAP:
         GPIO.setup(
             button,
             GPIO.IN,
