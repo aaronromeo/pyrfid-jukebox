@@ -152,7 +152,20 @@ To automatically establish a Bluetooth connection on reboot, the script named [`
 - Check SPI Device Files:
   - After enabling SPI, check if the SPI device files exist. You should find device files like /dev/spidev0.0 or /dev/spidev0.1.You can check this by running ls /dev/spi* in the terminal.
 
-### 10. Project setup
+### 10. PCB buildout
+
+Due to the noisy buttons, the following schematics of the R-C circuit connect the buttons to the Raspberry PI. The schematics were created using [circuit-diagram](https://www.circuit-diagram.org)
+
+![schematics of circuit diagram](docs/circuit.svg)
+
+The required parts are
+
+- 5 push buttons
+- 5 100nF capacitors (for button bouncing)
+- 5 10kΩ resistors (for the pull-down resistor)
+- 5 1kΩ resistors (to protect the Raspberry Pi board)
+
+### 11. Project setup
 
 - Install virtual env
   - `sudo apt-get install python3-venv`
