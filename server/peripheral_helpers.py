@@ -11,6 +11,7 @@ from cmus_utils import (
     REPEAT,
     STOP,
 )
+from logger import Logger
 
 # GPIO pin numbers
 BUTTON_PLAY_PAUSE = 17
@@ -25,26 +26,15 @@ REPEAT_LED_PIN = 5
 SHUFFLE_LED_PIN = 6
 
 
-def low_check(pin):
-    print(
-        f"In low_check before sleep {pin} {GPIO.input(pin)} {GPIO.LOW} "
-        # + f"{inspect.stack()}"
-    )
-    time.sleep(0.01)
-    print(f"In low_check after sleep {pin} {GPIO.input(pin)} {GPIO.LOW}")
-    if GPIO.input(pin) == GPIO.LOW:
-        return True
-    else:
-        return False
-
-
 def high_check(pin):
-    print(
+    Logger.debug(
         f"In high_check before sleep {pin} {GPIO.input(pin)} {GPIO.HIGH} "
         # + f"{inspect.stack()}"
     )
     time.sleep(0.01)
-    print(f"In high_check after sleep {pin} {GPIO.input(pin)} {GPIO.HIGH}")
+    Logger.debug(
+        f"In high_check after sleep {pin} {GPIO.input(pin)} {GPIO.HIGH}"
+    )
     if GPIO.input(pin) == GPIO.HIGH:
         return True
     else:
@@ -52,41 +42,33 @@ def high_check(pin):
 
 
 def play_pause_callback(pin):
-    if not low_check(pin):
+    if not high_check(pin):
         return True
 
-    print("Play/pause button pressed")
+    Logger.info("Play/pause button pressed")
     execute_cmus_command(PLAY_PAUSE)
 
 
 def next_track_callback(pin):
-    if not low_check(pin):
+    if not high_check(pin):
         return True
 
-    print("Next track button pressed")
+    Logger.info("Next track button pressed")
     execute_cmus_command(NEXT)
 
 
 def stop_track_callback(pin):
-    print(
-        f"In stop_track_callback {pin} {GPIO.input(pin)} {GPIO.LOW} "
-        # + f"{inspect.stack()}"
-    )
-    if not low_check(pin):
+    if not high_check(pin):
         return True
 
-    print("Stop track button pressed")
+    Logger.info("Stop track button pressed")
     execute_cmus_command(STOP)
 
 
 def toggle_shuffle_callback(pin):
-    print(
-        f"In toggle_shuffle_callback {pin} {GPIO.input(pin)} {GPIO.HIGH} "
-        # + f"{inspect.stack()}"
-    )
     if not high_check(pin):
         return True
-    print("Toggle shuffle")
+    Logger.info("Toggle shuffle")
     execute_cmus_command(SHUFFLE)
     for x in range(20):
         GPIO.output(SHUFFLE_LED_PIN, GPIO.HIGH)
@@ -96,10 +78,10 @@ def toggle_shuffle_callback(pin):
 
 
 def toggle_repeat_callback(pin):
-    if not low_check(pin):
+    if not high_check(pin):
         return True
 
-    print("Toggle repeat")
+    Logger.info("Toggle repeat")
     execute_cmus_command(REPEAT)
     for x in range(20):
         GPIO.output(REPEAT_LED_PIN, GPIO.HIGH)
@@ -213,7 +195,7 @@ def led_update_loop_factory(exit_event):
 
                 time.sleep(0.5)  # you can adjust the sleep time as needed
             except Exception as e:
-                print(f"Error in LED Loop: {e}")
+                Logger.error(f"Error in LED Loop: {e}")
                 raise e
 
     return led_update_loop

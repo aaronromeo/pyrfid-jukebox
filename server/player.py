@@ -1,4 +1,3 @@
-from datetime import datetime
 import sys
 from cmus_utils import (
     execute_cmus_command,
@@ -11,6 +10,7 @@ import RPi.GPIO as GPIO
 import threading
 import json
 import warnings
+from logger import Logger
 
 from peripheral_helpers import (
     blink_play,
@@ -22,7 +22,7 @@ from peripheral_helpers import (
     button_setup,
 )
 
-print(f"{datetime.now()} - Script started")
+Logger.info("Script started")
 warnings.simplefilter("error")
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -50,10 +50,10 @@ def acquire_lock():
 
     # Check if the PID from the lock file is still running
     if pid_str and is_process_running(int(pid_str)):
-        print(f"{datetime.now()} - Script is already running.")
+        Logger.critical("Script is already running.")
         raise RuntimeError("Script is already running.")
     else:
-        print(f"{datetime.now()} - Aquiring lock file.")
+        Logger.info("Aquiring lock file.")
         # Write the current PID to the lock file
         lock_file.seek(0)
         lock_file.truncate()
@@ -64,7 +64,7 @@ def acquire_lock():
 
 def data_to_map(data):
     with open(RFID_TO_MUSIC_MAP, "w") as file:
-        print(f"Writing to map file {RFID_TO_MUSIC_MAP}")
+        Logger.info(f"Writing to map file {RFID_TO_MUSIC_MAP}")
         json.dump(data, file, indent=4)
 
 
@@ -79,7 +79,7 @@ lock_file = None
 # Main loop
 try:
     # Setup GPIO
-    print("GPIO setup")
+    Logger.info("Starting GPIO setup")
     GPIO.setmode(GPIO.BCM)
 
     # The current connections are between the GPIO pin and GND when closed.
@@ -96,7 +96,7 @@ try:
     add_button_detections()
 
     # Initialize RFID reader
-    print("Initialize RFID reader")
+    Logger.info("Initialize RFID reader")
     rfid_reader = SimpleMFRC522()
 
     # Attempt to acquire the lock
@@ -111,12 +111,12 @@ try:
     # Ensure cmus is running and LED thread is alive
     while ensure_is_cmus_running() and led_thread.is_alive():
         if not played_ready_message:
-            print("Ready to read")
+            Logger.info("Ready to read")
             played_ready_message = True
 
         data = {}
 
-        print(f"Loading map file {RFID_TO_MUSIC_MAP}")
+        Logger.info(f"Loading map file {RFID_TO_MUSIC_MAP}")
 
         # Create map file if it doesn't exist
         if not os.path.exists(RFID_TO_MUSIC_MAP):
@@ -126,7 +126,7 @@ try:
             # Check for RFID card
             rfid_id, text = rfid_reader.read()
             rfid_id = str(rfid_id)
-            print("Received RFID card: %s" % rfid_id)
+            Logger.info("Received RFID card: %s" % rfid_id)
 
             update_map = False
 
@@ -134,21 +134,21 @@ try:
             with open(RFID_TO_MUSIC_MAP, "r") as file:
                 data = json.load(file)
 
-            print(data)
+            Logger.debug(data)
             folder_path = data.get(rfid_id, "")
             if folder_path:
                 folder_path = os.path.abspath(data[rfid_id])
 
-                print("Looking for folder: %s" % folder_path)
+                Logger.info("Looking for folder: %s" % folder_path)
 
                 # If folder exists, execute the command
                 if os.path.isdir(folder_path):
-                    print("Folder found")
+                    Logger.info("Folder found")
                     blink_leds_row_once()
                     blink_play(30)
                     execute_cmus_command(QUEUE_AND_PLAY_FOLDER, folder_path)
                 else:
-                    print("Folder not found")
+                    Logger.warning(f"Folder '{folder_path}' not found")
                     blink_red_leds_once()
                     blink_red_leds_once()
 
@@ -156,7 +156,9 @@ try:
                     # update_map = True
                     # data[rfid_id] = ""
             else:
-                print("RFID ID not in mapping or mapped to an empty path.")
+                Logger.warning(
+                    "RFID ID not in mapping or mapped to an empty path."
+                )
                 blink_red_leds_once()
                 blink_red_leds_once()
 
@@ -166,33 +168,33 @@ try:
             if update_map:
                 data_to_map(data)
         except Exception as e:
-            print(f"Error during RFID read or processing: {e}")
+            Logger.critical(f"Error during RFID read or processing: {e}")
             raise e
 
 except KeyboardInterrupt:
-    print("Script interrupted by user")
+    Logger.critical("Script interrupted by user")
 
 except Exception as e:
-    print(f"Unhandled exception: {e}")
+    Logger.critical(f"Unhandled exception: {e}")
     has_error = True
 
 finally:
     if exit_event is not None:
-        print("signal the led_thread to stop")
+        Logger.info("signal the led_thread to stop")
         exit_event.set()  # signal the led_thread to stop
 
     if led_thread is not None:
-        print("wait for the led_thread to finish")
+        Logger.info("wait for the led_thread to finish")
         led_thread.join()  # wait for the led_thread to finish
 
-    print("GPIO cleanup")
+    Logger.info("GPIO cleanup initiated")
     GPIO.cleanup()
 
     if lock_file:
-        print("Removing lock file")
+        Logger.info("Removing lock file")
         lock_file.close()
         os.remove(LOCK_FILE)
 
     if has_error:
-        print("Exiting with error")
+        Logger.info("Exiting with error")
         sys.exit(1)
