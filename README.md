@@ -156,7 +156,7 @@ To automatically establish a Bluetooth connection on reboot, the script named [`
 
 Due to the noisy buttons, the following schematics of the R-C circuit connect the buttons to the Raspberry PI. The schematics were created using [circuit-diagram](https://www.circuit-diagram.org)
 
-![schematics of circuit diagram](docs/circuit.svg)
+![schematics of circuit diagram](docs/circuit.png)
 
 The required parts are
 
