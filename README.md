@@ -109,27 +109,48 @@ sudo apt-get install -y git vim tmux
 4. Enable the `bluealsa` service on startup via `sudo systemctl enable bluealsa`
 5. Confirm it is configured with `sudo systemctl is-enabled bluealsa`
 
-### 7. Setup the loopback
+### 7. Setup Watchdog Timer
 
-1. Edit the Modules Configuration File `etc/modules`
+Enable the Watchdog Kernel Module:
 
-    ```bash
-    sudo vi /etc/modules
+1. Enable the BCM2708 (or BCM2835 on newer models) watchdog kernel module. Edit `/boot/config.txt` and add the following line at the end of the file
+
+    ```csharp
+    dtparam=watchdog=on
     ```
 
-2. Add a line at the end of the file with snd-aloop. The file should look something like this:
+2. Load the watchdog kernel module
 
     ```bash
-
-    # /etc/modules: kernel modules to load at boot time.
-    #
-    # This file contains the names of kernel modules that should be loaded
-    # at boot time, one per line. Lines beginning with "#" are ignored.
-
-    snd-aloop
+    sudo modprobe bcm2835_wdt
     ```
 
-3. Reboot your Raspberry Pi to apply the changes.
+3. Ensure the module is loaded on boot, add the following line to `/etc/modules`
+
+    ```text
+    bcm2835_wdt
+    ```
+
+4. Install the watchdog daemon:
+
+    ```bash
+    sudo apt-get update
+    sudo apt-get install watchdog
+    ```
+
+5. Configure the watchdog daemon by editing `/etc/watchdog.conf` and uncomment or add these lines. The `max-load-1`` option is an example to reboot if the system load average for the last minute exceeds 24. Adjust this according to your needs.
+
+    ```javascript
+    watchdog-device = /dev/watchdog
+    max-load-1 = 24
+    ```
+
+6. Start the Watchdog Service
+
+    ```bash
+    sudo systemctl enable watchdog
+    sudo systemctl start watchdog
+    ```
 
 ### 7. Configure CMUS to use BlueALSA
 
