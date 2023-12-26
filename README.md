@@ -217,6 +217,14 @@ The required parts are
 - Dump requirements
   - `pip3 freeze > requirements.txt`
 
+### 14. Disable power management on the lan
+
+Run this!
+
+```bash
+sudo iwconfig wlan0 power off
+```
+
 ## GPIO config
 
 ### RP4 Pinout
@@ -285,3 +293,29 @@ The required parts are
         ```
 
     - Disable `mpris` by setting the key in `~/.config/cmus/autosave` to `false`.
+
+## Notes
+
+### ALSACTL
+
+***Purpose***: `alsactl` is a command-line utility that is part of the ALSA (Advanced Linux Sound Architecture) system. ALSA is the standard audio API of Linux used for handling sound card drivers.
+
+***Functionality***: `alsactl` is primarily used for controlling advanced settings for sound cards and managing the ALSA sound card state. It allows users to save and load ALSA configurations and settings. Common uses of `alsactl` include:
+
+- Saving the current state of ALSA mixer controls to a file.
+- Restoring mixer settings from a file (e.g., during system startup).
+- Adjusting advanced settings for sound cards.
+
+***Typical Use Case***: `alsactl` is often used in scripts or during system initialization to set up sound levels or configurations. For example, after making changes to the .asoundrc file, you might use `alsactl` restore to apply these changes without rebooting.
+
+### BlueALSA
+
+***Purpose***: BlueALSA is a Bluetooth audio interface for ALSA. It acts as a bridge between ALSA, which does not natively support Bluetooth audio, and Bluetooth audio devices.
+
+***Functionality***: BlueALSA provides the capability to use Bluetooth audio devices within the ALSA framework. It allows ALSA applications (like music players) to send and receive audio to and from Bluetooth headsets, speakers, and other Bluetooth audio devices. Key features include:
+
+- Streaming audio from ALSA applications to Bluetooth audio devices (A2DP Sink role).
+- Receiving audio from Bluetooth devices (A2DP Source role).
+- Handling Bluetooth telephony audio (HFP/HSP profiles).
+
+***Typical Use Case***: BlueALSA is used when you want to integrate Bluetooth audio devices into a Linux system that uses ALSA for sound management. It enables ALSA-based applications to interact with Bluetooth audio hardware, which they wouldn't be able to do directly.
