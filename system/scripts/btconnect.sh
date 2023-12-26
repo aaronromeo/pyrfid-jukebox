@@ -40,16 +40,6 @@ while true; do
 
         # Try to connect
         connect_bluetooth
-    else
-        status=$(sudo supervisorctl status alsaloop | awk '{print $2}')
-        if [[ $status != "RUNNING" && $status != "STARTING" ]]; then
-            echo "$(date '+%Y-%m-%d %H:%M:%S') alsaloop is not running or starting. Starting it now..."
-            sudo supervisorctl start alsaloop
-        else
-            echo "$(date '+%Y-%m-%d %H:%M:%S') alsaloop is already running or starting."
-        fi
-
-        echo "$(date '+%Y-%m-%d %H:%M:%S') Already connected to $device. Sleeping for 30 seconds."
     fi
 
     # Wait before checking again
