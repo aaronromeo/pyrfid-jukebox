@@ -20,6 +20,13 @@ connect_bluetooth() {
 
 # Loop indefinitely
 while true; do
+
+    if [ diff /home/pi/.asoundrc /home/pi/workspace/pyrfid-jukebox/system/home/.asoundrc ]; then
+        echo "$(date '+%Y-%m-%d %H:%M:%S') .asoundrc has changed in repo. Copying over system config..."
+        cp /home/pi/workspace/pyrfid-jukebox/system/home/.asoundrc /home/pi/.asoundrc
+        sudo alsactl restore
+    fi
+
     # Check if already connected
     current_connection=$(bluetoothctl info "$device" | grep -c "Connected: yes")
     current_alsa_status=$(sudo service bluealsa status | grep -c "active (running)")
