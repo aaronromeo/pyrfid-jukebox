@@ -7,4 +7,4 @@ else
     sudo modprobe snd-aloop
 fi
 
-alsaloop -C hw:Loopback,1,0 -P bluealsa:DEV=FC:58:FA:8C:E3:A8,PROFILE=a2dp -c 2 -r 48000 -f s16_le -t 200000
+alsaloop -C hw:Loopback,1,0 -P bluealsa:DEV=88:C6:26:23:95:3F,PROFILE=a2dp -c 2 -r 48000 -f s16_le -t 200000
