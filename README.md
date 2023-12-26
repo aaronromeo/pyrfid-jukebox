@@ -152,7 +152,24 @@ Enable the Watchdog Kernel Module:
     sudo systemctl start watchdog
     ```
 
-### 7. Configure CMUS to use BlueALSA
+### 8. ALSA Configuration for Bluetooth Audio
+
+To enable and configure ALSA (Advanced Linux Sound Architecture) for Bluetooth audio output, the following steps should be taken
+
+1. Copy the `system/home/.asoundrc` configuration file to the `pi` home directory.
+
+2. Edit the file and make sure to replace "88:C6:26:23:95:3F" with the MAC address of your Bluetooth audio device.
+
+3. To apply the changes made in the .asoundrc file, ALSA needs to be restarted. This can be done by restarting your Raspberry Pi or by reloading the ALSA configuration. To reload ALSA, use the following command:
+
+    ```bash
+
+    sudo alsactl restore
+    ```
+
+    If this doesn't work try `sudo reboot`
+
+### 9. Configure CMUS to use BlueALSA
 
 1. Get the current bluetooth device from `bluealsa-aplay -L`
 2. In `~/.config/cmus/autosave` update the following values
@@ -162,18 +179,18 @@ Enable the Watchdog Kernel Module:
       set output_plugin=alsa
     ```
 
-### 8. Bluetooth Auto-connect on Reboot
+### 10. Bluetooth Auto-connect on Reboot
 
 To automatically establish a Bluetooth connection on reboot, the script named [`btconnect.sh`](system/scripts/btconnect.sh) is present in the home directory.
 
-### 9. Enable RDIF
+### 11. Enable RDIF
 
 - Enable SPI Interface:
   - The SPI interface must be enabled on your Raspberry Pi for the mfrc522 module to communicate with the RFID reader. You can enable SPI using the raspi-config tool. Run sudo raspi-config, navigate to "Interfacing Options" > "SPI" and enable it. After enabling, reboot your Raspberry Pi.
 - Check SPI Device Files:
   - After enabling SPI, check if the SPI device files exist. You should find device files like /dev/spidev0.0 or /dev/spidev0.1.You can check this by running ls /dev/spi* in the terminal.
 
-### 10. PCB buildout
+### 12. PCB buildout
 
 Due to the noisy buttons, the following schematics of the R-C circuit connect the buttons to the Raspberry PI. The schematics were created using [circuit-diagram](https://www.circuit-diagram.org)
 
@@ -186,7 +203,7 @@ The required parts are
 - 5 10kΩ resistors (for the pull-down resistor)
 - 5 1kΩ resistors (to protect the Raspberry Pi board)
 
-### 11. Project setup
+### 13. Project setup
 
 - Install virtual env
   - `sudo apt-get install python3-venv`
