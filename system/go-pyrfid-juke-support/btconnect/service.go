@@ -11,9 +11,9 @@ import (
 	"strings"
 )
 
-const DEFAULT_ASLA_CONFIG = "/home/pi/.asoundrc"
-const DEFAULT_PROJECT_ROOT = "/home/pi/workspace/pyrfid-jukebox"
-const DEFAULT_RELATIVE_ASLA_CONFIG = "/system/home/.asoundrc"
+const DefaultASLAConfig = "/home/pi/.asoundrc"
+const DefaultProjectRoot = "/home/pi/workspace/pyrfid-jukebox"
+const DefaultRelativeASLAConfig = "/system/home/.asoundrc"
 
 type CommandExecutor interface {
 	Command(name string, arg ...string) Cmd
@@ -29,17 +29,17 @@ func (e *OSCommandExecutor) Command(name string, arg ...string) Cmd {
 	return exec.Command(name, arg...)
 }
 
-type BtConnectService struct {
+type Service struct {
 	cmdExecutor CommandExecutor
 }
 
-func NewBtConnectService(cmdExecutor CommandExecutor) *BtConnectService {
-	return &BtConnectService{
+func NewBtConnectService(cmdExecutor CommandExecutor) *Service {
+	return &Service{
 		cmdExecutor: cmdExecutor,
 	}
 }
 
-func (bt *BtConnectService) Run() error {
+func (bt *Service) Run() error {
 	device := os.Getenv("PJ_BLUETOOTH_DEVICE")
 	if device == "" {
 		return fmt.Errorf("env var PJ_BLUETOOTH_DEVICE not set")
@@ -61,7 +61,7 @@ func (bt *BtConnectService) Run() error {
 	return nil
 }
 
-func (bt *BtConnectService) getBluetoothConnectionCount(device string) (int, error) {
+func (bt *Service) getBluetoothConnectionCount(device string) (int, error) {
 	cmd := exec.Command("bluetoothctl", "info", device)
 	var out bytes.Buffer
 	cmd.Stdout = &out
@@ -73,7 +73,7 @@ func (bt *BtConnectService) getBluetoothConnectionCount(device string) (int, err
 	return bt.countConnectedLines(out.String()), nil
 }
 
-func (*BtConnectService) countConnectedLines(output string) int {
+func (*Service) countConnectedLines(output string) int {
 	scanner := bufio.NewScanner(strings.NewReader(output))
 	count := 0
 	for scanner.Scan() {
@@ -84,9 +84,9 @@ func (*BtConnectService) countConnectedLines(output string) int {
 	return count
 }
 
-func (bt *BtConnectService) updateALSAConfig() error {
-	if hasChanged, err := bt.hasALSAConfigChanged(); err != nil {
-		return err
+func (bt *Service) updateALSAConfig() error {
+	if hasChanged, errHC := bt.hasALSAConfigChanged(); errHC != nil {
+		return errHC
 	} else if hasChanged {
 		log.Println("ALSA config has changed. Copying over system config...")
 
@@ -106,24 +106,25 @@ func (bt *BtConnectService) updateALSAConfig() error {
 	return nil
 }
 
-func (bt *BtConnectService) hasALSAConfigChanged() (bool, error) {
+func (bt *Service) hasALSAConfigChanged() (bool, error) {
 	aslaConfig := bt.getALSASystemConfig()
 	projectAslaConfig := bt.getALSARepoConfig()
 
-	if diff, err := bt.filesAreDifferent(aslaConfig, projectAslaConfig); err != nil {
+	var diff bool
+	var err error
+	if diff, err = bt.filesAreDifferent(aslaConfig, projectAslaConfig); err != nil {
 		return false, err
-	} else {
-		return diff, nil
 	}
+	return diff, nil
 }
 
-func (*BtConnectService) copyFile(src, dst string) error {
+func (*Service) copyFile(src, dst string) error {
 	input, err := os.ReadFile(src)
 	if err != nil {
 		return err
 	}
 
-	err = os.WriteFile(dst, input, 0644)
+	err = os.WriteFile(dst, input, 0600)
 	if err != nil {
 		return err
 	}
@@ -131,23 +132,23 @@ func (*BtConnectService) copyFile(src, dst string) error {
 	return nil
 }
 
-func (*BtConnectService) getALSASystemConfig() string {
+func (*Service) getALSASystemConfig() string {
 	aslaConfig := os.Getenv("PJ_ALSA_CONFIG")
 	if aslaConfig == "" {
-		aslaConfig = DEFAULT_ASLA_CONFIG
+		aslaConfig = DefaultASLAConfig
 	}
 	return aslaConfig
 }
 
-func (*BtConnectService) getALSARepoConfig() string {
+func (*Service) getALSARepoConfig() string {
 	projectRoot := os.Getenv("PJ_PROJECT_ROOT")
 	if projectRoot == "" {
-		projectRoot = DEFAULT_PROJECT_ROOT
+		projectRoot = DefaultProjectRoot
 	}
-	return filepath.Join(projectRoot, DEFAULT_RELATIVE_ASLA_CONFIG)
+	return filepath.Join(projectRoot, DefaultRelativeASLAConfig)
 }
 
-func (*BtConnectService) filesAreDifferent(file1, file2 string) (bool, error) {
+func (*Service) filesAreDifferent(file1, file2 string) (bool, error) {
 	bytes1, err := os.ReadFile(file1)
 	if err != nil {
 		return false, err
