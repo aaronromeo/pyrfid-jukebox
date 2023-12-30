@@ -1,10 +1,10 @@
-name: golangci-lint
+name: Linting & pre-commit hooks
 
 on: [push]
 
 jobs:
   golangci:
-    name: Lint
+    name: Run golangci-lint
     runs-on: ubuntu-latest
 
     steps:
