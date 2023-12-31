@@ -4,7 +4,7 @@ import (
 	"log"
 	"os"
 
-	"aaronromeo.com/go-pyrfid-juke-support/btconnect"
+	"aaronromeo.com/rfid-jukebox/system/bin/btconnect"
 	"github.com/urfave/cli/v2"
 )
 
@@ -31,5 +31,3 @@ func main() {
 		log.Fatal(err)
 	}
 }
-
-// Additional functions to replicate other parts of btconnect.sh
