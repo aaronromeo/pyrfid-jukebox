@@ -21,7 +21,7 @@ jobs:
         with:
           version: v1.54
           args: --config .golangci.yml
-          working-directory: ./system/go-pyrfid-juke-support
+          # working-directory: ./system/go-pyrfid-juke-support
 
   pre-commit:
     name: Run pre-commit hooks
