@@ -85,7 +85,7 @@ func (*Service) countConnectedLines(output string) int {
 }
 
 func (bt *Service) updateALSAConfig() error {
-	if hasChanged, errHC := bt.hasALSAConfigChanged(); errHC != nil {
+	if hasChanged, errHC := bt.HasALSAConfigChanged(); errHC != nil {
 		return errHC
 	} else if hasChanged {
 		log.Println("ALSA config has changed. Copying over system config...")
@@ -106,7 +106,7 @@ func (bt *Service) updateALSAConfig() error {
 	return nil
 }
 
-func (bt *Service) hasALSAConfigChanged() (bool, error) {
+func (bt *Service) HasALSAConfigChanged() (bool, error) {
 	aslaConfig := bt.getALSASystemConfig()
 	projectAslaConfig := bt.getALSARepoConfig()
 
