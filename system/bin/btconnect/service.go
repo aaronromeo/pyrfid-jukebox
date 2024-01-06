@@ -112,7 +112,7 @@ func (bt *Service) HasALSAConfigChanged() (bool, error) {
 
 	var diff bool
 	var err error
-	if diff, err = bt.filesAreDifferent(aslaConfig, projectAslaConfig); err != nil {
+	if diff, err = bt.FilesAreDifferent(aslaConfig, projectAslaConfig); err != nil {
 		return false, err
 	}
 	return diff, nil
@@ -148,7 +148,7 @@ func (*Service) getALSARepoConfig() string {
 	return filepath.Join(projectRoot, DefaultRelativeASLAConfig)
 }
 
-func (*Service) filesAreDifferent(file1, file2 string) (bool, error) {
+func (*Service) FilesAreDifferent(file1, file2 string) (bool, error) {
 	bytes1, err := os.ReadFile(file1)
 	if err != nil {
 		return false, err
