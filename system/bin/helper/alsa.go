@@ -11,7 +11,7 @@ const DefaultASLAConfig = "/home/pi/.asoundrc"
 const DefaultProjectRoot = "/home/pi/workspace/pyrfid-jukebox"
 const DefaultRelativeASLAConfig = "/system/home/.asoundrc"
 
-func UpdateALSAConfig(cmdExecutor CommandExecutor) error {
+func (r *RealALSAConfigUpdater) UpdateALSAConfig(cmdExecutor CommandExecutor) error {
 	if hasChanged, errHC := HasALSAConfigChanged(); errHC != nil {
 		return errHC
 	} else if hasChanged {

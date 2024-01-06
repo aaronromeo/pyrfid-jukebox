@@ -28,3 +28,9 @@ func (e *OSCommandExecutor) Command(name string, arg ...string) Cmd {
 func (e *OSCommandExecutor) GetOutput() string {
 	return e.out.String()
 }
+
+type ALSAConfigUpdater interface {
+	UpdateALSAConfig(executor CommandExecutor) error
+}
+
+type RealALSAConfigUpdater struct{}

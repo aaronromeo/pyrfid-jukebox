@@ -17,7 +17,7 @@ func main() {
 				Aliases: []string{"b"},
 				Usage:   "Maintain a connection to bluetooth device",
 				Action: func(c *cli.Context) error {
-					connectService := btconnect.NewBtConnectService(&helper.OSCommandExecutor{})
+					connectService := btconnect.NewBtConnectService(&helper.OSCommandExecutor{}, &helper.RealALSAConfigUpdater{})
 					err := connectService.Run()
 					if err != nil {
 						log.Fatalf("Command execution failed: %v", err)

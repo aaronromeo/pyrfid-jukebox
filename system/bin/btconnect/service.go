@@ -11,12 +11,14 @@ import (
 )
 
 type Service struct {
-	cmdExecutor helper.CommandExecutor
+	cmdExecutor       helper.CommandExecutor
+	alsaConfigUpdater helper.ALSAConfigUpdater
 }
 
-func NewBtConnectService(cmdExecutor helper.CommandExecutor) *Service {
+func NewBtConnectService(cmdExecutor helper.CommandExecutor, alsaConfigUpdater helper.ALSAConfigUpdater) *Service {
 	return &Service{
-		cmdExecutor: cmdExecutor,
+		cmdExecutor:       cmdExecutor,
+		alsaConfigUpdater: alsaConfigUpdater,
 	}
 }
 
@@ -26,7 +28,7 @@ func (bt *Service) Run() error {
 		return fmt.Errorf("env var PJ_BLUETOOTH_DEVICE not set")
 	}
 
-	err := helper.UpdateALSAConfig(bt.cmdExecutor)
+	err := bt.alsaConfigUpdater.UpdateALSAConfig(bt.cmdExecutor)
 	if err != nil {
 		log.Printf("Error updating ALSA config: %v", err)
 		return err

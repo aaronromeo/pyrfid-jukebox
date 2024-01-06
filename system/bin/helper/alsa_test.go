@@ -22,7 +22,7 @@ type MockCommandExecutor struct {
 	CommandExecuted bool
 }
 
-func (e *MockCommandExecutor) Command(name string, arg ...string) helper.Cmd {
+func (e *MockCommandExecutor) Command(_ string, _ ...string) helper.Cmd {
 	e.CommandExecuted = true
 
 	return &MockCmd{}
@@ -142,6 +142,7 @@ func TestUpdateALSAConfig(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	alsaConfigUpdate := helper.RealALSAConfigUpdater{}
 
 	testSystemConfig := filepath.Join(testDir, "system.asoundrc")
 	testRepoConfig := filepath.Join(filepath.Join(testDir, "system", "home"), ".asoundrc")
@@ -160,7 +161,7 @@ func TestUpdateALSAConfig(t *testing.T) {
 	}
 
 	cmdExecutor := &MockCommandExecutor{}
-	err = helper.UpdateALSAConfig(cmdExecutor)
+	err = alsaConfigUpdate.UpdateALSAConfig(cmdExecutor)
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 	}
@@ -175,7 +176,7 @@ func TestUpdateALSAConfig(t *testing.T) {
 	}
 
 	cmdExecutor = &MockCommandExecutor{}
-	err = helper.UpdateALSAConfig(cmdExecutor)
+	err = alsaConfigUpdate.UpdateALSAConfig(cmdExecutor)
 	if err != nil {
 		t.Errorf("Unexpected error: %v", err)
 	}
