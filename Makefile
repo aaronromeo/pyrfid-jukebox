@@ -12,7 +12,8 @@ all: test build
 build:
 	$(GOBUILD) -o $(BINARY_NAME) -v ./...
 test:
-	$(GOTEST) -v ./...
+	$(GOTEST) ./... -coverprofile=./cover.out -covermode=atomic -coverpkg=./...
+	$(GOCMD) tool cover -html=./cover.out -o ./cover.html
 clean:
 	$(GOCLEAN)
 	rm -f $(BINARY_NAME)
