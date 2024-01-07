@@ -46,7 +46,7 @@ jobs:
           path: ./test_output.txt
 
       - name: Read test output
-        id: test-output
+        id: test_output
         run: |
           {
             echo 'JSON_RESPONSE<<EOF'
@@ -62,7 +62,7 @@ jobs:
           body: |
             ## Go Test Output
             ```
-            ${{ steps.test-output.outputs.results }}
+            ${{ env.TEST_OUTPUT }}
             ```
           # body-path: "test_output.txt"
         env:
