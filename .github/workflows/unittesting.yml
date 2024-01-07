@@ -1,6 +1,13 @@
 name: Unit Testing
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+    branches:
+      - "**"
 
 permissions:
   issues: write
@@ -40,7 +47,8 @@ jobs:
 
       - name: Read test output
         id: test-output
-        run: echo "::set-output name=results::$(cat test_output.txt)"
+        run: |
+          echo "::set-output name=results::$(<test_output.txt)"
 
       - name: Post test output as comment
         if: github.event.pull_request != null
