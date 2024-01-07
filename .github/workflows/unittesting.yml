@@ -48,11 +48,11 @@ jobs:
       - name: Read test output
         id: test-output
         run: |
-          content=$(cat test_output.txt)
-          content="${content//'%'/'%25'}"  # Escape %
-          content="${content//$'\n'/'%0A'}"  # Escape newlines
-          content="${content//$'\r'/'%0D'}"  # Escape carriage returns
-          echo "::set-output name=results::$content"
+          {
+            echo 'JSON_RESPONSE<<EOF'
+            cat test_output.txt
+            echo EOF
+          } >> "$GITHUB_ENV"
 
       - name: Post test output as comment
         if: github.event.pull_request != null
@@ -64,6 +64,7 @@ jobs:
             ```
             ${{ steps.test-output.outputs.results }}
             ```
+          # body-path: "test_output.txt"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
