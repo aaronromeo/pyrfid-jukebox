@@ -5,3 +5,4 @@ __pycache__
 server/rfid_map.json
 cover.out
 cover.html
+test_output.txt

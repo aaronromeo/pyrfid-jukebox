@@ -20,7 +20,7 @@ jobs:
         with:
           go-version: "~1.21" # Use the version of Go in your project
 
-      - name: Generate test coverage
+      - name: Run tests and generate test coverage
         run: go test ./... -coverprofile=./cover.out -covermode=atomic -coverpkg=./... > test_output.txt
 
       - name: Generate test coverage report
@@ -31,6 +31,12 @@ jobs:
         with:
           name: coverage-report
           path: ./cover.html
+
+      - name: Upload test_output report
+        uses: actions/upload-artifact@v2
+        with:
+          name: test_output
+          path: ./test_output.txt
 
       - name: Read test output
         id: test-output
