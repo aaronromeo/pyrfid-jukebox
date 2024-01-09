@@ -62,15 +62,20 @@ jobs:
           comment-author: "github-actions[bot]"
           body-includes: Go Test Output
 
-      - name: Delete comment
-        if: steps.fc.outputs.comment-id != ''
-        uses: detomarco/delete-comments@v1.0.4
+      - name: Delete PR comment
+        uses: actions/github-script@v6
         with:
-          token: ${GITHUB_TOKEN}
-          repository: owner/repo
-          comment-id: ${{ steps.fc.outputs.comment-id }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          script: |
+            const issue_number = ${{ github.event.pull_request.number }};
+            const comment_id = ${{ steps.fc.outputs.comment-id }};
+            if (comment_id) {
+              await github.rest.issues.deleteComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: comment_id
+              });
+            }
 
       - name: Post test output as comment
         if: github.event.pull_request != null
@@ -79,6 +84,7 @@ jobs:
           issue-number: ${{ github.event.pull_request.number }}
           body: |
             ## Go Test Output
+            previous comment ${{ steps.fc.outputs.comment-id }};
             ```
             ${{ steps.test-output.outputs.results }}
             ```
