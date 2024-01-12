@@ -2,6 +2,23 @@
 
 ## What does this tool do?
 
+This project is all about creating a user-friendly, RFID-based music player specifically designed for young children. Using a Raspberry Pi as its brain, the `pyrfid-jukebox` simplifies music playback to a simple action of scanning an RFID tag, thus making it accessible and engaging for little ones.
+
+![Finished product](docs/PXL_20240110_005504670.jpg)
+
+### Key Features of the Codebase
+
+- RFID Integration: Code to interface RFID readers with the Raspberry Pi for tag scanning and playback initiation.
+- Music Playback Control: Scripts to manage music playback using CMUS and ALSA for a smooth audio experience.
+- Hardware Interaction: Code for handling physical inputs like buttons for play/pause, volume control, and more.
+- LED Feedback System: Scripts to provide visual feedback through LEDs, enhancing the interaction for kids.
+- Parental Control Module: Remote management capabilities allowing updates and maintenance via SSH or a web interface.
+- Resilient Design: Focus on error handling and robustness suitable for a child-operated device.
+
+This repository serves as a resource for developers and hobbyists interested in creating interactive, child-friendly tech solutions. Whether you're looking to replicate the project, contribute, or draw inspiration for your own creation, I hope the `pyrfid-jukebox` codebase provides valuable insights into blending technology with playful learning.
+
+Feel free to explore, fork, and contribute to making music more accessible and fun for your little ones!
+
 ## Getting Started
 
 ### Setting up the Raspberry Pi Zero W for the Project
@@ -68,7 +85,7 @@ sudo apt-get install -y git vim tmux
   sudo nano /etc/ssh/sshd_config
   ```
 
-- Add the following line to prevent SSH from becoming nonresponsive:
+- Add the following line to prevent SSH from becoming non-responsive:
 
   ```txt
   IPQoS cs0 cs0
@@ -203,6 +220,10 @@ The required parts are
 - 5 10kΩ resistors (for the pull-down resistor)
 - 5 1kΩ resistors (to protect the Raspberry Pi board)
 
+![prototype board (picture 1)](docs/PXL_20231226_232926851.jpg)
+
+![prototype board (picture 2)](docs/PXL_20231226_232916070.jpg)
+
 ### 13. Project setup
 
 - Install virtual env
@@ -249,6 +270,8 @@ sudo iwconfig wlan0 power off
 ### RP0 Pinout
 
 ![RP0](docs/RP0-pinout.png)
+
+![Connections from the prototype board](docs/PXL_20231226_232936534.jpg)
 
 #### Pi Zero - Connections for the SDA, SCK, MOSI, MISO, RST of the MFRC522
 
