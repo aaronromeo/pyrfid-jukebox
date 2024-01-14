@@ -44,55 +44,56 @@ func (m *MockCmdExecutor) Command(name string, arg ...string) helper.Cmd {
 
 	var isError bool
 
-	if name == "bluetoothctl" && arg[0] == "info" && arg[1] == "connected_device" {
+	switch {
+	case name == "bluetoothctl" && arg[0] == "info" && arg[1] == "connected_device":
 		isError = false
 		m.Output = `
-		Device 88:C6:26:23:95:3F (public)
-		Name: UE MINI BOOM
-		Alias: UE MINI BOOM
-		Class: 0x00240404
-		Icon: audio-card
-		Paired: yes
-		Trusted: yes
-		Blocked: no
-		Connected: yes
-		LegacyPairing: no
-		UUID: Vendor specific           (00000000-deca-fade-deca-deafdecacaff)
-		UUID: Serial Port               (00001101-0000-1000-8000-00805f9b34fb)
-		UUID: Audio Sink                (0000110b-0000-1000-8000-00805f9b34fb)
-		UUID: A/V Remote Control Target (0000110c-0000-1000-8000-00805f9b34fb)
-		UUID: Advanced Audio Distribu.. (0000110d-0000-1000-8000-00805f9b34fb)
-		UUID: A/V Remote Control        (0000110e-0000-1000-8000-00805f9b34fb)
-		UUID: Handsfree                 (0000111e-0000-1000-8000-00805f9b34fb)
-		UUID: PnP Information           (00001200-0000-1000-8000-00805f9b34fb)
-		Modalias: usb:v046DpBA20dFF0E
-		`
-	} else if name == "bluetoothctl" && arg[0] == "info" && arg[1] == "not_connected_device" {
+			Device 88:C6:26:23:95:3F (public)
+			Name: UE MINI BOOM
+			Alias: UE MINI BOOM
+			Class: 0x00240404
+			Icon: audio-card
+			Paired: yes
+			Trusted: yes
+			Blocked: no
+			Connected: yes
+			LegacyPairing: no
+			UUID: Vendor specific           (00000000-deca-fade-deca-deafdecacaff)
+			UUID: Serial Port               (00001101-0000-1000-8000-00805f9b34fb)
+			UUID: Audio Sink                (0000110b-0000-1000-8000-00805f9b34fb)
+			UUID: A/V Remote Control Target (0000110c-0000-1000-8000-00805f9b34fb)
+			UUID: Advanced Audio Distribu.. (0000110d-0000-1000-8000-00805f9b34fb)
+			UUID: A/V Remote Control        (0000110e-0000-1000-8000-00805f9b34fb)
+			UUID: Handsfree                 (0000111e-0000-1000-8000-00805f9b34fb)
+			UUID: PnP Information           (00001200-0000-1000-8000-00805f9b34fb)
+			Modalias: usb:v046DpBA20dFF0E
+			`
+	case name == "bluetoothctl" && arg[0] == "info" && arg[1] == "not_connected_device":
 		isError = false
 		m.Output = `
-		Device FC:58:FA:8C:E3:A8 (public)
-		Name: ENEBY20
-		Alias: ENEBY20
-		Class: 0x002c0418
-		Icon: audio-card
-		Paired: yes
-		Trusted: yes
-		Blocked: no
-		Connected: no
-		LegacyPairing: no
-		UUID: Serial Port               (00001101-0000-1000-8000-00805f9b34fb)
-		UUID: Audio Sink                (0000110b-0000-1000-8000-00805f9b34fb)
-		UUID: A/V Remote Control Target (0000110c-0000-1000-8000-00805f9b34fb)
-		UUID: Advanced Audio Distribu.. (0000110d-0000-1000-8000-00805f9b34fb)
-		UUID: A/V Remote Control        (0000110e-0000-1000-8000-00805f9b34fb)
-		UUID: PnP Information           (00001200-0000-1000-8000-00805f9b34fb)
-		Modalias: bluetooth:v000ApFFFFdFFFF
-		`
-	} else if name == "bluetoothctl" && arg[0] == "info" && arg[1] == "non_existant_device" {
+			Device FC:58:FA:8C:E3:A8 (public)
+			Name: ENEBY20
+			Alias: ENEBY20
+			Class: 0x002c0418
+			Icon: audio-card
+			Paired: yes
+			Trusted: yes
+			Blocked: no
+			Connected: no
+			LegacyPairing: no
+			UUID: Serial Port               (00001101-0000-1000-8000-00805f9b34fb)
+			UUID: Audio Sink                (0000110b-0000-1000-8000-00805f9b34fb)
+			UUID: A/V Remote Control Target (0000110c-0000-1000-8000-00805f9b34fb)
+			UUID: Advanced Audio Distribu.. (0000110d-0000-1000-8000-00805f9b34fb)
+			UUID: A/V Remote Control        (0000110e-0000-1000-8000-00805f9b34fb)
+			UUID: PnP Information           (00001200-0000-1000-8000-00805f9b34fb)
+			Modalias: bluetooth:v000ApFFFFdFFFF
+			`
+	case name == "bluetoothctl" && arg[0] == "info" && arg[1] == "non_existant_device":
 		isError = true
 		m.Output = `
-		Device bacon not available
-		`
+			Device bacon not available
+			`
 	}
 	return &MockCmd{Output: m.Output, IsError: isError}
 }
@@ -118,7 +119,7 @@ func TestService_Run(t *testing.T) {
 
 	// Test 1: ALSA config update succeeds and Bluetooth connection count is retrieved successfully
 	device = "connected_device"
-	os.Setenv("PJ_BLUETOOTH_DEVICE", device)
+	t.Setenv("PJ_BLUETOOTH_DEVICE", device)
 
 	mockALSAConfigUpdater.UpdateALSAConfigFunc = func(cmdExecutor helper.CommandExecutor) error {
 		return nil
@@ -139,7 +140,7 @@ func TestService_Run(t *testing.T) {
 
 	// Test 2: ALSA config update fails
 	device = "connected_device"
-	os.Setenv("PJ_BLUETOOTH_DEVICE", device)
+	t.Setenv("PJ_BLUETOOTH_DEVICE", device)
 	mockALSAConfigUpdater.UpdateALSAConfigFunc = func(cmdExecutor helper.CommandExecutor) error {
 		return errors.New("ALSA config update failed")
 	}
@@ -151,7 +152,7 @@ func TestService_Run(t *testing.T) {
 
 	// Test 3: Bluetooth connection count retrieval fails
 	device = "non_existant_device"
-	os.Setenv("PJ_BLUETOOTH_DEVICE", device)
+	t.Setenv("PJ_BLUETOOTH_DEVICE", device)
 	mockALSAConfigUpdater.UpdateALSAConfigFunc = func(cmdExecutor helper.CommandExecutor) error {
 		return nil
 	}
@@ -178,7 +179,7 @@ func TestService_Run(t *testing.T) {
 
 	// Test 5: Bluetooth connection count is 0
 	device = "not_connected_device"
-	os.Setenv("PJ_BLUETOOTH_DEVICE", device)
+	t.Setenv("PJ_BLUETOOTH_DEVICE", device)
 
 	mockALSAConfigUpdater.UpdateALSAConfigFunc = func(cmdExecutor helper.CommandExecutor) error {
 		return nil
