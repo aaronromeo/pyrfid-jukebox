@@ -26,7 +26,7 @@ Feel free to explore, fork, and contribute to making music more accessible and f
 ### 1. Initial Configuration
 
 - Flash a fresh copy of Raspberry Pi OS (Debian-based) onto a microSD card.
-  - I've used the one without the desktop.
+  - I've used the one without the desktop. At the time of writing this, the install was Raspberry Pi OS Lite 32 Bit (64 bit was hanging)
   - Using [Raspberry Pi Imager](https://www.raspberrypi.com/software/) allows the setup of SSH
 
 ### 2. Deb Package Installations
@@ -37,10 +37,21 @@ sudo apt-get -y upgrade
 sudo xargs -a docs/packages_list.txt apt install
 sudo apt purge pulseaudio*
 sudo reboot now
+```
+
+When is boots back up...
+
+```bash
 sudo apt-get install -y git vim tmux
 ```
 
 ** The step to remove `pulseaudio` might not be necessary (as it might not be installed by the [packages_list.txt](docs/packages_list))
+
+### 3. Clone project setup
+
+- Git clone this project
+  - `mkdir /home/pi/workspace/`
+  - `git clone https://github.com/aaronromeo/pyrfid-jukebox`
 
 ### 3. Bluetooth Configuration
 
@@ -48,10 +59,21 @@ sudo apt-get install -y git vim tmux
 
   ```bash
   sudo usermod -a -G lp pi
+  sudo groupadd pulse
+  sudo groupadd pulse-access
   sudo usermod -aG pulse,pulse-access pi
   ```
 
-- Once installed, follow these next steps to pair with your Bluetooth keyboard:
+Verify the groups with
+
+```text
+$ groups pi
+pi : pi adm lp dialout cdrom sudo audio video plugdev games users input render netdev spi i2c gpio pulse pulse-access
+```
+
+Reboot the system (`sudo reboot now`)
+
+- Once installed, follow these next steps to pair with your Bluetooth KEYBOARD:
 
   1. Run the Bluetooth program by typing `bluetoothctl`.
 
@@ -82,7 +104,7 @@ sudo apt-get install -y git vim tmux
 - Edit the SSH configuration:
 
   ```bash
-  sudo nano /etc/ssh/sshd_config
+  sudo vi /etc/ssh/sshd_config
   ```
 
 - Add the following line to prevent SSH from becoming non-responsive:
@@ -120,17 +142,29 @@ sudo apt-get install -y git vim tmux
 - Raspbian installs with PulseAudio. However it wasn't the easiest to get working. This is partially because it is setup to run by a non-root user
 - BlueALSA is not bundled with Bullseye (Raspbian 11)
 
-1. `git clone git@github.com:arkq/bluez-alsa.git`
-2. Follow the [instructions](https://github.com/arkq/bluez-alsa/blob/master/INSTALL.md)
-3. `configure` was run with the flags `--enable-systemd` and `--enable-manpages`
-4. Enable the `bluealsa` service on startup via `sudo systemctl enable bluealsa`
-5. Confirm it is configured with `sudo systemctl is-enabled bluealsa`
+- `sudo apt-get update`
+- `sudo apt-get install -y autoconf automake libtool`
+- `sudo apt-get install -y libasound2-dev libbluetooth-dev libglib2.0-dev libsbc-dev python3-docutils`
+- `git clone https://github.com/arkq/bluez-alsa.git`
+- `cd bluez-alsa/`
+- Follow the [instructions](https://github.com/arkq/bluez-alsa/blob/master/INSTALL.md)
+  - At the time of writing this it is
+    - `autoreconf --install`
+    - `sudo apt-get install -y libasound2-dev libbluetooth-dev libglib2.0-dev libsbc-dev python3-docutils libdbus-1-dev`
+    - `./configure --enable-systemd --enable-manpages`
+    - `sudo make install`
+    - `sudo adduser --system --group --no-create-home bluealsa`
+    - `sudo adduser --system --group --no-create-home bluealsa-aplay`
+    - `sudo adduser bluealsa-aplay audio`
+    - `sudo systemctl daemon-reload`
+- Enable the `bluealsa` service on startup via `sudo systemctl enable bluealsa`
+- Confirm it is configured with `sudo systemctl is-enabled bluealsa`
 
 ### 7. Setup Watchdog Timer
 
 Enable the Watchdog Kernel Module:
 
-1. Enable the BCM2708 (or BCM2835 on newer models) watchdog kernel module. Edit `/boot/config.txt` and add the following line at the end of the file
+1. Enable the BCM2708 (or BCM2835 on newer models) watchdog kernel module. Edit `sudo vi /boot/firmware/config.txt` and add the following line at the end of the file
 
     ```csharp
     dtparam=watchdog=on
@@ -152,10 +186,10 @@ Enable the Watchdog Kernel Module:
 
     ```bash
     sudo apt-get update
-    sudo apt-get install watchdog
+    sudo apt-get -y install watchdog
     ```
 
-5. Configure the watchdog daemon by editing `/etc/watchdog.conf` and uncomment or add these lines. The `max-load-1`` option is an example to reboot if the system load average for the last minute exceeds 24. Adjust this according to your needs.
+5. Configure the watchdog daemon by editing `/etc/watchdog.conf` and uncomment or add these lines. The `max-load-1` option is an example to reboot if the system load average for the last minute exceeds 24. Adjust this according to your needs.
 
     ```javascript
     watchdog-device = /dev/watchdog
@@ -173,6 +207,8 @@ Enable the Watchdog Kernel Module:
 
 To enable and configure ALSA (Advanced Linux Sound Architecture) for Bluetooth audio output, the following steps should be taken
 
+1. `sudo apt-get install alsa-ucm-conf`
+
 1. Copy the `system/home/.asoundrc` configuration file to the `pi` home directory.
 
 2. Edit the file and make sure to replace "88:C6:26:23:95:3F" with the MAC address of your Bluetooth audio device.
@@ -188,8 +224,9 @@ To enable and configure ALSA (Advanced Linux Sound Architecture) for Bluetooth a
 
 ### 9. Configure CMUS to use BlueALSA
 
+1. `sudo apt-get install -y cmus cmus-plugin-ffmpeg`
 1. Get the current bluetooth device from `bluealsa-aplay -L`
-2. In `~/.config/cmus/autosave` update the following values
+2. In `~/.config/cmus/autosave` update the following values (and correct the bluetooth device name)
 
     ```txt
       set dsp.alsa.device=bluealsa:DEV=FC:58:FA:8C:E3:A8,PROFILE=a2dp,SRV=org.bluealsa
@@ -203,7 +240,7 @@ To automatically establish a Bluetooth connection on reboot, the script named [`
 ### 11. Enable RDIF
 
 - Enable SPI Interface:
-  - The SPI interface must be enabled on your Raspberry Pi for the mfrc522 module to communicate with the RFID reader. You can enable SPI using the raspi-config tool. Run sudo raspi-config, navigate to "Interfacing Options" > "SPI" and enable it. After enabling, reboot your Raspberry Pi.
+  - The SPI interface must be enabled on your Raspberry Pi for the mfrc522 module to communicate with the RFID reader. You can enable SPI using the `raspi-config` tool. Run `sudo raspi-config`, navigate to "Interfacing Options" > "SPI" and enable it. After enabling, reboot your Raspberry Pi.
 - Check SPI Device Files:
   - After enabling SPI, check if the SPI device files exist. You should find device files like /dev/spidev0.0 or /dev/spidev0.1.You can check this by running ls /dev/spi* in the terminal.
 
@@ -245,6 +282,10 @@ Run this!
 ```bash
 sudo iwconfig wlan0 power off
 ```
+
+### 15. Install scripts
+
+- Update the device ID <https://github.com/aaronromeo/pyrfid-jukebox/blob/main/system/scripts/btconnect.sh#L8>
 
 ## GPIO config
 

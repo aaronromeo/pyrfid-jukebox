@@ -5,7 +5,7 @@ set -uo pipefail
 echo
 echo "$(date '+%Y-%m-%d %H:%M:%S') - Script started"
 
-device="88:C6:26:23:95:3F"
+device="AC:BF:71:DA:D2:55"
 
 connect_bluetooth() {
     sudo modprobe snd-aloop
@@ -21,7 +21,7 @@ connect_bluetooth() {
 # Loop indefinitely
 while true; do
 
-    if [ diff /home/pi/.asoundrc /home/pi/workspace/pyrfid-jukebox/system/home/.asoundrc ]; then
+    if diff /home/pi/.asoundrc /home/pi/workspace/pyrfid-jukebox/system/home/.asoundrc >/dev/null; then
         echo "$(date '+%Y-%m-%d %H:%M:%S') .asoundrc has changed in repo. Copying over system config..."
         cp /home/pi/workspace/pyrfid-jukebox/system/home/.asoundrc /home/pi/.asoundrc
         sudo alsactl restore

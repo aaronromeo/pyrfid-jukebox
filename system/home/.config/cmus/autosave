@@ -50,7 +50,7 @@ set continue=true
 set continue_album=true
 set device=/dev/cdrom
 set display_artist_sort_name=false
-set dsp.alsa.device=default
+set dsp.alsa.device=bluealsa:DEV=AC:BF:71:DA:D2:55,PROFILE=a2dp,SRV=org.bluealsa
 set dsp.ao.buffer_size=16384
 set dsp.ao.device_interface=
 set dsp.ao.driver=
