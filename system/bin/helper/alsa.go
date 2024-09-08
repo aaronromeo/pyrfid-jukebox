@@ -1,10 +1,12 @@
 package helper
 
 import (
+	"bufio"
 	"bytes"
 	"log"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 const DefaultASLAConfig = "/home/pi/.asoundrc"
@@ -31,6 +33,24 @@ func (r *RealALSAConfigUpdater) UpdateALSAConfig(cmdExecutor CommandExecutor) er
 		}
 	}
 	return nil
+}
+
+func (r *RealALSAConfigUpdater) IsALSARunning(cmdExecutor CommandExecutor) (bool, error) {
+	if err := cmdExecutor.Command("sudo", "service", "bluealsa", "status").Run(); err != nil {
+		log.Printf("Error getting bluealsa status: %v", err)
+		return false, err
+	}
+
+	output := cmdExecutor.GetOutput()
+	scanner := bufio.NewScanner(strings.NewReader(output))
+	count := 0
+	for scanner.Scan() {
+		if strings.Contains(scanner.Text(), "active (running)") {
+			count++
+		}
+	}
+
+	return count > 0, nil
 }
 
 func HasALSAConfigChanged() (bool, error) {

@@ -31,6 +31,7 @@ func (e *OSCommandExecutor) GetOutput() string {
 
 type ALSAConfigUpdater interface {
 	UpdateALSAConfig(executor CommandExecutor) error
+	IsALSARunning(executor CommandExecutor) (bool, error)
 }
 
 type RealALSAConfigUpdater struct{}

@@ -13,6 +13,7 @@ import (
 
 type MockALSAConfigUpdater struct {
 	UpdateALSAConfigFunc func(cmdExecutor helper.CommandExecutor) error
+	IsALSARunningFunc    func(cmdExecutor helper.CommandExecutor) (bool, error)
 }
 
 func (m *MockALSAConfigUpdater) UpdateALSAConfig(cmdExecutor helper.CommandExecutor) error {
@@ -20,6 +21,13 @@ func (m *MockALSAConfigUpdater) UpdateALSAConfig(cmdExecutor helper.CommandExecu
 		return m.UpdateALSAConfigFunc(cmdExecutor)
 	}
 	return nil
+}
+
+func (m *MockALSAConfigUpdater) IsALSARunning(cmdExecutor helper.CommandExecutor) (bool, error) {
+	if m.IsALSARunningFunc != nil {
+		return m.IsALSARunningFunc(cmdExecutor)
+	}
+	return false, nil
 }
 
 type MockCmd struct {

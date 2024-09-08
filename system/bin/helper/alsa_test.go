@@ -1,6 +1,7 @@
 package helper_test
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 	"testing"
@@ -20,6 +21,7 @@ func (c *MockCmd) Run() error {
 
 type MockCommandExecutor struct {
 	CommandExecuted bool
+	Output          string
 }
 
 func (e *MockCommandExecutor) Command(_ string, _ ...string) helper.Cmd {
@@ -220,4 +222,62 @@ func TestCopyFile(t *testing.T) {
 
 	// Cleanup
 	os.Remove(dst)
+}
+func TestIsALSARunning(t *testing.T) {
+	cmdExecutor := &MockCommandExecutor{}
+	alsaConfigUpdater := helper.RealALSAConfigUpdater{}
+
+	// Test 1: ALSA is running
+	cmdExecutor.CommandExecuted = false
+	cmdExecutor.Output = "bluealsa.service - BluezALSA proxy\n   Loaded: loaded (/lib/systemd/system/bluealsa.service; enabled; vendor preset: enabled)\n   Active: active (running) since Wed 2022-10-12 10:00:00 UTC; 1 day 10h ago\n     Docs: man:bluealsa(1)\n Main PID: 1234 (bluealsa)\n    Tasks: 1 (limit: 4915)\n   Memory: 1.2M\n   CGroup: /system.slice/bluealsa.service\n           └─1234 /usr/bin/bluealsa --profile=a2dp-sink\n"
+	expectedResult := true
+	expectedError := error(nil)
+
+	result, err := alsaConfigUpdater.IsALSARunning(cmdExecutor)
+
+	if result != expectedResult {
+		t.Errorf("Expected ALSA to be running, but it is not")
+	}
+	if err != expectedError {
+		t.Errorf("Expected no error, but got: %v", err)
+	}
+	if !cmdExecutor.CommandExecuted {
+		t.Errorf("Expected command execution")
+	}
+
+	// Test 2: ALSA is not running
+	cmdExecutor.CommandExecuted = false
+	cmdExecutor.Output = "bluealsa.service - BluezALSA proxy\n   Loaded: loaded (/lib/systemd/system/bluealsa.service; enabled; vendor preset: enabled)\n   Active: inactive (dead) since Wed 2022-10-12 10:00:00 UTC; 1 day 10h ago\n     Docs: man:bluealsa(1)\n Main PID: 1234 (code=exited, status=0/SUCCESS)\n    Tasks: 0 (limit: 4915)\n   Memory: 0B\n   CGroup: /system.slice/bluealsa.service\n"
+	expectedResult = false
+	expectedError = error(nil)
+
+	result, err = alsaConfigUpdater.IsALSARunning(cmdExecutor)
+
+	if result != expectedResult {
+		t.Errorf("Expected ALSA to not be running, but it is")
+	}
+	if err != expectedError {
+		t.Errorf("Expected no error, but got: %v", err)
+	}
+	if !cmdExecutor.CommandExecuted {
+		t.Errorf("Expected command execution")
+	}
+
+	// Test 3: Error executing command
+	cmdExecutor.CommandExecuted = false
+	cmdExecutor.Output = ""
+	expectedResult = false
+	expectedError = fmt.Errorf("command execution error")
+
+	result, err = alsaConfigUpdater.IsALSARunning(cmdExecutor)
+
+	if result != expectedResult {
+		t.Errorf("Expected ALSA to not be running, but it is")
+	}
+	if err == nil || err.Error() != expectedError.Error() {
+		t.Errorf("Expected error: %v, but got: %v", expectedError, err)
+	}
+	if !cmdExecutor.CommandExecuted {
+		t.Errorf("Expected command execution")
+	}
 }

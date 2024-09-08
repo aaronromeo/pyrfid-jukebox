@@ -34,13 +34,16 @@ func (bt *Service) Run() error {
 		return err
 	}
 
-	count, err := bt.getBluetoothConnectionCount(device)
+	// TODO: The count should be greater than 0. This reconnect if the count is 0.
+	isBluetoothConnected, err := bt.IsBluetoothConnected(device)
 	if err != nil {
-		log.Printf("Error: %v", err)
+		log.Printf("Error checking Bluetooth connection: %v", err)
 		return err
 	}
-	// TODO: The count should be greater than 0. This reconnect if the count is 0.
-	log.Printf("Number of connections: %d\n", count)
+
+	if isBluetoothConnected {
+		log.Printf("BlueTooth connected")
+	}
 
 	/*
 		$ bluealsa-aplay -l
@@ -97,6 +100,17 @@ func (bt *Service) Run() error {
 	*/
 
 	return nil
+}
+
+func (bt *Service) IsBluetoothConnected(device string) (bool, error) {
+	count, err := bt.getBluetoothConnectionCount(device)
+	if err != nil {
+		log.Printf("Error: %v", err)
+		return false, err
+	}
+
+	log.Printf("Number of connections: %d\n", count)
+	return count > 0, nil
 }
 
 func (bt *Service) getBluetoothConnectionCount(device string) (int, error) {
