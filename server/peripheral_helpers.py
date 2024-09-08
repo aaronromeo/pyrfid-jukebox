@@ -91,11 +91,11 @@ def toggle_repeat_callback(pin):
 
 
 BUTTON_TO_FUNCTION_MAP = {
+    BUTTON_REPEAT_TRACK: toggle_repeat_callback,
+    BUTTON_SHUFFLE_TRACK: toggle_shuffle_callback,
     BUTTON_PLAY_PAUSE: play_pause_callback,
     BUTTON_NEXT_TRACK: next_track_callback,
     BUTTON_STOP_TRACK: stop_track_callback,
-    BUTTON_REPEAT_TRACK: toggle_repeat_callback,
-    BUTTON_SHUFFLE_TRACK: toggle_shuffle_callback,
 }
 
 
