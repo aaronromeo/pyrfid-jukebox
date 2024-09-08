@@ -39,7 +39,7 @@ sudo apt purge pulseaudio*
 sudo reboot now
 ```
 
-When is boots back up...
+When it boots back up...
 
 ```bash
 sudo apt-get install -y git vim tmux
@@ -144,7 +144,6 @@ Reboot the system (`sudo reboot now`)
 
 - `sudo apt-get update`
 - `sudo apt-get install -y autoconf automake libtool`
-- `sudo apt-get install -y libasound2-dev libbluetooth-dev libglib2.0-dev libsbc-dev python3-docutils`
 - `git clone https://github.com/arkq/bluez-alsa.git`
 - `cd bluez-alsa/`
 - Follow the [instructions](https://github.com/arkq/bluez-alsa/blob/master/INSTALL.md)
@@ -264,7 +263,7 @@ The required parts are
 ### 13. Project setup
 
 - Install virtual env
-  - `sudo apt-get install python3-venv`
+  - `sudo apt-get install python3-venv python3-pip`
 - Create a venv
   - `python -m venv env`
 - Activate venv
@@ -286,6 +285,8 @@ sudo iwconfig wlan0 power off
 ### 15. Install scripts
 
 - Update the device ID <https://github.com/aaronromeo/pyrfid-jukebox/blob/main/system/scripts/btconnect.sh#L8>
+- `sudo apt-get install -y supervisor screen lsof`
+- Run `setup.sh`
 
 ## GPIO config
 
@@ -359,6 +360,11 @@ sudo iwconfig wlan0 power off
     - Disable `mpris` by setting the key in `~/.config/cmus/autosave` to `false`.
 
 ## Notes
+
+- ffmeg is useful fo mp3 encoding `sudo apt install -y ffmpeg`
+- The i2cdetect command is used to check for any devices on the I²C bus `sudo apt install i2c-tools`
+- View pins with `sudo pinout`
+- Check the pins with `pinctrl` for example `pinctrl get 5`
 
 ### ALSACTL
 

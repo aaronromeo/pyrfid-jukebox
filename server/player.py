@@ -81,6 +81,7 @@ try:
     # Setup GPIO
     Logger.info("Starting GPIO setup")
     GPIO.setmode(GPIO.BCM)
+    Logger.info("Setup mode GPIO.BCM")
 
     # The current connections are between the GPIO pin and GND when closed.
     # This means the GPIO will read LOW when the button is pressed

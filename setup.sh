@@ -9,6 +9,7 @@ else
     exit 1
 fi
 
+cp -R system/scripts ~
 cp system/supervisor/conf.d/* /etc/supervisor/conf.d/
 
 mkdir -p /home/pi/logs

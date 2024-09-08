@@ -101,6 +101,7 @@ BUTTON_TO_FUNCTION_MAP = {
 
 def add_button_detections():
     for button in BUTTON_TO_FUNCTION_MAP:
+        Logger.info(f"Add button detection on {button}")
         GPIO.add_event_detect(
             button,
             GPIO.RISING,
@@ -111,6 +112,7 @@ def add_button_detections():
 
 def button_setup():
     for button in BUTTON_TO_FUNCTION_MAP:
+        Logger.info(f"Setting up button {button}")
         GPIO.setup(
             button,
             GPIO.IN,
@@ -119,8 +121,11 @@ def button_setup():
 
 
 def led_setup():
+    Logger.info(f"Setting up led {PLAY_LED_PIN}")
     GPIO.setup(PLAY_LED_PIN, GPIO.OUT)
+    Logger.info(f"Setting up led {SHUFFLE_LED_PIN}")
     GPIO.setup(SHUFFLE_LED_PIN, GPIO.OUT)
+    Logger.info(f"Setting up led {REPEAT_LED_PIN}")
     GPIO.setup(REPEAT_LED_PIN, GPIO.OUT)
 
 
