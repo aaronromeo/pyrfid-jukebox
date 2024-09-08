@@ -101,8 +101,9 @@ BUTTON_TO_FUNCTION_MAP = {
 
 def add_button_detections():
     for button in BUTTON_TO_FUNCTION_MAP:
-        Logger.info(f"Add button detection on {button}")
+        Logger.info(f"Removing button detection on {button}")
         GPIO.remove_event_detect(button)
+        Logger.info(f"Add button detection on {button}")
         GPIO.add_event_detect(
             button,
             GPIO.RISING,
