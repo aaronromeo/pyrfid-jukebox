@@ -11,6 +11,8 @@ SHUFFLE = 4
 REPEAT = 5
 STOP = 6
 
+TIMEOUT_DURATION = 20
+
 
 def send_to_cmus_socket(commands):
     try:
@@ -18,7 +20,6 @@ def send_to_cmus_socket(commands):
             os.environ.get("XDG_RUNTIME_DIR", "/home/pi"), "cmus-socket"
         )
 
-        Logger.info(f"Using CMUS socket path: {cmus_socket_path}")
         if not os.path.exists(cmus_socket_path):
             Logger.critical(f"Socket file '{cmus_socket_path}' not found.")
             raise FileNotFoundError(
@@ -31,10 +32,30 @@ def send_to_cmus_socket(commands):
                 Logger.info(f"Sending command: {cmd}")
 
             with socket.socket(socket.AF_UNIX, socket.SOCK_STREAM) as s:
-                s.connect(cmus_socket_path)
-                s.send(cmd.encode() + b"\n")
-                time.sleep(0.05)
-                data = s.recv(4096)
+                try:
+                    Logger.info(f"Using CMUS socket path: {cmus_socket_path}")
+                    s.settimeout(TIMEOUT_DURATION)
+                    s.connect(cmus_socket_path)
+                    s.send(cmd.encode() + b"\n")
+                    time.sleep(0.05)
+                    data = s.recv(4096)
+
+                except socket.timeout as e:
+                    Logger.critical(
+                        "Timeout occurred trying to connect to "
+                        + f"{cmus_socket_path} with the command {cmd}"
+                    )
+                    raise e
+
+                except Exception as e:
+                    Logger.critical(
+                        "An error occurred trying to connect to "
+                        + f"{cmus_socket_path} with the command {cmd}"
+                    )
+                    raise e
+
+                finally:
+                    s.close()
 
                 Logger.info(f"Completed command: {cmd}")
 
@@ -61,9 +82,9 @@ def ensure_is_cmus_running():
 
 
 def cmus_status():
-    Logger.info("Requesting cmus status")
+    # Logger.info("Requesting cmus status")
     status_output = send_to_cmus_socket(["status"])
-    Logger.info(f"Received cmus status {status_output}")
+    # Logger.info(f"Received cmus status {status_output}")
     is_playing = b"status playing" in status_output
     is_shuffle = b"set shuffle true" in status_output
     is_repeat = b"set repeat true" in status_output
