@@ -5,7 +5,7 @@ set -uo pipefail
 echo
 echo "$(date '+%Y-%m-%d %H:%M:%S') - Script started"
 
-device="AC:BF:71:DA:D2:55"
+device="EB:06:EF:22:D2:CB"
 
 connect_bluetooth() {
     sudo modprobe snd-aloop
