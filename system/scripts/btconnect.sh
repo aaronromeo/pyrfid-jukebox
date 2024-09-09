@@ -21,7 +21,7 @@ connect_bluetooth() {
 # Loop indefinitely
 while true; do
 
-    if diff /home/pi/.asoundrc /home/pi/workspace/pyrfid-jukebox/system/home/.asoundrc >/dev/null; then
+    if ! diff /home/pi/.asoundrc /home/pi/workspace/pyrfid-jukebox/system/home/.asoundrc >/dev/null; then
         echo "$(date '+%Y-%m-%d %H:%M:%S') .asoundrc has changed in repo. Copying over system config..."
         cp /home/pi/workspace/pyrfid-jukebox/system/home/.asoundrc /home/pi/.asoundrc
         sudo alsactl restore
