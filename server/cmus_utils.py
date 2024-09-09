@@ -1,6 +1,7 @@
 import os
 import socket
 import time
+from logger import Logger
 
 QUEUE_AND_PLAY_FOLDER = 0
 PLAY_PAUSE = 1
@@ -25,7 +26,7 @@ def send_to_cmus_socket(commands):
         data = b""
         for cmd in commands:
             if cmd != "status":
-                print(f"Sending command: {cmd}")
+                Logger.info(f"Sending command: {cmd}")
 
             with socket.socket(socket.AF_UNIX, socket.SOCK_STREAM) as s:
                 s.connect(cmus_socket_path)
@@ -33,13 +34,15 @@ def send_to_cmus_socket(commands):
                 time.sleep(0.05)
                 data = s.recv(4096)
 
+                Logger.info(f"Completed command: {cmd}")
+
         return data
 
     except socket.error as e:
-        print(f"Socket error occurred: {e}")
+        Logger.critical(f"Socket error occurred: {e}")
         raise e
     except Exception as e:
-        print(f"An unexpected error occurred: {e}")
+        Logger.critical(f"An unexpected error occurred: {e}")
         raise e
 
 
@@ -49,7 +52,7 @@ def ensure_is_cmus_running():
     )
 
     if not os.path.exists(cmus_socket_path):
-        print("cmus is not running.")
+        Logger.critical("cmus is not running.")
         raise FileNotFoundError(f"Socket file '{cmus_socket_path}' not found.")
 
     return True

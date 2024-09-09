@@ -263,7 +263,7 @@ The required parts are
 ### 13. Project setup
 
 - Install virtual env
-  - `sudo apt-get install python3-venv python3-pip`
+  - `sudo apt-get install python3-venv python3-pip python3-lgpio`
 - Create a venv
   - `python3 -m venv --system-site-packages env`
 - Activate venv
