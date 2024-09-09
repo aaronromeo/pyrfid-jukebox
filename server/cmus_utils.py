@@ -59,7 +59,9 @@ def ensure_is_cmus_running():
 
 
 def cmus_status():
+    Logger.info("Requesting cmus status")
     status_output = send_to_cmus_socket(["status"])
+    Logger.info(f"Received cmus status {status_output}")
     is_playing = b"status playing" in status_output
     is_shuffle = b"set shuffle true" in status_output
     is_repeat = b"set repeat true" in status_output
