@@ -20,7 +20,7 @@ BUTTON_STOP_TRACK = 18
 BUTTON_REPEAT_TRACK = 13
 BUTTON_SHUFFLE_TRACK = 19
 
-# BUTTON_DEBOUNCE_TIME = 250  # milliseconds
+BUTTON_DEBOUNCE_TIME = 250  # milliseconds
 PLAY_LED_PIN = 22
 REPEAT_LED_PIN = 5
 SHUFFLE_LED_PIN = 6
@@ -108,18 +108,14 @@ def add_button_detections():
             button,
             GPIO.RISING,
             callback=BUTTON_TO_FUNCTION_MAP[button],
-            # bouncetime=BUTTON_DEBOUNCE_TIME,
+            bouncetime=BUTTON_DEBOUNCE_TIME,
         )
 
 
 def button_setup():
     for button in BUTTON_TO_FUNCTION_MAP:
         Logger.info(f"Setting up button {button}")
-        GPIO.setup(
-            button,
-            GPIO.IN,
-            # pull_up_down=GPIO.PUD_UP
-        )
+        GPIO.setup(button, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
 
 def led_setup():

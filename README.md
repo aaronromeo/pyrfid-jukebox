@@ -265,7 +265,7 @@ The required parts are
 - Install virtual env
   - `sudo apt-get install python3-venv python3-pip`
 - Create a venv
-  - `python -m venv env`
+  - `python3 -m venv --system-site-packages env`
 - Activate venv
   - `source env/bin/activate`
 - Install the `requirements.txt`
