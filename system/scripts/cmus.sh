@@ -39,7 +39,7 @@ while true; do
 
     if [ $screen_exit_status -ne 0 ] || [ -z "$screen_session" ]; then
         echo "$(date '+%Y-%m-%d %H:%M:%S') Starting cmus..."
-        /usr/bin/screen -dmS cmus /usr/bin/cmus 2> /home/pi/logs/process_cmus_error.log > /home/pi/logs/process_cmus_output.log
+        /usr/bin/screen -dmS cmus /usr/bin/cmus --listen $socket_file 2> /home/pi/logs/process_cmus_error.log > /home/pi/logs/process_cmus_output.log
 
         sleep 5  # Wait a bit for CMUS to start and create the socket file
 

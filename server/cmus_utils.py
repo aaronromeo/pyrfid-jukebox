@@ -18,7 +18,9 @@ def send_to_cmus_socket(commands):
             os.environ.get("XDG_RUNTIME_DIR", "/home/pi"), "cmus-socket"
         )
 
+        Logger.info(f"Using CMUS socket path: {cmus_socket_path}")
         if not os.path.exists(cmus_socket_path):
+            Logger.critical(f"Socket file '{cmus_socket_path}' not found.")
             raise FileNotFoundError(
                 f"Socket file '{cmus_socket_path}' not found."
             )
