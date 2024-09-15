@@ -5,12 +5,10 @@ set -uo pipefail
 echo
 echo "$(date '+%Y-%m-%d %H:%M:%S') - Script started"
 
-device="EB:06:EF:22:D2:CB"
-
 connect_bluetooth() {
     sudo modprobe snd-aloop
-    if bluetoothctl connect "$device"; then
-        echo "Connected successfully to $device."
+    if bluetoothctl connect "$PJ_BLUETOOTH_DEVICE"; then
+        echo "Connected successfully to $PJ_BLUETOOTH_DEVICE."
 
         bluealsa-aplay -l
     else
@@ -28,10 +26,10 @@ while true; do
     fi
 
     # Check if already connected
-    current_connection=$(bluetoothctl info "$device" | grep -c "Connected: yes")
+    current_connection=$(bluetoothctl info "$PJ_BLUETOOTH_DEVICE" | grep -c "Connected: yes")
     current_alsa_status=$(sudo service bluealsa status | grep -c "active (running)")
     if [ "$current_connection" -eq 0 ]; then
-        echo "$(date '+%Y-%m-%d %H:%M:%S') Attempting to connect to $device..."
+        echo "$(date '+%Y-%m-%d %H:%M:%S') Attempting to connect to $PJ_BLUETOOTH_DEVICE..."
 
         # Start BlueALSA if not running
         if [ "$current_alsa_status" -eq 0 ]; then

@@ -37,6 +37,8 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') Checking variables $repodiffs $pipinstall"
 if [ "$repodiffs" = true ]; then
     echo "$(date '+%Y-%m-%d %H:%M:%S') Running setup"
     sudo bash setup.sh
+    make build
+    sudo mv system/go-pyrfid-juke-support/soundsprout-server /usr/local/bin/
 fi
 
 if [ "$pipinstall" = true ]; then

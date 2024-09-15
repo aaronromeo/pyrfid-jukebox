@@ -1,5 +1,6 @@
 GOCMD=go
 GOBUILD=$(GOCMD) build
+GOINSTALL=$(GOCMD) install
 GOCLEAN=$(GOCMD) clean
 GOTEST=$(GOCMD) test
 GOGET=$(GOCMD) get
@@ -24,7 +25,7 @@ clean:
 .PHONY: install
 install:
 	$(GOCLEAN)
-	$(GOBUILD) install ./cmd
+	GOBIN=/usr/local/bin/ $(GOINSTALL) ./cmd
 
 .PHONY: run
 run:

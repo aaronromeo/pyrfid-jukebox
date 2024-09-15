@@ -287,6 +287,12 @@ The required parts are
 - Dump requirements
   - `pip3 freeze > requirements.txt`
 
+- Go build
+
+  ```bash
+  make build && sudo mv system/go-pyrfid-juke-support/soundsprout-server /usr/local/bin/
+  ```
+
 ### 14. Disable power management on the lan
 
 Run this!
@@ -300,6 +306,12 @@ sudo iwconfig wlan0 power off
 - Update the device ID <https://github.com/aaronromeo/pyrfid-jukebox/blob/main/system/scripts/btconnect.sh#L8>
 - `sudo apt-get install -y supervisor screen lsof`
 - Run `setup.sh`
+
+### 16. Setup the env vars
+
+```bash
+echo "PJ_BLUETOOTH_DEVICE=XX:XX:XX:XX:XX:XX" | sudo tee -a /etc/environment
+```
 
 ## GPIO config
 
