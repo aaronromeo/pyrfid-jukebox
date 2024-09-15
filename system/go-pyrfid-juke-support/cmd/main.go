@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"os"
+	"path/filepath"
 
 	"aaronromeo.com/go-pyrfid-juke-support/btconnect"
 	"github.com/joho/godotenv"
@@ -10,7 +11,7 @@ import (
 )
 
 func main() {
-	err := godotenv.Load("$HOME/.soundsprout/conf")
+	err := godotenv.Load(filepath.Join("home", "pi", ".soundsprout", "conf"))
 	if err != nil {
 		log.Fatal("Error loading .env file")
 	}
