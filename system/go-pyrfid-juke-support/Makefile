@@ -3,7 +3,7 @@ GOBUILD=$(GOCMD) build
 GOCLEAN=$(GOCMD) clean
 GOTEST=$(GOCMD) test
 GOGET=$(GOCMD) get
-BINARY_NAME_BASE=soundsprout-server
+BINARY_NAME=soundsprout-server
 
 .PHONY: all
 all: test build
