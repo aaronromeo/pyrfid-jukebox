@@ -1,4 +1,5 @@
 env
+.env
 music/card-*
 __pycache__
 .vscode
