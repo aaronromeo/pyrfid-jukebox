@@ -13,9 +13,11 @@ sudo -u pi git branch -r
 echo "$(date '+%Y-%m-%d %H:%M:%S') Fetching from remote..."
 sudo -u pi git fetch
 
+branch=rpi-lgpio
+
 pipinstall=false
 echo "$(date '+%Y-%m-%d %H:%M:%S') Checking for updates in requirements.txt..."
-if ! sudo -u pi git diff --quiet origin/main...HEAD -- requirements.txt; then
+if ! sudo -u pi git diff --quiet origin/$branch...HEAD -- requirements.txt; then
     echo "$(date '+%Y-%m-%d %H:%M:%S') New requirements found in requirements.txt"
     pipinstall=true
 else
@@ -25,7 +27,7 @@ fi
 repodiffs=false
 if [ $(sudo -u pi git rev-parse HEAD) != $(sudo -u pi git rev-parse @{u}) ]; then
     echo "$(date '+%Y-%m-%d %H:%M:%S') New version available. Updating..."
-    sudo -u pi git reset --hard origin/main
+    sudo -u pi git reset --hard origin/$branch
     sudo -u pi git pull
     repodiffs=true
 else
