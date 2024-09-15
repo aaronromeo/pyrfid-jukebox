@@ -1,4 +1,4 @@
-GOCMD=go
+GOCMD?=go
 GOBUILD=$(GOCMD) build
 GOINSTALL=$(GOCMD) install
 GOCLEAN=$(GOCMD) clean
