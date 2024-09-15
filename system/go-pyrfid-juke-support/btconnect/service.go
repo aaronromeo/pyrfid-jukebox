@@ -45,28 +45,28 @@ func NewBtConnectService(cmdExecutor CommandExecutor, logger *slog.Logger) *Serv
 }
 
 func (bt *Service) Run() error {
-	device := os.Getenv("PJ_BLUETOOTH_DEVICE")
-	if device == "" {
-		return fmt.Errorf("env var PJ_BLUETOOTH_DEVICE not set")
+	for {
+		device := os.Getenv("PJ_BLUETOOTH_DEVICE")
+		if device == "" {
+			return fmt.Errorf("env var PJ_BLUETOOTH_DEVICE not set")
+		}
+
+		err := bt.updateALSAConfig()
+		if err != nil {
+			bt.logger.Error("updating ALSA falure", "error", err)
+			return err
+		}
+
+		count, err := bt.getBluetoothConnectionCount(device)
+		if err != nil {
+			bt.logger.Error("bt.getBluetoothConnectionCount falure", "error", err)
+			return err
+		}
+		bt.logger.Info("found connections", "connections", count)
+
+		bt.logger.Info(fmt.Sprintf("sleeping for %d seconds", DefaultSleepTime))
+		time.Sleep(DefaultSleepTime * time.Second)
 	}
-
-	err := bt.updateALSAConfig()
-	if err != nil {
-		bt.logger.Error("updating ALSA falure", "error", err)
-		return err
-	}
-
-	count, err := bt.getBluetoothConnectionCount(device)
-	if err != nil {
-		bt.logger.Error("bt.getBluetoothConnectionCount falure", "error", err)
-		return err
-	}
-	bt.logger.Info("found connections", "connections", count)
-
-	bt.logger.Info(fmt.Sprintf("sleeping for %d seconds", DefaultSleepTime))
-	time.Sleep(DefaultSleepTime * time.Second)
-
-	return nil
 }
 
 func (bt *Service) getBluetoothConnectionCount(device string) (int, error) {
