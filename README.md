@@ -1,4 +1,4 @@
-# PyRFID Jukebox
+# ~PyRFID Jukebox~ SoundSprout
 
 ## What does this tool do?
 
@@ -47,11 +47,24 @@ sudo apt-get install -y git vim tmux
 
 ** The step to remove `pulseaudio` might not be necessary (as it might not be installed by the [packages_list.txt](docs/packages_list))
 
+### 3. Install asdf and go
+
+```bash
+git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.14.1
+echo '. "$HOME/.asdf/asdf.sh"' >> ~/.bashrc
+echo '. "$HOME/.asdf/completions/asdf.bash"' >> ~/.bashrc
+source ~/.bashrc
+asdf plugin add golang
+asdf install golang 1.23.1
+```
+
 ### 3. Clone project setup
 
 - Git clone this project
   - `mkdir /home/pi/workspace/`
   - `git clone https://github.com/aaronromeo/pyrfid-jukebox`
+
+`GOBIN=/usr/local/bin/ go install`
 
 ### 3. Bluetooth Configuration
 

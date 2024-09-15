@@ -27,14 +27,14 @@ SHUFFLE_LED_PIN = 6
 
 
 def high_check(pin):
-    Logger.debug(
-        f"In high_check before sleep {pin} {GPIO.input(pin)} {GPIO.HIGH} "
-        # + f"{inspect.stack()}"
-    )
+    # Logger.debug(
+    #     f"In high_check before sleep {pin} {GPIO.input(pin)} {GPIO.HIGH} "
+    #     # + f"{inspect.stack()}"
+    # )
     time.sleep(0.01)
-    Logger.debug(
-        f"In high_check after sleep {pin} {GPIO.input(pin)} {GPIO.HIGH}"
-    )
+    # Logger.debug(
+    #     f"In high_check after sleep {pin} {GPIO.input(pin)} {GPIO.HIGH}"
+    # )
     if GPIO.input(pin) == GPIO.HIGH:
         return True
     else:
