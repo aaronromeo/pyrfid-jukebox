@@ -41,6 +41,7 @@ if [ "$repodiffs" = true ]; then
     sudo bash setup.sh
     make GOCMD=/home/pi/.asdf/shims/go build
     sudo mv system/go-pyrfid-juke-support/soundsprout-server /usr/local/bin/
+    sudo supervisorctl restart btconnect
 fi
 
 if [ "$pipinstall" = true ]; then
@@ -50,7 +51,7 @@ fi
 
 if [ "$repodiffs" = true ]; then
     echo "$(date '+%Y-%m-%d %H:%M:%S') Restarting pyrfid_jukebox"
-    supervisorctl restart pyrfid_jukebox
+    sudo supervisorctl restart pyrfid_jukebox
 fi
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') Sleeping for 5 minutes..."

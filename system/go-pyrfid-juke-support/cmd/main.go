@@ -1,7 +1,7 @@
 package main
 
 import (
-	"log"
+	"log/slog"
 	"os"
 	"path/filepath"
 
@@ -11,9 +11,11 @@ import (
 )
 
 func main() {
+	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
+
 	err := godotenv.Load(filepath.Join("home", "pi", ".soundsprout", "conf"))
 	if err != nil {
-		log.Fatal("Error loading .env file")
+		logger.Error("Error loading .env file")
 	}
 
 	app := &cli.App{
@@ -23,10 +25,16 @@ func main() {
 				Aliases: []string{"b"},
 				Usage:   "Maintain a connection to bluetooth device",
 				Action: func(c *cli.Context) error {
-					connectService := btconnect.NewBtConnectService(&btconnect.OSCommandExecutor{})
+					connectService := btconnect.NewBtConnectService(
+						&btconnect.OSCommandExecutor{},
+						logger,
+					)
 					err := connectService.Run()
 					if err != nil {
-						log.Fatalf("Command execution failed: %v", err)
+						logger.Error(
+							"btconnect failure",
+							"error", err,
+						)
 					}
 					return nil
 				},
@@ -35,7 +43,11 @@ func main() {
 	}
 
 	if err := app.Run(os.Args); err != nil {
-		log.Fatal(err)
+		logger.Error(
+			"failure on run",
+			"args", os.Args,
+			"error", err,
+		)
 	}
 }
 
