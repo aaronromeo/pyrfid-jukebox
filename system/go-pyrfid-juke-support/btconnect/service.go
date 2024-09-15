@@ -4,7 +4,7 @@ import (
 	"bufio"
 	"bytes"
 	"fmt"
-	"log"
+	"log/slog"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -47,16 +47,16 @@ func (bt *Service) Run() error {
 
 	err := bt.updateALSAConfig()
 	if err != nil {
-		log.Printf("Error updating ALSA config: %v", err)
+		slog.Error("updating ALSA falure", "error", err)
 		return err
 	}
 
 	count, err := bt.getBluetoothConnectionCount(device)
 	if err != nil {
-		log.Printf("Error: %v", err)
+		slog.Error("bt.getBluetoothConnectionCount falure", "error", err)
 		return err
 	}
-	log.Printf("Number of connections: %d\n", count)
+	slog.Info("status", "connections", count)
 
 	return nil
 }
@@ -88,18 +88,26 @@ func (bt *Service) updateALSAConfig() error {
 	if hasChanged, errHC := bt.hasALSAConfigChanged(); errHC != nil {
 		return errHC
 	} else if hasChanged {
-		log.Println("ALSA config has changed. Copying over system config...")
+		slog.Info("ALSA config has changed. Copying over system config...")
 
 		aslaConfig := bt.getALSASystemConfig()
 		projectAslaConfig := bt.getALSARepoConfig()
 
 		if err := bt.copyFile(aslaConfig, projectAslaConfig); err != nil {
-			log.Printf("Error copying file: %v", err)
+			slog.Error(
+				"copy file error",
+				"error", err,
+				"aslaConfig", aslaConfig,
+				"projectAslaConfig", projectAslaConfig,
+			)
 			return err
 		}
 
 		if err := bt.cmdExecutor.Command("sudo", "alsactl", "restore").Run(); err != nil {
-			log.Printf("Error executing alsactl restore: %v", err)
+			slog.Error(
+				"alsactl restore error",
+				"error", err,
+			)
 			return err
 		}
 	}
