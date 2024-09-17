@@ -8,7 +8,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') - Script started"
 device="AC:BF:71:DA:D2:55"
 
 connect_bluetooth() {
-    sudo modprobe snd-aloop
+    # sudo modprobe snd-aloop
     if bluetoothctl connect "$device"; then
         echo "Connected successfully to $device."
 

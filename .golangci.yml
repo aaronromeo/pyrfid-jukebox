@@ -300,7 +300,6 @@ linters:
     #- structcheck # [deprecated, replaced by unused] finds unused struct fields
     #- varcheck # [deprecated, replaced by unused] finds unused global variables and constants
 
-
 issues:
   # Maximum count of issues with the same text.
   # Set to 0 to disable.
@@ -315,6 +314,7 @@ issues:
     - path: "_test\\.go"
       linters:
         - bodyclose
+        - cyclop
         - dupl
         - funlen
         - goconst
