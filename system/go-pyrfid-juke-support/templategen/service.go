@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"html/template"
+	"log"
 	"log/slog"
 	"os"
 	"path/filepath"
@@ -26,13 +27,13 @@ func NewTemplateGenService(logger *slog.Logger) *Service {
 	templates := []FileTemplate{
 		{
 			Name:         "config-cmus-autosave",
-			TemplateFile: "templates/config-cmus-autosave.txt",
+			TemplateFile: "config-cmus-autosave.txt",
 			OutputFile:   "/home/pi/.config/cmus/autosave",
 			EnvVars:      []string{"PJ_BLUETOOTH_DEVICE"},
 		},
 		{
 			Name:         "asoundrc",
-			TemplateFile: "templates/asoundrc.txt",
+			TemplateFile: "asoundrc.txt",
 			OutputFile:   "/home/pi/.asoundrc",
 			EnvVars:      []string{"PJ_BLUETOOTH_DEVICE"},
 		},
@@ -50,6 +51,24 @@ func (ft *Service) Run() error {
 		return fmt.Errorf("logger has not been configured")
 	}
 
+	outputPath, err := filepath.Abs("./../../../outputs")
+	if err != nil {
+		return err
+	}
+
+	runner, err := os.Create(filepath.Join(outputPath, "runner.sh"))
+	if err != nil {
+		log.Fatalf("Error creating runner file: %v", err)
+		return err
+	}
+	defer runner.Close()
+
+	_, err = runner.WriteString("#!/bin/bash\n\n")
+	if err != nil {
+		log.Fatalf("Error writing to runner file: %v", err)
+		return err
+	}
+
 	outputs := map[string]string{}
 	for _, t := range ft.templates {
 		ft.logger.Info("Generating template", "Name", t.Name)
@@ -63,19 +82,40 @@ func (ft *Service) Run() error {
 				return fmt.Errorf("env var %s not found for substitution", e)
 			}
 		}
-		output, err := generateTemplate(t.TemplateFile, substitutions)
+		absTemplateFilename := filepath.Join("templates", t.TemplateFile)
+		output, err := generateTemplate(absTemplateFilename, substitutions)
 		if err != nil {
 			return err
 		}
 
+		generatedTemplate, err := os.Create(filepath.Join(outputPath, t.TemplateFile))
+		if err != nil {
+			log.Fatalf("Error creating output file: %v", err)
+			return err
+		}
+		defer generatedTemplate.Close()
+
 		outputs[t.OutputFile] = output
+		_, err = generatedTemplate.WriteString(output)
+		if err != nil {
+			log.Fatalf("Error creating output file: %v", err)
+			return err
+		}
+
+		mvCmd := fmt.Sprintf("mv %s %s\n", t.TemplateFile, t.OutputFile)
+		_, err = runner.WriteString(mvCmd)
+		if err != nil {
+			log.Fatalf("Error writing to runner file: %v", err)
+			return err
+		}
 	}
 
+	runner.Sync()
 	return nil
 }
 
 func generateTemplate(inputFile string, data map[string]string) (string, error) {
-	dir, err := filepath.Abs(".")
+	dir, err := filepath.Abs("./")
 	if err != nil {
 		panic(err)
 	}

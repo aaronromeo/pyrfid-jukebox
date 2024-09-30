@@ -68,13 +68,13 @@ while true; do
     set -e  # Re-enable 'exit on error'
 
     set +e
-    status=$(sudo supervisorctl status pyrfid_jukebox | awk '{print $2}')
+    status=$(sudo supervisorctl status soundsprout_server | awk '{print $2}')
     set -e  # Re-enable 'exit on error'
     if [[ $status != "RUNNING" && $status != "STARTING" ]]; then
-        echo "$(date '+%Y-%m-%d %H:%M:%S') pyrfid_jukebox is not running or starting. Starting it now..."
-        sudo supervisorctl start pyrfid_jukebox
+        echo "$(date '+%Y-%m-%d %H:%M:%S') soundsprout_server is not running or starting. Starting it now..."
+        sudo supervisorctl start soundsprout_server
     else
-        echo "$(date '+%Y-%m-%d %H:%M:%S') pyrfid_jukebox is already running or starting."
+        echo "$(date '+%Y-%m-%d %H:%M:%S') soundsprout_server is already running or starting."
     fi
 
     sleep 1 # Avoiding the `Exited too quickly (process log may have details)` error

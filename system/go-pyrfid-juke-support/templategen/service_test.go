@@ -4,7 +4,10 @@ import (
 	"context"
 	"log/slog"
 	"os"
+	"path/filepath"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 // MockLogger provides a simple logger for testing purposes.
@@ -86,11 +89,39 @@ func TestRun(t *testing.T) {
 
 			if tt.expectError {
 				if err == nil {
-					t.Errorf("Expected error, but got none")
+					assert.Fail(t, "Expected error, but got none")
 				}
 			} else {
 				if err != nil {
-					t.Errorf("Did not expect error, but got: %v", err)
+					assert.Fail(t, "Did not expect error, but got: %v", err)
+				}
+
+				basePath, err := filepath.Abs("./")
+				if err != nil {
+					assert.Fail(t, "Did not expect error getting absolute path, but got: %v", err)
+				}
+				for _, templates := range service.templates {
+					assert.FileExists(t,
+						filepath.Join(
+							basePath,
+							"..", "..", "..", "outputs",
+							templates.TemplateFile,
+						),
+					)
+
+					expectedFile, err := os.ReadFile(filepath.Join(basePath, "baselines", templates.TemplateFile))
+					if err != nil {
+						assert.Fail(t, "Did not expect error getting expected file, but got: %v", err)
+					}
+					actualFile, err := os.ReadFile(filepath.Join(
+						basePath,
+						"..", "..", "..", "outputs",
+						templates.TemplateFile,
+					))
+					if err != nil {
+						assert.Fail(t, "Did not expect error getting expected file, but got: %v", err)
+					}
+					assert.Equal(t, string(expectedFile), string(actualFile))
 				}
 			}
 		})
@@ -130,9 +161,7 @@ func TestGenerateTemplate(t *testing.T) {
 				t.Fatalf("Failed to generate template: %v", err)
 			}
 
-			if result != tt.expected {
-				t.Errorf("Expected: %s, but got: %s", tt.expected, result)
-			}
+			assert.Equal(t, tt.expected, result)
 		})
 	}
 }

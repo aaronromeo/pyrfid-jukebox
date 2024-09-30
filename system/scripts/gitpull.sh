@@ -50,8 +50,8 @@ if [ "$pipinstall" = true ]; then
 fi
 
 if [ "$repodiffs" = true ]; then
-    echo "$(date '+%Y-%m-%d %H:%M:%S') Restarting pyrfid_jukebox"
-    sudo supervisorctl restart pyrfid_jukebox
+    echo "$(date '+%Y-%m-%d %H:%M:%S') Restarting soundsprout_server"
+    sudo supervisorctl restart soundsprout_server
 fi
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') Sleeping for 5 minutes..."
