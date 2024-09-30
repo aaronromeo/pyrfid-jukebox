@@ -1,4 +1,4 @@
-package templategen
+package templategen_test
 
 import (
 	"context"
@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 	"testing"
 
+	"aaronromeo.com/go-pyrfid-juke-support/templategen"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -82,7 +83,7 @@ func TestRun(t *testing.T) {
 			}()
 
 			// Create the service with the mock logger
-			service := NewTemplateGenService(slog.New(mockLogger))
+			service := templategen.NewTemplateGenService(slog.New(mockLogger))
 
 			// Execute the Run method
 			err := service.Run()
@@ -100,7 +101,7 @@ func TestRun(t *testing.T) {
 				if err != nil {
 					assert.Fail(t, "Did not expect error getting absolute path, but got: %v", err)
 				}
-				for _, templates := range service.templates {
+				for _, templates := range service.Templates {
 					assert.FileExists(t,
 						filepath.Join(
 							basePath,
@@ -156,7 +157,7 @@ func TestGenerateTemplate(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			result, err := generateTemplate(tt.template, tt.data)
+			result, err := templategen.GenerateTemplate(tt.template, tt.data)
 			if err != nil {
 				t.Fatalf("Failed to generate template: %v", err)
 			}

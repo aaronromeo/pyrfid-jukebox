@@ -1,9 +1,7 @@
 package templategen
 
 import (
-	"bytes"
 	"fmt"
-	"html/template"
 	"log"
 	"log/slog"
 	"os"
@@ -19,7 +17,7 @@ type FileTemplate struct {
 
 type Service struct {
 	// cmdExecutor CommandExecutor
-	templates []FileTemplate
+	Templates []FileTemplate
 	logger    *slog.Logger
 }
 
@@ -41,7 +39,7 @@ func NewTemplateGenService(logger *slog.Logger) *Service {
 
 	return &Service{
 		// cmdExecutor: cmdExecutor,
-		templates: templates,
+		Templates: templates,
 		logger:    logger,
 	}
 }
@@ -58,19 +56,21 @@ func (ft *Service) Run() error {
 
 	runner, err := os.Create(filepath.Join(outputPath, "runner.sh"))
 	if err != nil {
-		log.Fatalf("Error creating runner file: %v", err)
+		log.Printf("Error creating runner file: %v", err)
 		return err
 	}
 	defer runner.Close()
 
 	_, err = runner.WriteString("#!/bin/bash\n\n")
 	if err != nil {
-		log.Fatalf("Error writing to runner file: %v", err)
+		log.Printf("Error writing to runner file: %v", err)
 		return err
 	}
 
 	outputs := map[string]string{}
-	for _, t := range ft.templates {
+	for _, t := range ft.Templates {
+		var output string
+
 		ft.logger.Info("Generating template", "Name", t.Name)
 
 		substitutions := map[string]string{}
@@ -83,7 +83,7 @@ func (ft *Service) Run() error {
 			}
 		}
 		absTemplateFilename := filepath.Join("templates", t.TemplateFile)
-		output, err := generateTemplate(absTemplateFilename, substitutions)
+		output, err = GenerateTemplate(absTemplateFilename, substitutions)
 		if err != nil {
 			return err
 		}
@@ -110,28 +110,5 @@ func (ft *Service) Run() error {
 		}
 	}
 
-	runner.Sync()
 	return nil
-}
-
-func generateTemplate(inputFile string, data map[string]string) (string, error) {
-	dir, err := filepath.Abs("./")
-	if err != nil {
-		panic(err)
-	}
-	// Parse the template file
-	tmpl, err := template.ParseFiles(inputFile)
-	if err != nil {
-		// the executable directory
-		return "", fmt.Errorf("%w - current path %s", err, dir)
-	}
-
-	// Use a buffer to capture the output instead of writing to a file
-	var out bytes.Buffer
-	err = tmpl.Execute(&out, data)
-	if err != nil {
-		return "", err
-	}
-
-	return out.String(), nil
 }

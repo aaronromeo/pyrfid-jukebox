@@ -29,7 +29,7 @@ func main() {
 						&btconnect.OSCommandExecutor{},
 						logger,
 					)
-					err := connectService.Run()
+					err = connectService.Run()
 					if err != nil {
 						logger.Error(
 							"btconnect failure",
@@ -42,7 +42,7 @@ func main() {
 		},
 	}
 
-	if err := app.Run(os.Args); err != nil {
+	if err = app.Run(os.Args); err != nil {
 		logger.Error(
 			"failure on run",
 			"args", os.Args,
