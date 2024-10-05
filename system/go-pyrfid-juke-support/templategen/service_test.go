@@ -1,5 +1,4 @@
 //nolint:gocognit
-//noling:nestif
 package templategen_test
 
 import (
@@ -102,10 +101,12 @@ func TestRun(t *testing.T) {
 			// Execute the Run method
 			err := service.Run()
 
+			if tt.expectError != (err != nil) {
+				assert.Fail(t, "Expected error, but got none")
+			}
+
 			if tt.expectError {
-				if err == nil {
-					assert.Fail(t, "Expected error, but got none")
-				}
+				return
 			} else {
 				if err != nil {
 					assert.Fail(t, "Did not expect error, but got: %v", err)
