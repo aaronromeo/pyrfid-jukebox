@@ -88,9 +88,10 @@ func (ft *Service) Run() error {
 			return err
 		}
 
-		generatedTemplate, err := os.Create(filepath.Join(outputPath, t.TemplateFile))
+		var generatedTemplate *os.File
+		generatedTemplate, err = os.Create(filepath.Join(outputPath, t.TemplateFile))
 		if err != nil {
-			log.Fatalf("Error creating output file: %v", err)
+			ft.logger.Error("Error creating output file", "error", err)
 			return err
 		}
 		defer generatedTemplate.Close()
@@ -98,14 +99,14 @@ func (ft *Service) Run() error {
 		outputs[t.OutputFile] = output
 		_, err = generatedTemplate.WriteString(output)
 		if err != nil {
-			log.Fatalf("Error creating output file: %v", err)
+			ft.logger.Error("Error creating output file", "error", err)
 			return err
 		}
 
 		mvCmd := fmt.Sprintf("mv %s %s\n", t.TemplateFile, t.OutputFile)
 		_, err = runner.WriteString(mvCmd)
 		if err != nil {
-			log.Fatalf("Error writing to runner file: %v", err)
+			ft.logger.Error("Error writing to runner file", "error", err)
 			return err
 		}
 	}

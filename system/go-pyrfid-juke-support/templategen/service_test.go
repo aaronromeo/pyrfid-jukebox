@@ -1,3 +1,4 @@
+//nolint:gocognit
 package templategen_test
 
 import (
@@ -28,21 +29,33 @@ func (ml *MockLogger) Handle(context.Context, slog.Record) error {
 }
 
 // WithAttrs implements slog.Handler.
-func (ml *MockLogger) WithAttrs(attrs []slog.Attr) slog.Handler {
+func (*MockLogger) WithAttrs(_ []slog.Attr) slog.Handler {
 	panic("unimplemented")
 }
 
 // WithGroup implements slog.Handler.
-func (ml *MockLogger) WithGroup(name string) slog.Handler {
+func (*MockLogger) WithGroup(_ string) slog.Handler {
 	panic("unimplemented")
 }
 
 func (ml *MockLogger) Info(msg string, keysAndValues ...interface{}) {
 	ml.logs = append(ml.logs, msg)
+	for _, val := range keysAndValues {
+		logVal, ok := val.(string)
+		if ok {
+			ml.logs = append(ml.logs, logVal)
+		}
+	}
 }
 
 func (ml *MockLogger) Error(msg string, keysAndValues ...interface{}) {
 	ml.logs = append(ml.logs, msg)
+	for _, val := range keysAndValues {
+		logVal, ok := val.(string)
+		if ok {
+			ml.logs = append(ml.logs, logVal)
+		}
+	}
 }
 
 func TestRun(t *testing.T) {
@@ -97,7 +110,8 @@ func TestRun(t *testing.T) {
 					assert.Fail(t, "Did not expect error, but got: %v", err)
 				}
 
-				basePath, err := filepath.Abs("./")
+				var basePath string
+				basePath, err = filepath.Abs("./")
 				if err != nil {
 					assert.Fail(t, "Did not expect error getting absolute path, but got: %v", err)
 				}
@@ -110,11 +124,13 @@ func TestRun(t *testing.T) {
 						),
 					)
 
-					expectedFile, err := os.ReadFile(filepath.Join(basePath, "baselines", templates.TemplateFile))
+					var expectedFile []byte
+					expectedFile, err = os.ReadFile(filepath.Join(basePath, "baselines", templates.TemplateFile))
 					if err != nil {
 						assert.Fail(t, "Did not expect error getting expected file, but got: %v", err)
 					}
-					actualFile, err := os.ReadFile(filepath.Join(
+					var actualFile []byte
+					actualFile, err = os.ReadFile(filepath.Join(
 						basePath,
 						"..", "..", "..", "outputs",
 						templates.TemplateFile,
