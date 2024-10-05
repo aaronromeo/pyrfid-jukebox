@@ -107,41 +107,41 @@ func TestRun(t *testing.T) {
 
 			if tt.expectError {
 				return
-			} else {
-				if err != nil {
-					assert.Fail(t, "Did not expect error, but got: %v", err)
-				}
+			}
 
-				var basePath string
-				basePath, err = filepath.Abs("./")
-				if err != nil {
-					assert.Fail(t, "Did not expect error getting absolute path, but got: %v", err)
-				}
-				for _, templates := range service.Templates {
-					assert.FileExists(t,
-						filepath.Join(
-							basePath,
-							"..", "..", "..", "outputs",
-							templates.TemplateFile,
-						),
-					)
+			if err != nil {
+				assert.Fail(t, "Did not expect error, but got: %v", err)
+			}
 
-					var expectedFile []byte
-					expectedFile, err = os.ReadFile(filepath.Join(basePath, "baselines", templates.TemplateFile))
-					if err != nil {
-						assert.Fail(t, "Did not expect error getting expected file, but got: %v", err)
-					}
-					var actualFile []byte
-					actualFile, err = os.ReadFile(filepath.Join(
+			var basePath string
+			basePath, err = filepath.Abs("./")
+			if err != nil {
+				assert.Fail(t, "Did not expect error getting absolute path, but got: %v", err)
+			}
+			for _, templates := range service.Templates {
+				assert.FileExists(t,
+					filepath.Join(
 						basePath,
 						"..", "..", "..", "outputs",
 						templates.TemplateFile,
-					))
-					if err != nil {
-						assert.Fail(t, "Did not expect error getting expected file, but got: %v", err)
-					}
-					assert.Equal(t, string(expectedFile), string(actualFile))
+					),
+				)
+
+				var expectedFile []byte
+				expectedFile, err = os.ReadFile(filepath.Join(basePath, "baselines", templates.TemplateFile))
+				if err != nil {
+					assert.Fail(t, "Did not expect error getting expected file, but got: %v", err)
 				}
+				var actualFile []byte
+				actualFile, err = os.ReadFile(filepath.Join(
+					basePath,
+					"..", "..", "..", "outputs",
+					templates.TemplateFile,
+				))
+				if err != nil {
+					assert.Fail(t, "Did not expect error getting expected file, but got: %v", err)
+				}
+				assert.Equal(t, string(expectedFile), string(actualFile))
 			}
 		})
 	}
