@@ -1,4 +1,5 @@
 //nolint:gocognit
+//noling:nestif
 package templategen_test
 
 import (
