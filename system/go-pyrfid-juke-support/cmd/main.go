@@ -44,8 +44,14 @@ func main() {
 				Name:    "templategen",
 				Aliases: []string{"t"},
 				Usage:   "Generate the templates needed for this service",
+				Flags: []cli.Flag{
+					&cli.StringFlag{
+						Name:    "output-dir",
+						Aliases: []string{"o"},
+					},
+				},
 				Action: func(ctx *cli.Context) error {
-					outputPath, err := filepath.Abs("./../../../outputs")
+					outputPath, err := filepath.Abs("./outputs")
 					if err != nil {
 						return err
 					}
