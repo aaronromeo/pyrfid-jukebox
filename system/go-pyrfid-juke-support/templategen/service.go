@@ -1,6 +1,7 @@
 package templategen
 
 import (
+	"bytes"
 	"fmt"
 	"log"
 	"log/slog"
@@ -9,10 +10,10 @@ import (
 )
 
 type FileTemplate struct {
-	Name         string
-	TemplateFile string
-	OutputFile   string
-	EnvVars      []string
+	Name            string
+	TemplateFile    string
+	DestinationFile string
+	EnvVars         []string
 }
 
 type Service struct {
@@ -24,16 +25,16 @@ type Service struct {
 func NewTemplateGenService(logger *slog.Logger) *Service {
 	templates := []FileTemplate{
 		{
-			Name:         "config-cmus-autosave",
-			TemplateFile: "config-cmus-autosave.txt",
-			OutputFile:   "/home/pi/.config/cmus/autosave",
-			EnvVars:      []string{"PJ_BLUETOOTH_DEVICE"},
+			Name:            "config-cmus-autosave",
+			TemplateFile:    "config-cmus-autosave.txt",
+			DestinationFile: "/home/pi/.config/cmus/autosave",
+			EnvVars:         []string{"PJ_BLUETOOTH_DEVICE"},
 		},
 		{
-			Name:         "asoundrc",
-			TemplateFile: "asoundrc.txt",
-			OutputFile:   "/home/pi/.asoundrc",
-			EnvVars:      []string{"PJ_BLUETOOTH_DEVICE"},
+			Name:            "asoundrc",
+			TemplateFile:    "asoundrc.txt",
+			DestinationFile: "/home/pi/.asoundrc",
+			EnvVars:         []string{"PJ_BLUETOOTH_DEVICE"},
 		},
 	}
 
@@ -96,18 +97,52 @@ func (ft *Service) Run() error {
 		}
 		defer generatedTemplate.Close()
 
-		outputs[t.OutputFile] = output
+		outputs[t.DestinationFile] = output
 		_, err = generatedTemplate.WriteString(output)
 		if err != nil {
 			ft.logger.Error("Error creating output file", "error", err)
 			return err
 		}
 
-		mvCmd := fmt.Sprintf("mv %s %s\n", t.TemplateFile, t.OutputFile)
-		_, err = runner.WriteString(mvCmd)
-		if err != nil {
-			ft.logger.Error("Error writing to runner file", "error", err)
-			return err
+		_, destinationDirErr := os.Stat(filepath.Dir(t.DestinationFile))
+		_, destinationFileErr := os.Stat(t.DestinationFile)
+
+		if destinationFileErr == nil {
+			var destinationBytes []byte
+			destinationBytes, err = os.ReadFile(t.DestinationFile)
+			if err != nil {
+				ft.logger.Error("Error reading destination file", "error", err, "file", t.DestinationFile)
+				return err
+			}
+
+			generatedBytes := make([]byte, 100)
+			_, err = generatedTemplate.Read(generatedBytes)
+			if err != nil {
+				ft.logger.Error("Error reading generated file", "error", err, "file", generatedTemplate.Name())
+				return err
+			}
+
+			if !bytes.Equal(destinationBytes, generatedBytes) {
+				mvCmd := fmt.Sprintf("mv %s %s\n", t.TemplateFile, t.DestinationFile)
+				_, err = runner.WriteString(mvCmd)
+				if err != nil {
+					ft.logger.Error("Error writing to runner file", "error", err, "cmd", mvCmd)
+					return err
+				}
+			}
+		}
+
+		if os.IsNotExist(destinationFileErr) && os.IsNotExist(destinationDirErr) {
+			destinationDir := filepath.Dir(t.DestinationFile)
+			mkdirCmd := fmt.Sprintf("mkdir -p %s\n", destinationDir)
+			_, err = runner.WriteString(mkdirCmd)
+			if err != nil {
+				ft.logger.Error("Error writing to runner file", "error", err, "cmd", mkdirCmd)
+				return err
+			}
+		} else if !os.IsNotExist(destinationFileErr) {
+			ft.logger.Error("Error stating file", "error", destinationFileErr)
+			return destinationFileErr
 		}
 	}
 
