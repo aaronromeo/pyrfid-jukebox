@@ -20,9 +20,10 @@ type Service struct {
 	// cmdExecutor CommandExecutor
 	Templates []FileTemplate
 	logger    *slog.Logger
+	OutputDir string
 }
 
-func NewTemplateGenService(logger *slog.Logger) *Service {
+func NewTemplateGenService(logger *slog.Logger, outputDir string) *Service {
 	templates := []FileTemplate{
 		{
 			Name:            "config-cmus-autosave",
@@ -39,9 +40,9 @@ func NewTemplateGenService(logger *slog.Logger) *Service {
 	}
 
 	return &Service{
-		// cmdExecutor: cmdExecutor,
 		Templates: templates,
 		logger:    logger,
+		OutputDir: outputDir,
 	}
 }
 
@@ -50,12 +51,7 @@ func (ft *Service) Run() error {
 		return fmt.Errorf("logger has not been configured")
 	}
 
-	outputPath, err := filepath.Abs("./../../../outputs")
-	if err != nil {
-		return err
-	}
-
-	runner, err := os.Create(filepath.Join(outputPath, "runner.sh"))
+	runner, err := os.Create(filepath.Join(ft.OutputDir, "runner.sh"))
 	if err != nil {
 		log.Printf("Error creating runner file: %v", err)
 		return err
@@ -90,7 +86,7 @@ func (ft *Service) Run() error {
 		}
 
 		var generatedTemplate *os.File
-		generatedTemplate, err = os.Create(filepath.Join(outputPath, t.TemplateFile))
+		generatedTemplate, err = os.Create(filepath.Join(ft.OutputDir, t.TemplateFile))
 		if err != nil {
 			ft.logger.Error("Error creating output file", "error", err)
 			return err

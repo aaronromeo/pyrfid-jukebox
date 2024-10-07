@@ -96,7 +96,7 @@ func TestRun(t *testing.T) {
 			}()
 
 			// Create the service with the mock logger
-			service := templategen.NewTemplateGenService(slog.New(mockLogger))
+			service := templategen.NewTemplateGenService(slog.New(mockLogger), t.TempDir())
 
 			// Execute the Run method
 			err := service.Run()

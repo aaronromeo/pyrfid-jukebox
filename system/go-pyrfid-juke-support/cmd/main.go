@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 
 	"aaronromeo.com/go-pyrfid-juke-support/btconnect"
+	"aaronromeo.com/go-pyrfid-juke-support/templategen"
 	"github.com/joho/godotenv"
 	"github.com/urfave/cli/v2"
 )
@@ -33,6 +34,31 @@ func main() {
 					if err != nil {
 						logger.Error(
 							"btconnect failure",
+							"error", err,
+						)
+					}
+					return nil
+				},
+			},
+			{
+				Name:    "templategen",
+				Aliases: []string{"t"},
+				Usage:   "Generate the templates needed for this service",
+				Action: func(ctx *cli.Context) error {
+					outputPath, err := filepath.Abs("./../../../outputs")
+					if err != nil {
+						return err
+					}
+
+					templateService := templategen.NewTemplateGenService(
+						logger,
+						outputPath,
+					)
+
+					err = templateService.Run()
+					if err != nil {
+						logger.Error(
+							"templategen failure",
 							"error", err,
 						)
 					}
