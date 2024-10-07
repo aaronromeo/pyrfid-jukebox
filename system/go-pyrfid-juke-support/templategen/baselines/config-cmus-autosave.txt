@@ -50,7 +50,7 @@ set continue=true
 set continue_album=true
 set device=/dev/cdrom
 set display_artist_sort_name=false
-set dsp.alsa.device=bluealsa:DEV=EB:06:EF:22:D2:CB,PROFILE=a2dp,SRV=org.bluealsa
+set dsp.alsa.device=bluealsa:DEV=TestBluetoothDevice,PROFILE=a2dp,SRV=org.bluealsa
 set dsp.ao.buffer_size=16384
 set dsp.ao.device_interface=
 set dsp.ao.driver=
@@ -209,7 +209,7 @@ bind common y win-add-p
 bind common z player-prev
 bind common { vol -1% -0
 bind common } vol -0 -1%
-fset 90s=date>=1990&date<2000
+fset 90s=date>=1990&date&lt;2000
 fset classical=genre="Classical"
 fset missing-tag=!stream&(artist=""|album=""|title=""|tracknumber=-1|date=-1)
 fset mp3=filename="*.mp3"

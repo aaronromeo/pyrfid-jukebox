@@ -18,7 +18,7 @@ while true; do
     screen_exit_status=$?
     set -e  # Re-enable 'exit on error'
 
-    if diff /home/pi/.config/cmus/autosave /home/pi/workspace/pyrfid-jukebox/system/home/.config/cmus/autosave >/dev/null; then
+    if ! diff /home/pi/.config/cmus/autosave /home/pi/workspace/pyrfid-jukebox/system/home/.config/cmus/autosave >/dev/null; then
         echo "$(date '+%Y-%m-%d %H:%M:%S') CMUS autosave has changed in repo. Copying over system config..."
         if [ -n "$screen_session" ]; then
             set +e
@@ -39,7 +39,7 @@ while true; do
 
     if [ $screen_exit_status -ne 0 ] || [ -z "$screen_session" ]; then
         echo "$(date '+%Y-%m-%d %H:%M:%S') Starting cmus..."
-        /usr/bin/screen -dmS cmus /usr/bin/cmus 2> /home/pi/logs/process_cmus_error.log > /home/pi/logs/process_cmus_output.log
+        /usr/bin/screen -dmS cmus /usr/bin/cmus --listen $socket_file 2> /home/pi/logs/process_cmus_error.log > /home/pi/logs/process_cmus_output.log
 
         sleep 5  # Wait a bit for CMUS to start and create the socket file
 
@@ -68,13 +68,13 @@ while true; do
     set -e  # Re-enable 'exit on error'
 
     set +e
-    status=$(sudo supervisorctl status pyrfid_jukebox | awk '{print $2}')
+    status=$(sudo supervisorctl status soundsprout_server | awk '{print $2}')
     set -e  # Re-enable 'exit on error'
     if [[ $status != "RUNNING" && $status != "STARTING" ]]; then
-        echo "$(date '+%Y-%m-%d %H:%M:%S') pyrfid_jukebox is not running or starting. Starting it now..."
-        sudo supervisorctl start pyrfid_jukebox
+        echo "$(date '+%Y-%m-%d %H:%M:%S') soundsprout_server is not running or starting. Starting it now..."
+        sudo supervisorctl start soundsprout_server
     else
-        echo "$(date '+%Y-%m-%d %H:%M:%S') pyrfid_jukebox is already running or starting."
+        echo "$(date '+%Y-%m-%d %H:%M:%S') soundsprout_server is already running or starting."
     fi
 
     sleep 1 # Avoiding the `Exited too quickly (process log may have details)` error

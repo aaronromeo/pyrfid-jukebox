@@ -5,12 +5,10 @@ set -uo pipefail
 echo
 echo "$(date '+%Y-%m-%d %H:%M:%S') - Script started"
 
-device="AC:BF:71:DA:D2:55"
-
 connect_bluetooth() {
     sudo modprobe snd-aloop
-    if bluetoothctl connect "$device"; then
-        echo "Connected successfully to $device."
+    if bluetoothctl connect "$PJ_BLUETOOTH_DEVICE"; then
+        echo "Connected successfully to $PJ_BLUETOOTH_DEVICE."
 
         bluealsa-aplay -l
     else
@@ -21,17 +19,17 @@ connect_bluetooth() {
 # Loop indefinitely
 while true; do
 
-    if diff /home/pi/.asoundrc /home/pi/workspace/pyrfid-jukebox/system/home/.asoundrc >/dev/null; then
+    if ! diff /home/pi/.asoundrc /home/pi/workspace/pyrfid-jukebox/system/home/.asoundrc >/dev/null; then
         echo "$(date '+%Y-%m-%d %H:%M:%S') .asoundrc has changed in repo. Copying over system config..."
         cp /home/pi/workspace/pyrfid-jukebox/system/home/.asoundrc /home/pi/.asoundrc
         sudo alsactl restore
     fi
 
     # Check if already connected
-    current_connection=$(bluetoothctl info "$device" | grep -c "Connected: yes")
+    current_connection=$(bluetoothctl info "$PJ_BLUETOOTH_DEVICE" | grep -c "Connected: yes")
     current_alsa_status=$(sudo service bluealsa status | grep -c "active (running)")
     if [ "$current_connection" -eq 0 ]; then
-        echo "$(date '+%Y-%m-%d %H:%M:%S') Attempting to connect to $device..."
+        echo "$(date '+%Y-%m-%d %H:%M:%S') Attempting to connect to $PJ_BLUETOOTH_DEVICE..."
 
         # Start BlueALSA if not running
         if [ "$current_alsa_status" -eq 0 ]; then

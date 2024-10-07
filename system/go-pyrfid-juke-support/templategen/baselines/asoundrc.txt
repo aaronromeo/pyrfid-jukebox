@@ -1,5 +1,5 @@
 defaults.bluealsa.interface "hci0"  # Your Bluetooth adapter
-defaults.bluealsa.device "EB:06:EF:22:D2:CB"  # Your Bluetooth device address
+defaults.bluealsa.device "TestBluetoothDevice"  # Your Bluetooth device address
 defaults.bluealsa.profile "a2dp"
 defaults.bluealsa.delay 10000
 
@@ -7,7 +7,7 @@ pcm.!default {
     type plug
     slave.pcm {
         type bluealsa
-        device "EB:06:EF:22:D2:CB"
+        device "TestBluetoothDevice"
         profile "a2dp"
     }
 }
