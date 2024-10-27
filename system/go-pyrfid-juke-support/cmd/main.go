@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log/slog"
 	"os"
 	"path/filepath"
@@ -46,14 +47,21 @@ func main() {
 				Usage:   "Generate the templates needed for this service",
 				Flags: []cli.Flag{
 					&cli.StringFlag{
-						Name:    "output-dir",
-						Aliases: []string{"o"},
+						Name:     "output-dir",
+						Aliases:  []string{"o"},
+						Value:    "./outputs",
+						Required: true,
 					},
 				},
 				Action: func(ctx *cli.Context) error {
-					outputPath, err := filepath.Abs("./outputs")
+					outputPath, err := filepath.Abs(ctx.String("output-dir"))
 					if err != nil {
 						return err
+					}
+
+					_, err = os.Stat(outputPath)
+					if err != nil && os.IsNotExist(err) {
+						return fmt.Errorf("output path '%s' must exist", outputPath)
 					}
 
 					templateService := templategen.NewTemplateGenService(
