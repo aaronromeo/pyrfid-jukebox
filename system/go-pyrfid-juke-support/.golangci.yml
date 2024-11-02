@@ -324,4 +324,3 @@ issues:
 
   exclude:
     - "shadow: declaration of \"err\" shadows declaration at.*"
-
