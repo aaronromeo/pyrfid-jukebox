@@ -13,7 +13,7 @@ sudo -u pi git branch -r
 echo "$(date '+%Y-%m-%d %H:%M:%S') Fetching from remote..."
 sudo -u pi git fetch
 
-branch=rpi-lgpio
+branch=${PJ_DEFAULT_BRANCH:-main}
 
 pipinstall=false
 echo "$(date '+%Y-%m-%d %H:%M:%S') Checking for updates in requirements.txt..."
