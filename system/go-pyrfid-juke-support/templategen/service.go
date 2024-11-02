@@ -61,14 +61,14 @@ func (ft *Service) Run() error {
 	}
 	defer runner.Close()
 
-	if _, err := runner.WriteString("#!/bin/bash\n\n"); err != nil {
+	if _, err := runner.WriteString("#!/bin/bash\n\n"); err != nil { // nolint:shadow
 		log.Printf("Error writing to runner file: %v", err)
 		return err
 	}
 
 	outputs := map[string]string{}
 	for _, template := range ft.Templates {
-		if err := ft.processTemplateSubstitutions(template, outputs, runner); err != nil {
+		if err := ft.processTemplateSubs(template, outputs, runner); err != nil { // nolint:shadow
 			return err
 		}
 	}
@@ -76,7 +76,7 @@ func (ft *Service) Run() error {
 	return nil
 }
 
-func (ft *Service) processTemplateSubstitutions(template FileTemplate, outputs map[string]string, runner *os.File) error {
+func (ft *Service) processTemplateSubs(template FileTemplate, outputs map[string]string, runner *os.File) error {
 	ft.logger.Info("Generating template", "Name", template.Name)
 
 	generateTemplateFilename, err := ft.createNewTemplatedFile(template, outputs)
@@ -128,7 +128,6 @@ func (ft *Service) checkDestination(template FileTemplate) (bool, bool, error) {
 
 	if (destinationFileErr != nil && !os.IsNotExist(destinationFileErr)) ||
 		(destinationDirErr != nil && !os.IsNotExist(destinationDirErr)) {
-
 		ft.logger.Error("Error stating file", "error", destinationFileErr)
 		return false, false, destinationFileErr
 	}
@@ -158,7 +157,7 @@ func (ft *Service) createNewTemplatedFile(template FileTemplate, outputs map[str
 	defer generatedTemplate.Close()
 
 	outputs[template.DestinationFile] = output
-	if _, err := generatedTemplate.WriteString(output); err != nil {
+	if _, err := generatedTemplate.WriteString(output); err != nil { // nolint:shadow
 		ft.logger.Error("Error creating output file", "error", err)
 		return "", err
 	}
