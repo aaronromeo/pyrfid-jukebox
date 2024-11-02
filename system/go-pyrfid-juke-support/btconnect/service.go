@@ -63,8 +63,16 @@ func (bt *Service) Run() error {
 			return err
 		}
 		bt.logger.Info("found connections", "connections", count)
+		if count == 0 {
+			bt.logger.Info(fmt.Sprintf("attempting to connect to the device %s\n", device))
+			if err = bt.connectBluetoothConnection(device); err != nil {
+				bt.logger.Error("bt.connectBluetoothConnection falure", "error", err)
+				return err
+			}
+			bt.logger.Info("no connection errors")
+		}
 
-		bt.logger.Info(fmt.Sprintf("sleeping for %d seconds", DefaultSleepTime))
+		bt.logger.Info(fmt.Sprintf("sleeping for %d seconds\n", DefaultSleepTime))
 		time.Sleep(DefaultSleepTime * time.Second)
 	}
 }
@@ -79,6 +87,18 @@ func (bt *Service) getBluetoothConnectionCount(device string) (int, error) {
 	}
 
 	return bt.countConnectedLines(out.String()), nil
+}
+
+func (bt *Service) connectBluetoothConnection(device string) error {
+	cmd := exec.Command("bluetoothctl", "connect", device)
+	var out bytes.Buffer
+	cmd.Stdout = &out
+	err := cmd.Run()
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (*Service) countConnectedLines(output string) int {
