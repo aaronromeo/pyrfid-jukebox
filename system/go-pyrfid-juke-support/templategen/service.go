@@ -61,14 +61,14 @@ func (ft *Service) Run() error {
 	}
 	defer runner.Close()
 
-	if _, err := runner.WriteString("#!/bin/bash\n\n"); err != nil { // nolint:shadow
+	if _, err := runner.WriteString("#!/bin/bash\n\n"); err != nil {
 		log.Printf("Error writing to runner file: %v", err)
 		return err
 	}
 
 	outputs := map[string]string{}
 	for _, template := range ft.Templates {
-		if err := ft.processTemplateSubs(template, outputs, runner); err != nil { // nolint:shadow
+		if err := ft.processTemplateSubs(template, outputs, runner); err != nil {
 			return err
 		}
 	}
@@ -157,7 +157,7 @@ func (ft *Service) createNewTemplatedFile(template FileTemplate, outputs map[str
 	defer generatedTemplate.Close()
 
 	outputs[template.DestinationFile] = output
-	if _, err := generatedTemplate.WriteString(output); err != nil { // nolint:shadow
+	if _, err := generatedTemplate.WriteString(output); err != nil {
 		ft.logger.Error("Error creating output file", "error", err)
 		return "", err
 	}
