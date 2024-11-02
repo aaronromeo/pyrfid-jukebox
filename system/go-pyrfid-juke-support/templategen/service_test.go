@@ -95,8 +95,10 @@ func TestRun(t *testing.T) {
 				}
 			}()
 
+			outputDir := t.TempDir()
+
 			// Create the service with the mock logger
-			service := templategen.NewTemplateGenService(slog.New(mockLogger), t.TempDir())
+			service := templategen.NewTemplateGenService(slog.New(mockLogger), outputDir)
 
 			// Execute the Run method
 			err := service.Run()
@@ -119,13 +121,12 @@ func TestRun(t *testing.T) {
 				assert.Fail(t, "Did not expect error getting absolute path, but got: %v", err)
 			}
 			for _, templates := range service.Templates {
-				assert.FileExists(t,
-					filepath.Join(
-						basePath,
-						"..", "..", "..", "outputs",
-						templates.TemplateFile,
-					),
+				actualFileName := filepath.Join(
+					outputDir,
+					templates.TemplateFile,
 				)
+
+				assert.FileExists(t, actualFileName)
 
 				var expectedFile []byte
 				expectedFile, err = os.ReadFile(filepath.Join(basePath, "baselines", templates.TemplateFile))
@@ -133,11 +134,7 @@ func TestRun(t *testing.T) {
 					assert.Fail(t, "Did not expect error getting expected file, but got: %v", err)
 				}
 				var actualFile []byte
-				actualFile, err = os.ReadFile(filepath.Join(
-					basePath,
-					"..", "..", "..", "outputs",
-					templates.TemplateFile,
-				))
+				actualFile, err = os.ReadFile(actualFileName)
 				if err != nil {
 					assert.Fail(t, "Did not expect error getting expected file, but got: %v", err)
 				}
