@@ -54,7 +54,8 @@ func main() {
 					},
 				},
 				Action: func(ctx *cli.Context) error {
-					outputPath, err := filepath.Abs(ctx.String("output-dir"))
+					var outputPath string
+					outputPath, err = filepath.Abs(ctx.String("output-dir"))
 					if err != nil {
 						return err
 					}
