@@ -6,6 +6,7 @@ import (
 	"log/slog"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"aaronromeo.com/go-pyrfid-juke-support/templategen"
@@ -63,16 +64,29 @@ func TestRun(t *testing.T) {
 	mockLogger := &MockLogger{}
 
 	tests := []struct {
-		name        string
-		envVars     map[string]string
-		expectError bool
+		name            string
+		envVars         map[string]string
+		expectError     bool
+		baselinesPath   string
+		destinationPath string
 	}{
 		{
 			name: "Happy Path - All Env Vars Present",
 			envVars: map[string]string{
 				"PJ_BLUETOOTH_DEVICE": "TestBluetoothDevice",
 			},
-			expectError: false,
+			expectError:     false,
+			baselinesPath:   "happypath",
+			destinationPath: "/home/pi",
+		},
+		{
+			name: "Match Some Services",
+			envVars: map[string]string{
+				"PJ_BLUETOOTH_DEVICE": "TestBluetoothDevice",
+			},
+			expectError:     false,
+			baselinesPath:   "matchsomeservices",
+			destinationPath: "./testdata/destination/matchsomeservices/pi",
 		},
 		{
 			name:        "Error Path - Missing Env Var",
@@ -95,13 +109,21 @@ func TestRun(t *testing.T) {
 				}
 			}()
 
+			basePath, err := filepath.Abs("./")
+			if err != nil {
+				assert.Fail(t, "Did not expect error getting absolute path, but got: %v", err)
+			}
+
 			outputDir := t.TempDir()
 
 			// Create the service with the mock logger
 			service := templategen.NewTemplateGenService(slog.New(mockLogger), outputDir)
+			for i, template := range service.Templates {
+				service.Templates[i].DestinationFile = strings.Replace(template.DestinationFile, "/home/pi", tt.destinationPath, 1)
+			}
 
 			// Execute the Run method
-			err := service.Run()
+			err = service.Run()
 
 			if tt.expectError != (err != nil) {
 				assert.Fail(t, "Expected error, but got none")
@@ -112,14 +134,9 @@ func TestRun(t *testing.T) {
 			}
 
 			if err != nil {
-				assert.Fail(t, "Did not expect error, but got: %v", err)
+				assert.Fail(t, "Did not expect error", err)
 			}
 
-			var basePath string
-			basePath, err = filepath.Abs("./")
-			if err != nil {
-				assert.Fail(t, "Did not expect error getting absolute path, but got: %v", err)
-			}
 			for _, templates := range service.Templates {
 				actualFileName := filepath.Join(
 					outputDir,
@@ -129,17 +146,31 @@ func TestRun(t *testing.T) {
 				assert.FileExists(t, actualFileName)
 
 				var expectedFile []byte
-				expectedFile, err = os.ReadFile(filepath.Join(basePath, "baselines", templates.TemplateFile))
+				expectedFile, err = os.ReadFile(
+					filepath.Join(basePath, "testdata", "baselines", tt.baselinesPath, templates.TemplateFile),
+				)
 				if err != nil {
-					assert.Fail(t, "Did not expect error getting expected file, but got: %v", err)
+					assert.Fail(t, "Did not expect error getting expected file", err)
 				}
 				var actualFile []byte
 				actualFile, err = os.ReadFile(actualFileName)
 				if err != nil {
-					assert.Fail(t, "Did not expect error getting expected file, but got: %v", err)
+					assert.Fail(t, "Did not expect error getting expected file", err)
 				}
 				assert.Equal(t, string(expectedFile), string(actualFile))
 			}
+			actualFile, err := os.ReadFile(
+				filepath.Join(
+					outputDir,
+					templategen.RunnerFilename,
+				),
+			)
+			assert.NoError(t, err)
+			expectedFile, err := os.ReadFile(
+				filepath.Join(basePath, "testdata", "baselines", tt.baselinesPath, templategen.RunnerFilename),
+			)
+			assert.NoError(t, err)
+			assert.Equal(t, string(expectedFile), string(actualFile))
 		})
 	}
 }

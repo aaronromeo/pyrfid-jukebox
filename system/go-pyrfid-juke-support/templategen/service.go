@@ -24,6 +24,8 @@ type Service struct {
 	OutputDir string
 }
 
+const RunnerFilename = "runner.sh"
+
 func NewTemplateGenService(logger *slog.Logger, outputDir string) *Service {
 	templates := []FileTemplate{
 		{
@@ -54,7 +56,7 @@ func (ft *Service) Run() error {
 		return fmt.Errorf("logger has not been configured")
 	}
 
-	runner, err := os.Create(filepath.Join(ft.OutputDir, "runner.sh"))
+	runner, err := os.Create(filepath.Join(ft.OutputDir, RunnerFilename))
 	if err != nil {
 		log.Printf("Error creating runner file: %v", err)
 		return err
@@ -123,8 +125,14 @@ func (ft *Service) processTemplateSubs(template FileTemplate, outputs map[string
 }
 
 func (ft *Service) checkDestination(template FileTemplate) (bool, bool, error) {
-	_, destinationDirErr := os.Stat(filepath.Dir(template.DestinationFile))
-	_, destinationFileErr := os.Stat(template.DestinationFile)
+	absFile, err := filepath.Abs(template.DestinationFile)
+	if err != nil {
+		ft.logger.Error("Error getting abs file", "error", template.DestinationFile)
+		return false, false, err
+	}
+
+	_, destinationDirErr := os.Stat(filepath.Dir(absFile))
+	_, destinationFileErr := os.Stat(absFile)
 
 	if (destinationFileErr != nil && !os.IsNotExist(destinationFileErr)) ||
 		(destinationDirErr != nil && !os.IsNotExist(destinationDirErr)) {
