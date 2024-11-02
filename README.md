@@ -1,4 +1,4 @@
-# PyRFID Jukebox
+# ~PyRFID Jukebox~ SoundSprout
 
 ## What does this tool do?
 
@@ -47,11 +47,24 @@ sudo apt-get install -y git vim tmux
 
 ** The step to remove `pulseaudio` might not be necessary (as it might not be installed by the [packages_list.txt](docs/packages_list))
 
+### 3. Install asdf and go
+
+```bash
+git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.14.1
+echo '. "$HOME/.asdf/asdf.sh"' >> ~/.bashrc
+echo '. "$HOME/.asdf/completions/asdf.bash"' >> ~/.bashrc
+source ~/.bashrc
+asdf plugin add golang
+asdf install golang 1.23.1
+```
+
 ### 3. Clone project setup
 
 - Git clone this project
   - `mkdir /home/pi/workspace/`
   - `git clone https://github.com/aaronromeo/pyrfid-jukebox`
+
+`GOBIN=/usr/local/bin/ go install`
 
 ### 3. Bluetooth Configuration
 
@@ -263,9 +276,9 @@ The required parts are
 ### 13. Project setup
 
 - Install virtual env
-  - `sudo apt-get install python3-venv python3-pip`
+  - `sudo apt-get install python3-venv python3-pip python3-lgpio`
 - Create a venv
-  - `python -m venv env`
+  - `python3 -m venv --system-site-packages env`
 - Activate venv
   - `source env/bin/activate`
 - Install the `requirements.txt`
@@ -273,6 +286,12 @@ The required parts are
 
 - Dump requirements
   - `pip3 freeze > requirements.txt`
+
+- Go build
+
+  ```bash
+  make build && sudo mv system/go-pyrfid-juke-support/soundsprout-server /usr/local/bin/
+  ```
 
 ### 14. Disable power management on the lan
 
@@ -287,6 +306,12 @@ sudo iwconfig wlan0 power off
 - Update the device ID <https://github.com/aaronromeo/pyrfid-jukebox/blob/main/system/scripts/btconnect.sh#L8>
 - `sudo apt-get install -y supervisor screen lsof`
 - Run `setup.sh`
+
+### 16. Setup the env vars
+
+```bash
+echo "PJ_BLUETOOTH_DEVICE=XX:XX:XX:XX:XX:XX" | sudo tee -a /etc/environment
+```
 
 ## GPIO config
 

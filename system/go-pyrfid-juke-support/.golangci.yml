@@ -321,3 +321,6 @@ issues:
         - gosec
         - noctx
         - wrapcheck
+
+  exclude:
+    - "shadow: declaration of \"err\" shadows declaration at.*"

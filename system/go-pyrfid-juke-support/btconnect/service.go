@@ -4,16 +4,18 @@ import (
 	"bufio"
 	"bytes"
 	"fmt"
-	"log"
+	"log/slog"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"strings"
+	"time"
 )
 
 const DefaultASLAConfig = "/home/pi/.asoundrc"
 const DefaultProjectRoot = "/home/pi/workspace/pyrfid-jukebox"
 const DefaultRelativeASLAConfig = "/system/home/.asoundrc"
+const DefaultSleepTime = 15
 
 type CommandExecutor interface {
 	Command(name string, arg ...string) Cmd
@@ -23,7 +25,8 @@ type Cmd interface {
 	Run() error
 }
 
-type OSCommandExecutor struct{}
+type OSCommandExecutor struct {
+}
 
 func (e *OSCommandExecutor) Command(name string, arg ...string) Cmd {
 	return exec.Command(name, arg...)
@@ -31,34 +34,39 @@ func (e *OSCommandExecutor) Command(name string, arg ...string) Cmd {
 
 type Service struct {
 	cmdExecutor CommandExecutor
+	logger      *slog.Logger
 }
 
-func NewBtConnectService(cmdExecutor CommandExecutor) *Service {
+func NewBtConnectService(cmdExecutor CommandExecutor, logger *slog.Logger) *Service {
 	return &Service{
 		cmdExecutor: cmdExecutor,
+		logger:      logger,
 	}
 }
 
 func (bt *Service) Run() error {
-	device := os.Getenv("PJ_BLUETOOTH_DEVICE")
-	if device == "" {
-		return fmt.Errorf("env var PJ_BLUETOOTH_DEVICE not set")
-	}
+	for {
+		device := os.Getenv("PJ_BLUETOOTH_DEVICE")
+		if device == "" {
+			return fmt.Errorf("env var PJ_BLUETOOTH_DEVICE not set")
+		}
 
-	err := bt.updateALSAConfig()
-	if err != nil {
-		log.Printf("Error updating ALSA config: %v", err)
-		return err
-	}
+		err := bt.updateALSAConfig()
+		if err != nil {
+			bt.logger.Error("updating ALSA falure", "error", err)
+			return err
+		}
 
-	count, err := bt.getBluetoothConnectionCount(device)
-	if err != nil {
-		log.Printf("Error: %v", err)
-		return err
-	}
-	log.Printf("Number of connections: %d\n", count)
+		count, err := bt.getBluetoothConnectionCount(device)
+		if err != nil {
+			bt.logger.Error("bt.getBluetoothConnectionCount falure", "error", err)
+			return err
+		}
+		bt.logger.Info("found connections", "connections", count)
 
-	return nil
+		bt.logger.Info(fmt.Sprintf("sleeping for %d seconds", DefaultSleepTime))
+		time.Sleep(DefaultSleepTime * time.Second)
+	}
 }
 
 func (bt *Service) getBluetoothConnectionCount(device string) (int, error) {
@@ -88,18 +96,26 @@ func (bt *Service) updateALSAConfig() error {
 	if hasChanged, errHC := bt.hasALSAConfigChanged(); errHC != nil {
 		return errHC
 	} else if hasChanged {
-		log.Println("ALSA config has changed. Copying over system config...")
+		bt.logger.Info("ALSA config has changed. Copying over system config...")
 
 		aslaConfig := bt.getALSASystemConfig()
 		projectAslaConfig := bt.getALSARepoConfig()
 
 		if err := bt.copyFile(aslaConfig, projectAslaConfig); err != nil {
-			log.Printf("Error copying file: %v", err)
+			bt.logger.Error(
+				"copy file error",
+				"error", err,
+				"aslaConfig", aslaConfig,
+				"projectAslaConfig", projectAslaConfig,
+			)
 			return err
 		}
 
 		if err := bt.cmdExecutor.Command("sudo", "alsactl", "restore").Run(); err != nil {
-			log.Printf("Error executing alsactl restore: %v", err)
+			bt.logger.Error(
+				"alsactl restore error",
+				"error", err,
+			)
 			return err
 		}
 	}
