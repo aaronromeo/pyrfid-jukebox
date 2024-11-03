@@ -10,6 +10,7 @@ else
 fi
 
 cp -R system/scripts ~
+rm /etc/supervisor/conf.d/*
 cp system/supervisor/conf.d/* /etc/supervisor/conf.d/
 
 mkdir -p /home/pi/logs
