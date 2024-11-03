@@ -18,7 +18,7 @@ while true; do
     screen_exit_status=$?
     set -e  # Re-enable 'exit on error'
 
-    if ! diff /home/pi/.config/cmus/autosave /home/pi/workspace/pyrfid-jukebox/system/home/.config/cmus/autosave >/dev/null; then
+    if ! test -S /home/pi/.config/cmus/screen-start || [ /home/pi/.config/cmus/autosave -nt /home/pi/.config/cmus/screen-start ]; then
         echo "$(date '+%Y-%m-%d %H:%M:%S') CMUS autosave has changed in repo. Copying over system config..."
         if [ -n "$screen_session" ]; then
             set +e
@@ -26,7 +26,7 @@ while true; do
             screen_session=""
             set -e  # Re-enable 'exit on error'
         fi
-        cp /home/pi/workspace/pyrfid-jukebox/system/home/.config/cmus/autosave /home/pi/.config/cmus/autosave
+        touch /home/pi/.config/cmus/screen-start
     fi
 
     if ! test -S $socket_file && [ -n "$screen_session" ]; then
