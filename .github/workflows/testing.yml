@@ -36,13 +36,13 @@ jobs:
         run: go tool cover -html=./cover.out -o ./cover.html
 
       - name: Upload coverage report
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: coverage-report
           path: ./cover.html
 
       - name: Upload test_output report
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: test_output
           path: ./test_output.txt
