@@ -1,9 +1,16 @@
 #!/bin/bash
 
-set -xeuo pipefail
+set -euo pipefail
 
 echo
 echo "$(date '+%Y-%m-%d %H:%M:%S') - Script started"
+
+if [ "$(id -u)" -eq 0 ]; then
+    echo "Running as root."
+else
+    echo "Not running as root. Exiting."
+    exit 1
+fi
 
 cd /home/pi/workspace/pyrfid-jukebox
 echo "$(date '+%Y-%m-%d %H:%M:%S') Current directory: $(pwd)"
@@ -38,11 +45,11 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') Checking variables $repodiffs $pipinstall"
 
 if [ "$repodiffs" = true ]; then
     echo "$(date '+%Y-%m-%d %H:%M:%S') Running setup"
-    sudo bash setup.sh
+    bash setup.sh
     GOCMD=/home/pi/.asdf/shims/go make build
-    sudo mv system/go-pyrfid-juke-support/soundsprout-server /usr/local/bin/
+    mv system/go-pyrfid-juke-support/soundsprout-server /usr/local/bin/
     sudo supervisorctl restart btconnect
-    sudo /usr/local/bin/soundsprout-server templategen --output-dir /tmp
+    /usr/local/bin/soundsprout-server templategen --output-dir /tmp
     bash /tmp/runner.sh
 fi
 
