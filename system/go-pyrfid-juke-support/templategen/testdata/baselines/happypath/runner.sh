@@ -8,3 +8,4 @@ mkdir -p /home/pi
 sudo mv <TEMPDIR>/asoundrc.txt /home/pi/.asoundrc
 sudo chown pi /home/pi/.asoundrc
 sudo supervisorctl restart btconnect
+sudo alsactl restore

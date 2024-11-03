@@ -15,7 +15,7 @@ type FileTemplate struct {
 	TemplateFile    string
 	DestinationFile string
 	EnvVars         []string
-	ServiceRestart  string
+	ServiceRestarts []string
 }
 
 type Service struct {
@@ -37,14 +37,14 @@ func NewTemplateGenService(logger *slog.Logger, outputDir string) *Service {
 			TemplateFile:    "config-cmus-autosave.txt",
 			DestinationFile: "/home/pi/.config/cmus/autosave",
 			EnvVars:         []string{"PJ_BLUETOOTH_DEVICE"},
-			ServiceRestart:  "cmus_manager",
+			ServiceRestarts: []string{"sudo supervisorctl restart cmus_manager"},
 		},
 		{
 			Name:            "asoundrc",
 			TemplateFile:    "asoundrc.txt",
 			DestinationFile: "/home/pi/.asoundrc",
 			EnvVars:         []string{"PJ_BLUETOOTH_DEVICE"},
-			ServiceRestart:  "btconnect",
+			ServiceRestarts: []string{"sudo supervisorctl restart btconnect", "sudo alsactl restore"},
 		},
 	}
 
@@ -114,8 +114,10 @@ func (ft *Service) processTemplateSubs(template FileTemplate, outputs map[string
 		cmds = append(cmds, []string{
 			fmt.Sprintf("sudo mv %s %s\n", generateTemplateFilename, template.DestinationFile),
 			fmt.Sprintf("sudo chown pi %s\n", template.DestinationFile),
-			fmt.Sprintf("sudo supervisorctl restart %s\n", template.ServiceRestart),
 		}...)
+		for _, cmd := range template.ServiceRestarts {
+			cmds = append(cmds, fmt.Sprintln(cmd))
+		}
 	}
 
 	for _, cmd := range cmds {
