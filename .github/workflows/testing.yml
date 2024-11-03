@@ -62,18 +62,19 @@ jobs:
           body-includes: Go Test Output
 
       - name: Delete PR comment
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
-            const issue_number = ${{ github.event.pull_request.number }};
-            const comment_id = ${{ steps.fc.outputs.comment-id }};
-            if (comment_id) {
+            const issue_number = ${{ github.event.pull_request.number }}
+            const comment_id = "${{ steps.fc.outputs.comment-id }}"
+
+            if (comment_id != "") {
               await github.rest.issues.deleteComment({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                comment_id: comment_id
-              });
+                comment_id: comment_id,
+              })
             }
             
       - name: Post test output as comment
