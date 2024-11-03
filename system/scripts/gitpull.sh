@@ -39,7 +39,7 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') Checking variables $repodiffs $pipinstall"
 if [ "$repodiffs" = true ]; then
     echo "$(date '+%Y-%m-%d %H:%M:%S') Running setup"
     sudo bash setup.sh
-    make GOCMD=/home/pi/.asdf/shims/go build
+    GOCMD=/home/pi/.asdf/shims/go make build
     sudo mv system/go-pyrfid-juke-support/soundsprout-server /usr/local/bin/
     sudo supervisorctl restart btconnect
     sudo /usr/local/bin/soundsprout-server templategen --output-dir /tmp && /tmp/runner.sh
