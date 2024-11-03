@@ -292,7 +292,7 @@ The required parts are
 - Go build
 
   ```bash
-  make build && sudo mv system/go-pyrfid-juke-support/soundsprout-server /usr/local/bin/
+  make build && sudo mv system/soundsprout/soundsprout-server /usr/local/bin/
   ```
 
 ### 14. Disable power management on the lan

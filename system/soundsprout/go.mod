@@ -1,4 +1,4 @@
-module aaronromeo.com/go-pyrfid-juke-support
+module aaronromeo.com/soundsprout
 
 go 1.21.1
 

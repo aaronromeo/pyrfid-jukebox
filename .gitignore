@@ -9,3 +9,4 @@ outputs/config-cmus-autosave.txt
 outputs/runner.sh
 cover.out
 test_output.txt
+cover.html

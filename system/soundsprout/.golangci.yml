@@ -315,6 +315,7 @@ issues:
     - path: "_test\\.go"
       linters:
         - bodyclose
+        - cyclop
         - dupl
         - funlen
         - goconst
