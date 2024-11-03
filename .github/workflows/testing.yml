@@ -32,9 +32,6 @@ jobs:
           make test > test_output.txt 2>&1
           cat test_output.txt
       
-      - name: Generate test coverage report
-        run: go tool cover -html=./cover.out -o ./cover.html
-
       - name: Upload coverage report
         uses: actions/upload-artifact@v4
         with:
