@@ -9,7 +9,7 @@ else
     exit 1
 fi
 
-mkdir -p /home/pi/.soundsprout/conf
+mkdir -p /home/pi/.soundsprout/conf || true
 ln -s /etc/environment /home/pi/.soundsprout/conf/.env
 
 cp -R system/scripts ~
