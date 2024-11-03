@@ -15,7 +15,7 @@ build:
 
 .PHONY: test
 test:
-	$(GOTEST) -v ./...
+	$(GOTEST) -v ./... -coverprofile=./../../cover.out -covermode=atomic -coverpkg=./...
 
 .PHONY: clean
 clean:
