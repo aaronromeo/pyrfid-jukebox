@@ -7,3 +7,5 @@ server/rfid_map.json
 outputs/asoundrc.txt
 outputs/config-cmus-autosave.txt
 outputs/runner.sh
+cover.out
+test_output.txt

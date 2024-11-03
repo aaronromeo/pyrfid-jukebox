@@ -4,6 +4,7 @@ GOINSTALL=$(GOCMD) install
 GOCLEAN=$(GOCMD) clean
 GOTEST=$(GOCMD) test
 GOGET=$(GOCMD) get
+GOTOOL=$(GOCMD) tool
 BINARY_NAME=soundsprout-server
 
 .PHONY: all
@@ -15,7 +16,8 @@ build:
 
 .PHONY: test
 test:
-	$(GOTEST) -v ./...
+	$(GOTEST) -v ./... -coverprofile=./../../cover.out -covermode=atomic -coverpkg=./...
+	$(GOTOOL) cover -html=./../../cover.out -o ./../../cover.html
 
 .PHONY: clean
 clean:
