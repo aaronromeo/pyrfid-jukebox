@@ -67,7 +67,7 @@ func (ft *Service) Run() error {
 	}
 	defer runner.Close()
 
-	if _, err := runner.WriteString("#!/bin/bash\n\n"); err != nil {
+	if _, err := runner.WriteString("#!/bin/bash\nset -euo pipefail\n\n"); err != nil {
 		log.Printf("Error writing to runner file: %v", err)
 		return err
 	}

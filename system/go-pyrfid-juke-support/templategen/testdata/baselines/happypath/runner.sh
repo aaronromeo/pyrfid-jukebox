@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 
 mkdir -p /home/pi/.config/cmus
 sudo mv <TEMPDIR>/config-cmus-rc.txt /home/pi/.config/cmus/rc
