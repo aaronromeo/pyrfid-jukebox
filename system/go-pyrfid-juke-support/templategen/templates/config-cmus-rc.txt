@@ -1,0 +1,1 @@
+set dsp.alsa.device=bluealsa:DEV={{.PJ_BLUETOOTH_DEVICE}},PROFILE=a2dp,SRV=org.bluealsa

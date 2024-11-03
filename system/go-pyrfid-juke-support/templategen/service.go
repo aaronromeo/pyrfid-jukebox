@@ -33,9 +33,9 @@ const RunnerFilename = "runner.sh"
 func NewTemplateGenService(logger *slog.Logger, outputDir string) *Service {
 	templates := []FileTemplate{
 		{
-			Name:            "config-cmus-autosave",
-			TemplateFile:    "config-cmus-autosave.txt",
-			DestinationFile: "/home/pi/.config/cmus/autosave",
+			Name:            "config-cmus-rc",
+			TemplateFile:    "config-cmus-rc.txt",
+			DestinationFile: "/home/pi/.config/cmus/rc",
 			EnvVars:         []string{"PJ_BLUETOOTH_DEVICE"},
 			ServiceRestarts: []string{"sudo supervisorctl restart cmus_manager"},
 		},
