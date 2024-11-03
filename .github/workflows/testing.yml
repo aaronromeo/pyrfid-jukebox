@@ -55,6 +55,7 @@ jobs:
 
       - name: Find Comment
         uses: peter-evans/find-comment@v2
+        if: github.event.pull_request != null
         id: fc
         with:
           issue-number: ${{ github.event.pull_request.number }}
@@ -63,6 +64,7 @@ jobs:
 
       - name: Delete PR comment
         uses: actions/github-script@v7
+        if: github.event.pull_request != null
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
