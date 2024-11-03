@@ -42,7 +42,8 @@ if [ "$repodiffs" = true ]; then
     GOCMD=/home/pi/.asdf/shims/go make build
     sudo mv system/go-pyrfid-juke-support/soundsprout-server /usr/local/bin/
     sudo supervisorctl restart btconnect
-    sudo /usr/local/bin/soundsprout-server templategen --output-dir /tmp && /tmp/runner.sh
+    sudo /usr/local/bin/soundsprout-server templategen --output-dir /tmp
+    bash /tmp/runner.sh
 fi
 
 if [ "$pipinstall" = true ]; then
