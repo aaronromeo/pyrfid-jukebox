@@ -192,7 +192,7 @@ func TestGenerateTemplate(t *testing.T) {
 				"Age":     "30",
 				"Country": "USA",
 			},
-			expected: "Name: John Doe, Age: 30, Country: USA",
+			expected: "Name: John Doe, Age: 30, Country: USA\n",
 		},
 	}
 
