@@ -49,6 +49,8 @@ sudo apt-get install -y git vim tmux
 
 ### 3. Install asdf and go
 
+This needs to be done for `pi` and `root`
+
 ```bash
 git clone https://github.com/asdf-vm/asdf.git ~/.asdf --branch v0.14.1
 echo '. "$HOME/.asdf/asdf.sh"' >> ~/.bashrc

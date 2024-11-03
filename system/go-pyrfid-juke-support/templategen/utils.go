@@ -4,19 +4,14 @@ import (
 	"bytes"
 	"fmt"
 	"html/template"
-	"path/filepath"
 )
 
 func GenerateTemplate(inputFile string, data map[string]string) (string, error) {
-	dir, err := filepath.Abs("./")
-	if err != nil {
-		panic(err)
-	}
 	// Parse the template file
-	tmpl, err := template.ParseFiles(inputFile)
+	tmpl, err := template.ParseFS(templatesFS, inputFile)
 	if err != nil {
 		// the executable directory
-		return "", fmt.Errorf("%w - current path %s", err, dir)
+		return "", fmt.Errorf("error parsing template: %w", err)
 	}
 
 	// Use a buffer to capture the output instead of writing to a file

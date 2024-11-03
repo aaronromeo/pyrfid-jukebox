@@ -2,6 +2,7 @@ package templategen
 
 import (
 	"bytes"
+	"embed"
 	"fmt"
 	"log"
 	"log/slog"
@@ -23,6 +24,9 @@ type Service struct {
 	logger    *slog.Logger
 	OutputDir string
 }
+
+//go:embed templates/*
+var templatesFS embed.FS
 
 const RunnerFilename = "runner.sh"
 
@@ -108,10 +112,9 @@ func (ft *Service) processTemplateSubs(template FileTemplate, outputs map[string
 
 	if !contentEqual {
 		cmds = append(cmds, []string{
-			fmt.Sprintf("mv %s %s\n", template.TemplateFile, template.DestinationFile),
-			fmt.Sprintf("chown pi %s\n", template.DestinationFile),
-			fmt.Sprintf("sudo supervisorctl %s reload\n", template.ServiceRestart),
-			fmt.Sprintf("sudo supervisorctl %s restart\n", template.ServiceRestart),
+			fmt.Sprintf("sudo mv %s %s\n", generateTemplateFilename, template.DestinationFile),
+			fmt.Sprintf("sudo chown pi %s\n", template.DestinationFile),
+			fmt.Sprintf("sudo supervisorctl restart %s\n", template.ServiceRestart),
 		}...)
 	}
 

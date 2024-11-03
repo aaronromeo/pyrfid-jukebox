@@ -166,6 +166,8 @@ func TestRun(t *testing.T) {
 				),
 			)
 			assert.NoError(t, err)
+			actualFile = []byte(strings.ReplaceAll(string(actualFile), outputDir, "<TEMPDIR>"))
+
 			expectedFile, err := os.ReadFile(
 				filepath.Join(basePath, "testdata", "baselines", tt.baselinesPath, templategen.RunnerFilename),
 			)
@@ -190,20 +192,17 @@ func TestGenerateTemplate(t *testing.T) {
 				"Age":     "30",
 				"Country": "USA",
 			},
-			expected: "Name: John Doe, Age: 30, Country: USA",
+			expected: "Name: John Doe, Age: 30, Country: USA\n",
 		},
 	}
 
 	// Create a test template file
-	templateContent := "Name: {{.Name}}, Age: {{.Age}}, Country: {{.Country}}"
-	if err := os.WriteFile("test_template.txt", []byte(templateContent), 0644); err != nil {
-		t.Fatalf("Failed to create test template: %v", err)
-	}
-	defer os.Remove("test_template.txt") // Cleanup the test file after execution
-
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			result, err := templategen.GenerateTemplate(tt.template, tt.data)
+			result, err := templategen.GenerateTemplate(
+				filepath.Join("templates", tt.template),
+				tt.data,
+			)
 			if err != nil {
 				t.Fatalf("Failed to generate template: %v", err)
 			}
