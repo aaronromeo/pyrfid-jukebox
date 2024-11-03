@@ -5,6 +5,8 @@ set -euo pipefail
 echo
 echo "$(date '+%Y-%m-%d %H:%M:%S') - Script started"
 
+source /etc/environment
+
 if [ "$(id -u)" -eq 0 ]; then
     echo "Running as root."
 else
