@@ -9,7 +9,7 @@ import (
 	"strings"
 	"testing"
 
-	"aaronromeo.com/go-pyrfid-juke-support/templategen"
+	"aaronromeo.com/soundsprout/templategen"
 	"github.com/stretchr/testify/assert"
 )
 

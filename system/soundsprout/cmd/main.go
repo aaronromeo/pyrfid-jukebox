@@ -6,8 +6,8 @@ import (
 	"os"
 	"path/filepath"
 
-	"aaronromeo.com/go-pyrfid-juke-support/btconnect"
-	"aaronromeo.com/go-pyrfid-juke-support/templategen"
+	"aaronromeo.com/soundsprout/btconnect"
+	"aaronromeo.com/soundsprout/templategen"
 	"github.com/joho/godotenv"
 	"github.com/urfave/cli/v2"
 )

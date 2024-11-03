@@ -49,7 +49,7 @@ if [ "$repodiffs" = true ]; then
     echo "$(date '+%Y-%m-%d %H:%M:%S') Running setup"
     bash setup.sh
     GOCMD=/home/pi/.asdf/shims/go make build
-    mv system/go-pyrfid-juke-support/soundsprout-server /usr/local/bin/
+    mv system/soundsprout/soundsprout-server /usr/local/bin/
     sudo supervisorctl restart btconnect
     /usr/local/bin/soundsprout-server templategen --output-dir /tmp
     bash /tmp/runner.sh
