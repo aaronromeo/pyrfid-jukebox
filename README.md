@@ -65,6 +65,7 @@ asdf install golang 1.23.1
 - Git clone this project
   - `mkdir /home/pi/workspace/`
   - `git clone https://github.com/aaronromeo/pyrfid-jukebox`
+  - `git config --global --add safe.directory pyrfid-jukebox`
 
 `GOBIN=/usr/local/bin/ go install`
 
