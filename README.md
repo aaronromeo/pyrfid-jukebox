@@ -426,3 +426,15 @@ mkdir -p /home/pi/.soundsprout && printf "PJ_BLUETOOTH_DEVICE=XX:XX:XX:XX:XX:XX\
 - Handling Bluetooth telephony audio (HFP/HSP profiles).
 
 ***Typical Use Case***: BlueALSA is used when you want to integrate Bluetooth audio devices into a Linux system that uses ALSA for sound management. It enables ALSA-based applications to interact with Bluetooth audio hardware, which they wouldn't be able to do directly.
+
+## Web Portal
+
+`soundsprout-server serve` runs a LAN-only web portal (no authentication). It is
+supervised as `portal` (`system/supervisor/conf.d/portal.conf`) on port 8080 and logs to
+`/home/pi/logs/portal.{out,err}.log`.
+
+Run it locally with:
+
+```bash
+soundsprout-server serve --addr 127.0.0.1:8080
+```
