@@ -3,10 +3,13 @@ package main
 import (
 	"fmt"
 	"log/slog"
+	"net/http"
 	"os"
 	"path/filepath"
+	"time"
 
 	"aaronromeo.com/soundsprout/btconnect"
+	"aaronromeo.com/soundsprout/portal"
 	"aaronromeo.com/soundsprout/templategen"
 	"github.com/joho/godotenv"
 	"github.com/urfave/cli/v2"
@@ -15,7 +18,7 @@ import (
 func main() {
 	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
 
-	err := godotenv.Load(filepath.Join("home", "pi", ".soundsprout", "conf"))
+	err := godotenv.Load("/home/pi/.soundsprout/conf")
 	if err != nil {
 		logger.Error("Error loading .env file")
 	}
@@ -80,6 +83,29 @@ func main() {
 					return nil
 				},
 			},
+			{
+				Name:  "serve",
+				Usage: "Run the web portal",
+				Flags: []cli.Flag{
+					&cli.StringFlag{
+						Name:  "addr",
+						Value: "0.0.0.0:8080",
+					},
+				},
+				Action: func(ctx *cli.Context) error {
+					portalServer, srvErr := portal.NewService(logger)
+					if srvErr != nil {
+						return srvErr
+					}
+					logger.Info("portal listening", "addr", ctx.String("addr"))
+					httpServer := &http.Server{
+						Addr:              ctx.String("addr"),
+						Handler:           portalServer.Routes(),
+						ReadHeaderTimeout: 5 * time.Second,
+					}
+					return httpServer.ListenAndServe()
+				},
+			},
 		},
 	}
 
@@ -91,5 +117,3 @@ func main() {
 		)
 	}
 }
-
-// Additional functions to replicate other parts of btconnect.sh
