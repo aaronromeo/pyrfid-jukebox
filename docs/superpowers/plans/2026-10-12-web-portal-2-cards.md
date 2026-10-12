@@ -1,6 +1,6 @@
 # Web Portal Part 2 — RFID Card Manager Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [x]`) syntax for tracking.
 
 **Goal:** Let the web portal list, assign, repoint, and remove RFID-card → music-folder mappings in `server/rfid_map.json`, and harden the Python writer so the portal and `player.py` never clobber each other.
 
@@ -45,7 +45,7 @@
   - `func (m *MapStore) Assign(cardID, folder string) error`
   - `func (m *MapStore) Remove(cardID string) error`
 
-- [ ] **Step 1: Write the failing tests**
+- [x] **Step 1: Write the failing tests**
 
 Create `system/soundsprout/portal/rfidmap_test.go`:
 
@@ -112,12 +112,12 @@ func TestMapStoreUpdatePreservesExistingKeys(t *testing.T) {
 }
 ```
 
-- [ ] **Step 2: Run tests to verify they fail**
+- [x] **Step 2: Run tests to verify they fail**
 
 Run: `cd system/soundsprout && ASDF_GOLANG_VERSION=1.25.6 go test ./portal/...`
 Expected: FAIL — `undefined: portal.NewMapStore`.
 
-- [ ] **Step 3: Write `rfidmap.go`**
+- [x] **Step 3: Write `rfidmap.go`**
 
 Create `system/soundsprout/portal/rfidmap.go`:
 
@@ -221,7 +221,7 @@ func (m *MapStore) writeAtomic(data map[string]string) error {
 }
 ```
 
-- [ ] **Step 4: Write the shared atomic-write helper**
+- [x] **Step 4: Write the shared atomic-write helper**
 
 Create `system/soundsprout/portal/fileutil.go`:
 
@@ -261,12 +261,12 @@ func writeFileAtomic(path, content string) error {
 }
 ```
 
-- [ ] **Step 5: Run tests to verify they pass**
+- [x] **Step 5: Run tests to verify they pass**
 
 Run: `cd system/soundsprout && ASDF_GOLANG_VERSION=1.25.6 go test ./portal/...`
 Expected: PASS.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add system/soundsprout/portal/rfidmap.go system/soundsprout/portal/fileutil.go \
@@ -289,7 +289,7 @@ git commit -m "feat(portal): add atomic, locked map store"
   - `func (l *Library) Folders() ([]Folder, error)`
   - `func (l *Library) Resolve(name string) (string, error)`
 
-- [ ] **Step 1: Write the failing tests**
+- [x] **Step 1: Write the failing tests**
 
 Create `system/soundsprout/portal/music_test.go`:
 
@@ -342,12 +342,12 @@ func TestLibraryResolveRequiresExistingDir(t *testing.T) {
 }
 ```
 
-- [ ] **Step 2: Run tests to verify they fail**
+- [x] **Step 2: Run tests to verify they fail**
 
 Run: `cd system/soundsprout && ASDF_GOLANG_VERSION=1.25.6 go test ./portal/... -run TestLibrary`
 Expected: FAIL — `undefined: portal.NewLibrary`.
 
-- [ ] **Step 3: Write `music.go`**
+- [x] **Step 3: Write `music.go`**
 
 Create `system/soundsprout/portal/music.go`:
 
@@ -440,12 +440,12 @@ func countMP3(dir string) (int, error) {
 }
 ```
 
-- [ ] **Step 4: Run tests to verify they pass**
+- [x] **Step 4: Run tests to verify they pass**
 
 Run: `cd system/soundsprout && ASDF_GOLANG_VERSION=1.25.6 go test ./portal/...`
 Expected: PASS.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add system/soundsprout/portal/music.go system/soundsprout/portal/music_test.go
@@ -472,7 +472,7 @@ git commit -m "feat(portal): add music library folder listing"
   - `type Config struct{...}`; `func DefaultConfig() Config`
   - Routes: `GET /`, `GET /cards`, `POST /cards/assign`, `POST /cards/remove`.
 
-- [ ] **Step 1: Write the failing tests**
+- [x] **Step 1: Write the failing tests**
 
 Replace the entire contents of `system/soundsprout/portal/server_test.go` with:
 
@@ -588,12 +588,12 @@ func TestCSRFGuardRejectsCrossOrigin(t *testing.T) {
 }
 ```
 
-- [ ] **Step 2: Run tests to verify they fail**
+- [x] **Step 2: Run tests to verify they fail**
 
 Run: `cd system/soundsprout && ASDF_GOLANG_VERSION=1.25.6 go test ./portal/...`
 Expected: FAIL — `too many arguments in call to portal.NewServer`.
 
-- [ ] **Step 3: Replace `server.go`**
+- [x] **Step 3: Replace `server.go`**
 
 Replace the entire contents of `system/soundsprout/portal/server.go` with:
 
@@ -754,7 +754,7 @@ func (s *Server) handleRemove(w http.ResponseWriter, r *http.Request) {
 }
 ```
 
-- [ ] **Step 4: Replace `service.go`**
+- [x] **Step 4: Replace `service.go`**
 
 Replace the entire contents of `system/soundsprout/portal/service.go` with:
 
@@ -806,7 +806,7 @@ func NewService(logger *slog.Logger) (*Server, error) {
 }
 ```
 
-- [ ] **Step 5: Update `index.html`**
+- [x] **Step 5: Update `index.html`**
 
 Replace the entire contents of `system/soundsprout/portal/templates/index.html` with:
 
@@ -822,7 +822,7 @@ Replace the entire contents of `system/soundsprout/portal/templates/index.html` 
 </html>
 ```
 
-- [ ] **Step 6: Create `cards.html`**
+- [x] **Step 6: Create `cards.html`**
 
 Create `system/soundsprout/portal/templates/cards.html`:
 
@@ -878,12 +878,12 @@ Create `system/soundsprout/portal/templates/cards.html`:
 </html>
 ```
 
-- [ ] **Step 7: Run tests to verify they pass**
+- [x] **Step 7: Run tests to verify they pass**
 
 Run: `cd system/soundsprout && ASDF_GOLANG_VERSION=1.25.6 go test ./portal/...`
 Expected: PASS (all card + map + library tests).
 
-- [ ] **Step 8: Document the Cards tab**
+- [x] **Step 8: Document the Cards tab**
 
 In `README.md`, append this subsection under the `## Web Portal` section:
 
@@ -895,7 +895,7 @@ folder picker over `music/` to assign cards that were seen but never mapped. Map
 stored in `server/rfid_map.json` (writes are atomic and take the same lock as `player.py`).
 ```
 
-- [ ] **Step 9: Commit**
+- [x] **Step 9: Commit**
 
 ```bash
 git add system/soundsprout/portal/server.go system/soundsprout/portal/service.go \
@@ -920,7 +920,7 @@ git commit -m "feat(portal): add RFID card manager UI"
 **Interfaces:**
 - Produces: `load_map(path) -> dict`; `save_map_atomic(path, data) -> None`; `update_map(path, mutate, lock_path=MAP_LOCK) -> Any`.
 
-- [ ] **Step 1: Write the failing tests**
+- [x] **Step 1: Write the failing tests**
 
 Create an empty `server/tests/__init__.py`.
 
@@ -989,12 +989,12 @@ def test_update_is_safe_across_processes(tmp_path):
     assert len(load_map(path)) == 5
 ```
 
-- [ ] **Step 2: Run tests to verify they fail**
+- [x] **Step 2: Run tests to verify they fail**
 
 Run: `pip install pytest==8.3.4 && python3 -m pytest server/tests -q`
 Expected: FAIL — `ModuleNotFoundError: No module named 'rfid_map_store'`.
 
-- [ ] **Step 3: Write `server/rfid_map_store.py`**
+- [x] **Step 3: Write `server/rfid_map_store.py`**
 
 Create `server/rfid_map_store.py`:
 
@@ -1054,7 +1054,7 @@ def update_map(path, mutate, lock_path=MAP_LOCK):
     return result
 ```
 
-- [ ] **Step 4: Add pytest config + deps**
+- [x] **Step 4: Add pytest config + deps**
 
 Append to `pyproject.toml`:
 
@@ -1071,12 +1071,12 @@ pluggy==1.5.0
 pytest==8.3.4
 ```
 
-- [ ] **Step 5: Run tests to verify they pass**
+- [x] **Step 5: Run tests to verify they pass**
 
 Run: `pip install pytest==8.3.4 && python3 -m pytest -q`
 Expected: all tests PASS (config in `pyproject.toml` points at `server/tests`).
 
-- [ ] **Step 6: Add the CI job**
+- [x] **Step 6: Add the CI job**
 
 In `.github/workflows/testing.yml`, add this job after the existing ones:
 
@@ -1097,7 +1097,7 @@ In `.github/workflows/testing.yml`, add this job after the existing ones:
         run: python -m pytest -q
 ```
 
-- [ ] **Step 7: Document the Python tests in `AGENTS.md`**
+- [x] **Step 7: Document the Python tests in `AGENTS.md`**
 
 In the `**Python:**` bullet list under `## Build, test, lint, format`, add:
 
@@ -1105,7 +1105,7 @@ In the `**Python:**` bullet list under `## Build, test, lint, format`, add:
 - Tests: `python3 -m pytest` (config in `pyproject.toml`, tests under `server/tests/`)
 ```
 
-- [ ] **Step 8: Commit**
+- [x] **Step 8: Commit**
 
 ```bash
 git add server/rfid_map_store.py server/tests pyproject.toml requirements.txt \
@@ -1123,7 +1123,7 @@ git commit -m "feat(server): atomic locked rfid map store with pytest coverage"
 **Interfaces:**
 - Consumes: `rfid_map_store.load_map`, `rfid_map_store.save_map_atomic`, `rfid_map_store.update_map`.
 
-- [ ] **Step 1: Add the import**
+- [x] **Step 1: Add the import**
 
 In `server/player.py`, after `from logger import Logger` (line ~13) add:
 
@@ -1131,11 +1131,11 @@ In `server/player.py`, after `from logger import Logger` (line ~13) add:
 import rfid_map_store
 ```
 
-- [ ] **Step 2: Remove the unused `json` import**
+- [x] **Step 2: Remove the unused `json` import**
 
 Delete the `import json` line (line ~11). It is no longer referenced after the changes below.
 
-- [ ] **Step 3: Delete the non-atomic writer**
+- [x] **Step 3: Delete the non-atomic writer**
 
 Delete the `data_to_map` function:
 
@@ -1146,7 +1146,7 @@ def data_to_map(data):
         json.dump(data, file, indent=4)
 ```
 
-- [ ] **Step 4: Replace the create-if-missing call**
+- [x] **Step 4: Replace the create-if-missing call**
 
 Replace:
 
@@ -1162,7 +1162,7 @@ with:
                 rfid_map_store.save_map_atomic(RFID_TO_MUSIC_MAP, {})
 ```
 
-- [ ] **Step 5: Replace the map read**
+- [x] **Step 5: Replace the map read**
 
 Replace:
 
@@ -1177,7 +1177,7 @@ with:
             data = rfid_map_store.load_map(RFID_TO_MUSIC_MAP)
 ```
 
-- [ ] **Step 6: Replace the unknown-card write**
+- [x] **Step 6: Replace the unknown-card write**
 
 Delete the `update_map = False` line (near line ~132) and the trailing block:
 
@@ -1202,17 +1202,17 @@ with:
                 )
 ```
 
-- [ ] **Step 7: Byte-compile to verify syntax**
+- [x] **Step 7: Byte-compile to verify syntax**
 
 Run: `python3 -m py_compile server/player.py`
 Expected: exit 0.
 
-- [ ] **Step 8: Run flake8 + black checks**
+- [x] **Step 8: Run flake8 + black checks**
 
 Run: `black --check server/player.py server/rfid_map_store.py server/tests && flake8 server/player.py server/rfid_map_store.py server/tests`
 Expected: no changes needed, no lint errors.
 
-- [ ] **Step 9: Commit**
+- [x] **Step 9: Commit**
 
 ```bash
 git add server/player.py
@@ -1223,22 +1223,22 @@ git commit -m "fix(server): use atomic locked map writes in player"
 
 ### Task 6: Final validation for Part 2
 
-- [ ] **Step 1: Run the full Go suite**
+- [x] **Step 1: Run the full Go suite**
 
 Run: `ASDF_GOLANG_VERSION=1.25.6 make test`
 Expected: all packages PASS, including `portal`.
 
-- [ ] **Step 2: Run golangci-lint (if available)**
+- [x] **Step 2: Run golangci-lint (if available)**
 
 Run: `cd system/soundsprout && golangci-lint run --config .golangci.yml ./...`
 Expected: no issues. (If not installed, skip; fix any findings the CI job reports.)
 
-- [ ] **Step 3: Run Python tests + lint**
+- [x] **Step 3: Run Python tests + lint**
 
 Run: `python3 -m pytest -q && pre-commit run --all-files`
 Expected: tests PASS; hooks clean.
 
-- [ ] **Step 4: Smoke-test the cards page**
+- [x] **Step 4: Smoke-test the cards page**
 
 Run:
 
@@ -1253,7 +1253,7 @@ kill %1
 
 Expected: prints `OK`.
 
-- [ ] **Step 5: Commit any final fixups**
+- [x] **Step 5: Commit any final fixups**
 
 ```bash
 git add -A

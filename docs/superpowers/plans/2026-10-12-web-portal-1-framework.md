@@ -1,6 +1,6 @@
 # Web Portal Part 1 — Framework / Hello World Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [x]`) syntax for tracking.
 
 **Goal:** Add a `soundsprout-server serve` subcommand that launches a supervised HTTP portal serving a Hello World page — the framework the card manager (Part 2) and Bluetooth (Part 3) build on.
 
@@ -39,7 +39,7 @@
   - `func (s *Server) Routes() http.Handler`
   - `func NewService(logger *slog.Logger) (*Server, error)`
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 Create `system/soundsprout/portal/server_test.go`:
 
@@ -80,12 +80,12 @@ func TestUnknownPathIsNotFound(t *testing.T) {
 }
 ```
 
-- [ ] **Step 2: Run tests to verify they fail**
+- [x] **Step 2: Run tests to verify they fail**
 
 Run: `cd system/soundsprout && ASDF_GOLANG_VERSION=1.25.6 go test ./portal/...`
 Expected: FAIL — `package portal` has no Go files / `portal.NewServer` undefined.
 
-- [ ] **Step 3: Write `service.go`**
+- [x] **Step 3: Write `service.go`**
 
 Create `system/soundsprout/portal/service.go`:
 
@@ -100,7 +100,7 @@ func NewService(logger *slog.Logger) (*Server, error) {
 }
 ```
 
-- [ ] **Step 4: Write `server.go`**
+- [x] **Step 4: Write `server.go`**
 
 Create `system/soundsprout/portal/server.go`:
 
@@ -154,7 +154,7 @@ func (s *Server) handleIndex(w http.ResponseWriter, r *http.Request) {
 }
 ```
 
-- [ ] **Step 5: Write `templates/index.html`**
+- [x] **Step 5: Write `templates/index.html`**
 
 Create `system/soundsprout/portal/templates/index.html`:
 
@@ -169,12 +169,12 @@ Create `system/soundsprout/portal/templates/index.html`:
 </html>
 ```
 
-- [ ] **Step 6: Run tests to verify they pass**
+- [x] **Step 6: Run tests to verify they pass**
 
 Run: `cd system/soundsprout && ASDF_GOLANG_VERSION=1.25.6 go test ./portal/...`
 Expected: PASS (2 tests).
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add system/soundsprout/portal
@@ -192,7 +192,7 @@ git commit -m "feat(portal): add hello-world HTTP server"
 - Consumes: `portal.NewService`, `(*portal.Server).Routes`.
 - Produces: CLI command `serve` with an `--addr` flag (default `0.0.0.0:8080`).
 
-- [ ] **Step 1: Add `serve` and fix the dotenv path**
+- [x] **Step 1: Add `serve` and fix the dotenv path**
 
 Replace the entire contents of `system/soundsprout/cmd/main.go` with:
 
@@ -318,17 +318,17 @@ func main() {
 }
 ```
 
-- [ ] **Step 2: Build and vet**
+- [x] **Step 2: Build and vet**
 
 Run: `cd system/soundsprout && ASDF_GOLANG_VERSION=1.25.6 go build ./... && ASDF_GOLANG_VERSION=1.25.6 go vet ./...`
 Expected: no output, exit 0.
 
-- [ ] **Step 3: Confirm the command is registered**
+- [x] **Step 3: Confirm the command is registered**
 
 Run: `cd system/soundsprout && ASDF_GOLANG_VERSION=1.25.6 go run ./cmd serve --help`
 Expected: prints help for `serve` including the `--addr` flag.
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git add system/soundsprout/cmd/main.go
@@ -349,7 +349,7 @@ git commit -m "feat(portal): add serve subcommand and fix dotenv path"
 - Consumes: the `serve` command from Task 2.
 - Produces: a supervised `portal` program on port 8080 with logs under `/home/pi/logs/`.
 
-- [ ] **Step 1: Create the supervisor program**
+- [x] **Step 1: Create the supervisor program**
 
 Create `system/supervisor/conf.d/portal.conf`:
 
@@ -371,7 +371,7 @@ user=pi
 Note: `setup.sh` already runs `cp system/supervisor/conf.d/* /etc/supervisor/conf.d/`, so
 no `setup.sh` change is needed for the program itself.
 
-- [ ] **Step 2: Create the portal logs in `prepare_logs.sh`**
+- [x] **Step 2: Create the portal logs in `prepare_logs.sh`**
 
 In `system/scripts/prepare_logs.sh`, insert this block immediately before the final
 `chmod 666 /home/pi/logs/*` line:
@@ -389,12 +389,12 @@ echo "
 $(date '+%Y-%m-%d %H:%M:%S') - Created portal err." >> /home/pi/logs/portal.err.log
 ```
 
-- [ ] **Step 3: Verify shell syntax**
+- [x] **Step 3: Verify shell syntax**
 
 Run: `bash -n setup.sh system/scripts/prepare_logs.sh`
 Expected: exit 0.
 
-- [ ] **Step 4: Document the portal in `README.md`**
+- [x] **Step 4: Document the portal in `README.md`**
 
 Add this section at the end of `README.md`:
 
@@ -412,7 +412,7 @@ soundsprout-server serve --addr 127.0.0.1:8080
 ```
 ````
 
-- [ ] **Step 5: Document the portal in `AGENTS.md`**
+- [x] **Step 5: Document the portal in `AGENTS.md`**
 
 In the `## Code structure` list of `AGENTS.md`, add:
 
@@ -421,7 +421,7 @@ In the `## Code structure` list of `AGENTS.md`, add:
   with `soundsprout-server serve`.
 ```
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add system/supervisor/conf.d/portal.conf system/scripts/prepare_logs.sh README.md AGENTS.md
@@ -432,18 +432,18 @@ git commit -m "feat(system): supervise the portal and document it"
 
 ### Task 4: Final validation for Part 1
 
-- [ ] **Step 1: Run the full Go suite**
+- [x] **Step 1: Run the full Go suite**
 
 Run: `ASDF_GOLANG_VERSION=1.25.6 make test`
 Expected: all packages PASS, including `portal`.
 
-- [ ] **Step 2: Run golangci-lint (if available)**
+- [x] **Step 2: Run golangci-lint (if available)**
 
 Run: `cd system/soundsprout && golangci-lint run --config .golangci.yml ./...`
 Expected: no issues. (If `golangci-lint` is not installed, skip and let CI run it; fix any
 findings the CI job reports before merging.)
 
-- [ ] **Step 3: Smoke-test the running binary**
+- [x] **Step 3: Smoke-test the running binary**
 
 Run:
 
@@ -458,12 +458,12 @@ kill %1
 
 Expected: prints `OK`.
 
-- [ ] **Step 4: Run pre-commit**
+- [x] **Step 4: Run pre-commit**
 
 Run: `pre-commit run --all-files`
 Expected: hooks clean (fix formatting if needed).
 
-- [ ] **Step 5: Commit any final fixups**
+- [x] **Step 5: Commit any final fixups**
 
 ```bash
 git add -A
