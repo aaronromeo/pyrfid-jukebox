@@ -26,7 +26,18 @@ func newTestServer(t *testing.T) (*portal.Server, *portal.MapStore, string) {
 		filepath.Join(dir, "map.lock"),
 	)
 	library := portal.NewLibrary(music)
-	srv, err := portal.NewServer(mapStore, library, nil)
+	r := newFakeRunner()
+	settings := portal.NewSettings(
+		filepath.Join(dir, "conf"),
+		filepath.Join(dir, "settings.lock"),
+	)
+	audio := portal.NewAudioConfig(
+		filepath.Join(dir, ".asoundrc"),
+		filepath.Join(dir, "cmus-rc"),
+		r,
+	)
+	bt := portal.NewBluetooth(r, settings, audio)
+	srv, err := portal.NewServer(mapStore, library, bt, nil)
 	require.NoError(t, err)
 	return srv, mapStore, music
 }
@@ -106,4 +117,15 @@ func TestCSRFGuardRejectsCrossOrigin(t *testing.T) {
 		url.Values{"card_id": {"999"}, "folder": {"card-1"}}, "evil.com")
 
 	assert.Equal(t, http.StatusForbidden, rec.Code)
+}
+
+func TestBluetoothPageRenders(t *testing.T) {
+	srv, _, _ := newTestServer(t)
+
+	req := httptest.NewRequest("GET", "/bluetooth", nil)
+	rec := httptest.NewRecorder()
+	srv.Routes().ServeHTTP(rec, req)
+
+	assert.Equal(t, http.StatusOK, rec.Code)
+	assert.Contains(t, rec.Body.String(), "Bluetooth")
 }

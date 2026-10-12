@@ -1,6 +1,10 @@
 package portal
 
-import "log/slog"
+import (
+	"log/slog"
+
+	"aaronromeo.com/soundsprout/bluetooth"
+)
 
 const (
 	DefaultMusicDir     = "/home/pi/workspace/pyrfid-jukebox/music"
@@ -39,7 +43,11 @@ func DefaultConfig() Config {
 // NewService wires the portal's dependencies and returns a ready Server.
 func NewService(logger *slog.Logger) (*Server, error) {
 	cfg := DefaultConfig()
+	runner := bluetooth.OSRunner{}
 	mapStore := NewMapStore(cfg.MapFile, cfg.MapLock)
 	library := NewLibrary(cfg.MusicDir)
-	return NewServer(mapStore, library, logger)
+	settings := NewSettings(cfg.SettingsFile, cfg.SettingsLock)
+	audio := NewAudioConfig(cfg.AsoundrcPath, cfg.CmusRcPath, runner)
+	bt := NewBluetooth(runner, settings, audio)
+	return NewServer(mapStore, library, bt, logger)
 }

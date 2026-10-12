@@ -7,10 +7,14 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"time"
 )
 
 //go:embed templates/*.html
 var templatesFS embed.FS
+
+// scanTimeout bounds bluetoothctl discovery.
+const scanTimeout = 5 * time.Second
 
 type cardRow struct {
 	ID       string
@@ -22,17 +26,18 @@ type cardRow struct {
 type Server struct {
 	mapStore *MapStore
 	library  *Library
+	bt       *Bluetooth
 	logger   *slog.Logger
 	tmpl     *template.Template
 }
 
 // NewServer parses the embedded templates and returns a Server.
-func NewServer(mapStore *MapStore, library *Library, logger *slog.Logger) (*Server, error) {
+func NewServer(mapStore *MapStore, library *Library, bt *Bluetooth, logger *slog.Logger) (*Server, error) {
 	tmpl, err := template.ParseFS(templatesFS, "templates/*.html")
 	if err != nil {
 		return nil, err
 	}
-	return &Server{mapStore: mapStore, library: library, logger: logger, tmpl: tmpl}, nil
+	return &Server{mapStore: mapStore, library: library, bt: bt, logger: logger, tmpl: tmpl}, nil
 }
 
 // Routes returns the portal's HTTP handler.
@@ -42,6 +47,11 @@ func (s *Server) Routes() http.Handler {
 	mux.HandleFunc("/cards", s.handleCards)
 	mux.HandleFunc("/cards/assign", s.handleAssign)
 	mux.HandleFunc("/cards/remove", s.handleRemove)
+	mux.HandleFunc("/bluetooth", s.handleBluetooth)
+	mux.HandleFunc("/bluetooth/scan", s.handleScan)
+	mux.HandleFunc("/bluetooth/pair", s.handlePair)
+	mux.HandleFunc("/bluetooth/connect", s.handleConnect)
+	mux.HandleFunc("/bluetooth/reconnect", s.handleReconnect)
 	return s.csrfGuard(mux)
 }
 
@@ -151,4 +161,62 @@ func (s *Server) handleRemove(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	s.redirect(w, r)
+}
+
+func (s *Server) handleBluetooth(w http.ResponseWriter, r *http.Request) {
+	s.renderBluetooth(w, nil)
+}
+
+func (s *Server) handleScan(w http.ResponseWriter, r *http.Request) {
+	devices, err := s.bt.Scan(scanTimeout)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadGateway)
+		return
+	}
+	s.renderBluetooth(w, devices)
+}
+
+func (s *Server) handlePair(w http.ResponseWriter, r *http.Request) {
+	if err := s.bt.PairAndActivate(r.FormValue("mac")); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	s.redirect(w, r)
+}
+
+func (s *Server) handleConnect(w http.ResponseWriter, r *http.Request) {
+	if err := s.bt.Activate(r.FormValue("mac")); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	s.redirect(w, r)
+}
+
+func (s *Server) handleReconnect(w http.ResponseWriter, r *http.Request) {
+	if err := s.bt.Reconnect(); err != nil {
+		http.Error(w, err.Error(), http.StatusBadGateway)
+		return
+	}
+	s.redirect(w, r)
+}
+
+func (s *Server) renderBluetooth(w http.ResponseWriter, discovered any) {
+	mac, err := s.bt.ActiveMAC()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	var status any
+	if mac != "" {
+		if st, stErr := s.bt.Status(mac); stErr == nil {
+			status = st
+		}
+	}
+	known, _ := s.bt.KnownDevices()
+	s.render(w, "bluetooth.html", map[string]any{
+		"ActiveMAC":  mac,
+		"Status":     status,
+		"Known":      known,
+		"Discovered": discovered,
+	})
 }
