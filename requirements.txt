@@ -29,6 +29,7 @@ gpiozero==1.6.2
 identify==2.5.30
 idna==2.10
 importlib-metadata==6.8.0
+iniconfig==2.0.0
 iso8601==2.0.0
 itsdangerous==2.1.2
 Jinja2==3.1.2
@@ -48,6 +49,7 @@ pathvalidate==2.5.2
 pigpio==1.78
 Pillow==9.5.0
 platformdirs==3.9.1
+pluggy==1.5.0
 pre-commit==3.5.0
 pycares==4.3.0
 pycodestyle==2.11.1
@@ -56,6 +58,7 @@ pycryptodomex==3.18.0
 pyflakes==3.1.0
 Pygments==2.14.0
 pylev==1.4.0
+pytest==8.3.4
 python-apt==2.6.0
 pyttsx3==2.90
 PyYAML==6.0.1

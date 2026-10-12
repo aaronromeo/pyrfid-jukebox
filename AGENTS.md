@@ -30,6 +30,7 @@ make run    # runs local binary
 **Python:**
 - Pre-commit hooks configured (`.pre-commit-config.yaml`): black (23.11.0), flake8 (6.1.0), trailing whitespace, end-of-file-fixer, check-yaml, check-added-large-files
 - Run: `pre-commit run --all-files` (also runs in CI on push)
+- Tests: `python3 -m pytest` (config in `pyproject.toml`, tests under `server/tests/`)
 
 ## Code structure
 - `system/soundsprout/cmd/main.go`: CLI with commands `btconnect` (maintains BT connection, loops every 15s, needs `PJ_BLUETOOTH_DEVICE`) and `templategen` (generates cmus/asoundrc templates from embedded templates; writes runner script to output dir).
