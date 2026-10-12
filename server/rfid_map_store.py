@@ -26,7 +26,9 @@ def load_map(path):
 def save_map_atomic(path, data):
     directory = os.path.dirname(os.path.abspath(path))
     os.makedirs(directory, exist_ok=True)
-    fd, tmp = tempfile.mkstemp(dir=directory, prefix=".rfid_map-", suffix=".tmp")
+    fd, tmp = tempfile.mkstemp(
+        dir=directory, prefix=".rfid_map-", suffix=".tmp"
+    )
     try:
         with os.fdopen(fd, "w") as handle:
             json.dump(data, handle, indent=4)

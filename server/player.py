@@ -8,9 +8,9 @@ import os
 from mfrc522 import SimpleMFRC522
 import RPi.GPIO as GPIO
 import threading
-import json
 import warnings
 from logger import Logger
+import rfid_map_store
 
 from peripheral_helpers import (
     blink_play,
@@ -60,12 +60,6 @@ def acquire_lock():
         lock_file.write(str(os.getpid()))
         lock_file.flush()
         return lock_file
-
-
-def data_to_map(data):
-    with open(RFID_TO_MUSIC_MAP, "w") as file:
-        Logger.info(f"Writing to map file {RFID_TO_MUSIC_MAP}")
-        json.dump(data, file, indent=4)
 
 
 # Set up button event detection with debouncing
@@ -121,7 +115,7 @@ try:
 
         # Create map file if it doesn't exist
         if not os.path.exists(RFID_TO_MUSIC_MAP):
-            data_to_map(data)
+            rfid_map_store.save_map_atomic(RFID_TO_MUSIC_MAP, {})
 
         try:
             # Check for RFID card
@@ -129,11 +123,8 @@ try:
             rfid_id = str(rfid_id)
             Logger.info("Received RFID card: %s" % rfid_id)
 
-            update_map = False
-
             # Load existing map file
-            with open(RFID_TO_MUSIC_MAP, "r") as file:
-                data = json.load(file)
+            data = rfid_map_store.load_map(RFID_TO_MUSIC_MAP)
 
             Logger.debug(data)
             folder_path = data.get(rfid_id, "")
@@ -163,11 +154,10 @@ try:
                 blink_red_leds_once()
                 blink_red_leds_once()
 
-                update_map = True
-                data[rfid_id] = ""
-
-            if update_map:
-                data_to_map(data)
+                rfid_map_store.update_map(
+                    RFID_TO_MUSIC_MAP,
+                    lambda mapping: mapping.__setitem__(rfid_id, ""),
+                )
         except Exception as e:
             Logger.critical(f"Error during RFID read or processing: {e}")
             raise e
