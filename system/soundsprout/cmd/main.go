@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"aaronromeo.com/soundsprout/btconnect"
+	"aaronromeo.com/soundsprout/bluetooth"
 	"aaronromeo.com/soundsprout/portal"
 	"aaronromeo.com/soundsprout/templategen"
 	"github.com/joho/godotenv"
@@ -31,7 +32,7 @@ func main() {
 				Usage:   "Maintain a connection to bluetooth device",
 				Action: func(c *cli.Context) error {
 					connectService := btconnect.NewBtConnectService(
-						&btconnect.OSCommandExecutor{},
+						bluetooth.OSRunner{},
 						logger,
 					)
 					err = connectService.Run()
