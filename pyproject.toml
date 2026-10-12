@@ -3,3 +3,6 @@ line-length = 79
 
 [flake8]
 max-line-length = 80
+
+[tool.pytest.ini_options]
+testpaths = ["server/tests"]

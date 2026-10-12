@@ -60,6 +60,17 @@ echo "
 
 $(date '+%Y-%m-%d %H:%M:%S') - Created gitpull err." >> /home/pi/logs/gitpull.err.log
 
+touch /home/pi/logs/portal.err.log
+touch /home/pi/logs/portal.out.log
+chown pi:pi /home/pi/logs/portal.err.log
+chown pi:pi /home/pi/logs/portal.out.log
+echo "
+
+$(date '+%Y-%m-%d %H:%M:%S') - Created portal logs." >> /home/pi/logs/portal.out.log
+echo "
+
+$(date '+%Y-%m-%d %H:%M:%S') - Created portal err." >> /home/pi/logs/portal.err.log
+
 chmod 666 /home/pi/logs/*
 
 sudo supervisorctl start gitpull

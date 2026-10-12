@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>Bluetooth</title></head>
+<body>
+<h1>Bluetooth</h1>
+<p><a href="/">Home</a> · <a href="/cards">Cards</a></p>
+
+<h2>Status</h2>
+{{if .ActiveMAC}}
+  <p>Active device: {{.ActiveMAC}}</p>
+  {{with .Status}}<p>Connected: {{.Connected}} — {{.Name}}</p>{{end}}
+  <form method="post" action="/bluetooth/reconnect"><button type="submit">Reconnect</button></form>
+{{else}}<p>No active device configured.</p>{{end}}
+
+<h2>Scan for devices</h2>
+<form method="post" action="/bluetooth/scan">
+  <button type="submit">Scan (~5s)</button>
+</form>
+{{if .Discovered}}
+<table>
+  <tr><th>Device</th><th>Name</th><th>Pair</th></tr>
+  {{range .Discovered}}
+  <tr>
+    <td>{{.MAC}}</td><td>{{.Name}}</td>
+    <td><form method="post" action="/bluetooth/pair">
+      <input type="hidden" name="mac" value="{{.MAC}}">
+      <button type="submit">Pair</button>
+    </form></td>
+  </tr>
+  {{end}}
+</table>
+{{end}}
+
+<h2>Known devices</h2>
+<table>
+  <tr><th>Device</th><th>Name</th><th>Activate</th></tr>
+  {{range .Known}}
+  <tr>
+    <td>{{.MAC}}</td><td>{{.Name}}</td>
+    <td><form method="post" action="/bluetooth/connect">
+      <input type="hidden" name="mac" value="{{.MAC}}">
+      <button type="submit">Connect</button>
+    </form></td>
+  </tr>
+  {{end}}
+</table>
+</body>
+</html>
