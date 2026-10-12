@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>Cards</title></head>
+<body>
+<h1>Cards</h1>
+<p><a href="/">Home</a></p>
+
+<h2>Unassigned cards</h2>
+{{if .Unassigned}}
+<table>
+  <tr><th>Card</th><th>Assign folder</th></tr>
+  {{range .Unassigned}}
+  <tr>
+    <td>{{.}}</td>
+    <td>
+      <form method="post" action="/cards/assign">
+        <input type="hidden" name="card_id" value="{{.}}">
+        <select name="folder">
+          {{range $.Folders}}<option value="{{.Name}}">{{.Name}} ({{.MP3Count}} mp3)</option>{{end}}
+        </select>
+        <button type="submit">Assign</button>
+      </form>
+    </td>
+  </tr>
+  {{end}}
+</table>
+{{else}}<p>None.</p>{{end}}
+
+<h2>Mappings</h2>
+{{if .Rows}}
+<table>
+  <tr><th>Card</th><th>Folder</th><th>Status</th><th></th></tr>
+  {{range .Rows}}
+  <tr>
+    <td>{{.ID}}</td>
+    <td>{{.Path}}</td>
+    <td>{{if .Exists}}{{.MP3Count}} mp3{{else}}missing{{end}}</td>
+    <td>
+      <form method="post" action="/cards/remove">
+        <input type="hidden" name="card_id" value="{{.ID}}">
+        <button type="submit">Remove</button>
+      </form>
+    </td>
+  </tr>
+  {{end}}
+</table>
+{{else}}<p>No mappings yet.</p>{{end}}
+</body>
+</html>

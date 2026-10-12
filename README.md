@@ -438,3 +438,9 @@ Run it locally with:
 ```bash
 soundsprout-server serve --addr 127.0.0.1:8080
 ```
+
+### Cards
+
+The Cards tab (`/cards`) lists every known RFID card and its mapped folder, and offers a
+folder picker over `music/` to assign cards that were seen but never mapped. Mappings are
+stored in `server/rfid_map.json` (writes are atomic and take the same lock as `player.py`).
