@@ -223,18 +223,23 @@ To enable and configure ALSA (Advanced Linux Sound Architecture) for Bluetooth a
 
 1. `sudo apt-get install alsa-ucm-conf`
 
-1. Copy the `system/home/.asoundrc` configuration file to the `pi` home directory.
+1. Set `PJ_BLUETOOTH_DEVICE` to the MAC address of your Bluetooth audio device (see step 16).
 
-2. Edit the file and make sure to replace "88:C6:26:23:95:3F" with the MAC address of your Bluetooth audio device.
-
-3. To apply the changes made in the .asoundrc file, ALSA needs to be restarted. This can be done by restarting your Raspberry Pi or by reloading the ALSA configuration. To reload ALSA, use the following command:
+1. Generate the ALSA and cmus configs from templates (requires `PJ_BLUETOOTH_DEVICE`):
 
     ```bash
-
-    sudo alsactl restore
+    soundsprout-server templategen --output-dir /tmp
     ```
 
-    If this doesn't work try `sudo reboot`
+    This renders `system/soundsprout/templategen/templates/asoundrc.txt` to `/home/pi/.asoundrc` and `config-cmus-rc.txt` to `/home/pi/.config/cmus/rc`.
+
+1. Install the generated configs by running the generated runner script:
+
+    ```bash
+    bash /tmp/runner.sh
+    ```
+
+    This moves the files into place, sets ownership to `pi`, restarts `btconnect`, and runs `sudo alsactl restore` as needed. If audio still does not work try `sudo reboot`.
 
 ### 9. Configure CMUS to use BlueALSA
 
@@ -249,7 +254,9 @@ To enable and configure ALSA (Advanced Linux Sound Architecture) for Bluetooth a
 
 ### 10. Bluetooth Auto-connect on Reboot
 
-To automatically establish a Bluetooth connection on reboot, the script named [`btconnect.sh`](system/scripts/btconnect.sh) is present in the home directory.
+Bluetooth auto-reconnect is handled by the Go `btconnect` service (`system/soundsprout/btconnect/service.go`), managed by Supervisor via `system/supervisor/conf.d/btconnect.conf` (runs `/usr/local/bin/soundsprout-server btconnect` as user `pi`).
+
+It requires `PJ_BLUETOOTH_DEVICE` to be set (see step 16). Every 15s it checks `bluetoothctl info <device>` for `Connected: yes` and runs `bluetoothctl connect <device>` when disconnected.
 
 ### 11. Enable RDIF
 
@@ -305,14 +312,17 @@ sudo iwconfig wlan0 power off
 
 ### 15. Install scripts
 
-- Update the device ID <https://github.com/aaronromeo/pyrfid-jukebox/blob/main/system/scripts/btconnect.sh#L8>
+- Set `PJ_BLUETOOTH_DEVICE` to your speaker MAC address (see step 16)
 - `sudo apt-get install -y supervisor screen lsof`
 - Run `setup.sh`
 
 ### 16. Setup the env vars
 
+See `.env.sample` for the expected keys. `PJ_BLUETOOTH_DEVICE` is required by the Go `btconnect`/`templategen` commands; `PJ_DEFAULT_BRANCH` is used by `system/scripts/gitpull.sh` (defaults to `main`). Set them system-wide (`/etc/environment`, which `system/scripts/gitpull.sh` and `system/scripts/cmus.sh` source) and for the Go service (dotenv at `/home/pi/.soundsprout/conf` loaded by `soundsprout-server`):
+
 ```bash
 echo "PJ_BLUETOOTH_DEVICE=XX:XX:XX:XX:XX:XX" | sudo tee -a /etc/environment
+mkdir -p /home/pi/.soundsprout && printf "PJ_BLUETOOTH_DEVICE=XX:XX:XX:XX:XX:XX\n" > /home/pi/.soundsprout/conf
 ```
 
 ## GPIO config
