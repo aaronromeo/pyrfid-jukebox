@@ -19,7 +19,6 @@ type OSRunner struct{}
 func (OSRunner) Output(name string, args ...string) (string, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), commandTimeout)
 	defer cancel()
-	//nolint:gosec // name/args come from fixed internal callers, never user input.
 	out, err := exec.CommandContext(ctx, name, args...).Output()
 	return string(out), err
 }
@@ -27,6 +26,5 @@ func (OSRunner) Output(name string, args ...string) (string, error) {
 func (OSRunner) Run(name string, args ...string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), commandTimeout)
 	defer cancel()
-	//nolint:gosec // name/args come from fixed internal callers, never user input.
 	return exec.CommandContext(ctx, name, args...).Run()
 }

@@ -11,6 +11,9 @@ import (
 const (
 	bluetoothctlCommand = "bluetoothctl"
 	yesValue            = "yes"
+	// minDeviceFields is the minimum field count of a parsed
+	// `bluetoothctl devices` line that carries a MAC address.
+	minDeviceFields = 2
 )
 
 // ValidMAC reports whether mac is a colon-separated 48-bit address.
@@ -39,7 +42,7 @@ func ParseInfo(out string) Info {
 		line = strings.TrimSpace(line)
 		switch {
 		case strings.HasPrefix(line, "Device "):
-			if fields := strings.Fields(line); len(fields) >= 2 {
+			if fields := strings.Fields(line); len(fields) >= minDeviceFields {
 				info.MAC = fields[1]
 			}
 		case strings.HasPrefix(line, "Name:"):
@@ -60,9 +63,9 @@ func ParseDevices(out string) []Device {
 	var devices []Device
 	for _, line := range strings.Split(out, "\n") {
 		fields := strings.Fields(strings.TrimSpace(line))
-		if len(fields) >= 2 && fields[0] == "Device" {
+		if len(fields) >= minDeviceFields && fields[0] == "Device" {
 			name := ""
-			if len(fields) > 2 {
+			if len(fields) > minDeviceFields {
 				name = strings.Join(fields[2:], " ")
 			}
 			devices = append(devices, Device{MAC: fields[1], Name: name})

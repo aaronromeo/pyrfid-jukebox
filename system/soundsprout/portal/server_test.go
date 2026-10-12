@@ -44,7 +44,7 @@ func newTestServer(t *testing.T) (*portal.Server, *portal.MapStore, string) {
 
 func postForm(t *testing.T, h http.Handler, path string, form url.Values, host string) *httptest.ResponseRecorder {
 	t.Helper()
-	req := httptest.NewRequest("POST", path, strings.NewReader(form.Encode()))
+	req := httptest.NewRequest(http.MethodPost, path, strings.NewReader(form.Encode()))
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	req.Header.Set("Origin", "http://"+host)
 	rec := httptest.NewRecorder()
@@ -55,7 +55,7 @@ func postForm(t *testing.T, h http.Handler, path string, form url.Values, host s
 func TestIndexRendersHello(t *testing.T) {
 	srv, _, _ := newTestServer(t)
 
-	req := httptest.NewRequest("GET", "/", nil)
+	req := httptest.NewRequest(http.MethodGet, "/", nil)
 	rec := httptest.NewRecorder()
 	srv.Routes().ServeHTTP(rec, req)
 
@@ -66,7 +66,7 @@ func TestIndexRendersHello(t *testing.T) {
 func TestUnknownPathIsNotFound(t *testing.T) {
 	srv, _, _ := newTestServer(t)
 
-	req := httptest.NewRequest("GET", "/does-not-exist", nil)
+	req := httptest.NewRequest(http.MethodGet, "/does-not-exist", nil)
 	rec := httptest.NewRecorder()
 	srv.Routes().ServeHTTP(rec, req)
 
@@ -122,7 +122,7 @@ func TestCSRFGuardRejectsCrossOrigin(t *testing.T) {
 func TestBluetoothPageRenders(t *testing.T) {
 	srv, _, _ := newTestServer(t)
 
-	req := httptest.NewRequest("GET", "/bluetooth", nil)
+	req := httptest.NewRequest(http.MethodGet, "/bluetooth", nil)
 	rec := httptest.NewRecorder()
 	srv.Routes().ServeHTTP(rec, req)
 

@@ -8,13 +8,16 @@ import (
 	"path/filepath"
 	"time"
 
-	"aaronromeo.com/soundsprout/btconnect"
 	"aaronromeo.com/soundsprout/bluetooth"
+	"aaronromeo.com/soundsprout/btconnect"
 	"aaronromeo.com/soundsprout/portal"
 	"aaronromeo.com/soundsprout/templategen"
 	"github.com/joho/godotenv"
 	"github.com/urfave/cli/v2"
 )
+
+// readHeaderTimeout bounds reading the portal's HTTP request headers.
+const readHeaderTimeout = 5 * time.Second
 
 func main() {
 	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
@@ -102,7 +105,7 @@ func main() {
 					httpServer := &http.Server{
 						Addr:              ctx.String("addr"),
 						Handler:           portalServer.Routes(),
-						ReadHeaderTimeout: 5 * time.Second,
+						ReadHeaderTimeout: readHeaderTimeout,
 					}
 					return httpServer.ListenAndServe()
 				},

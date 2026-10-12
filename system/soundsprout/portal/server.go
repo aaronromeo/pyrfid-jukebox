@@ -97,7 +97,7 @@ func (s *Server) handleIndex(w http.ResponseWriter, r *http.Request) {
 	s.render(w, "index.html", map[string]any{"Title": "SoundSprout"})
 }
 
-func (s *Server) handleCards(w http.ResponseWriter, r *http.Request) {
+func (s *Server) handleCards(w http.ResponseWriter, _ *http.Request) {
 	data, err := s.mapStore.Load()
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -163,11 +163,11 @@ func (s *Server) handleRemove(w http.ResponseWriter, r *http.Request) {
 	s.redirect(w, r)
 }
 
-func (s *Server) handleBluetooth(w http.ResponseWriter, r *http.Request) {
+func (s *Server) handleBluetooth(w http.ResponseWriter, _ *http.Request) {
 	s.renderBluetooth(w, nil)
 }
 
-func (s *Server) handleScan(w http.ResponseWriter, r *http.Request) {
+func (s *Server) handleScan(w http.ResponseWriter, _ *http.Request) {
 	devices, err := s.bt.Scan(scanTimeout)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadGateway)
