@@ -17,5 +17,10 @@ mkdir -p /home/pi/logs
 
 chown -R pi:pi /home/pi/logs
 
+mkdir -p /etc/sudoers.d
+cp system/sudoers.d/soundsprout-portal /etc/sudoers.d/soundsprout-portal
+chmod 440 /etc/sudoers.d/soundsprout-portal
+visudo -cf /etc/sudoers.d/soundsprout-portal
+
 supervisorctl reread
 supervisorctl update

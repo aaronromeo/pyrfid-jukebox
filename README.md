@@ -444,3 +444,12 @@ soundsprout-server serve --addr 127.0.0.1:8080
 The Cards tab (`/cards`) lists every known RFID card and its mapped folder, and offers a
 folder picker over `music/` to assign cards that were seen but never mapped. Mappings are
 stored in `server/rfid_map.json` (writes are atomic and take the same lock as `player.py`).
+
+### Bluetooth
+
+The Bluetooth tab (`/bluetooth`) shows the active sink, scans for devices, and can
+pair/trust/connect a new speaker or switch the active output. Applying a device rewrites
+`/home/pi/.asoundrc` and `/home/pi/.config/cmus/rc` from the `templategen` templates and
+restarts `btconnect`/`cmus_manager`/`alsactl` through the narrow passwordless sudo
+whitelist in `system/sudoers.d/soundsprout-portal`. The active MAC is stored in the
+pi-owned dotenv `/home/pi/.soundsprout/conf`.

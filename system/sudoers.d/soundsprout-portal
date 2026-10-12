@@ -1,0 +1,3 @@
+pi ALL=(root) NOPASSWD: /usr/bin/supervisorctl restart btconnect
+pi ALL=(root) NOPASSWD: /usr/bin/supervisorctl restart cmus_manager
+pi ALL=(root) NOPASSWD: /usr/sbin/alsactl restore

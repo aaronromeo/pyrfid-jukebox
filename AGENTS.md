@@ -38,6 +38,8 @@ make run    # runs local binary
 - `system/soundsprout/templategen/`: template generation. Templates in `templates/*.txt` use Go templates with `{{.PJ_BLUETOOTH_DEVICE}}`. Generates runner.sh with commands to create dirs, move generated files, chown pi, restart supervisor services (cmus_manager, btconnect), and run `alsactl restore` as needed.
 - `system/soundsprout/portal/`: Go web portal package (embedded HTML templates). Started
   with `soundsprout-server serve`.
+- `system/soundsprout/bluetooth/`: shared `bluetoothctl` wrapper used by `btconnect` and
+  `portal` behind a `Runner` seam.
 - `server/player.py`: RFID jukebox using `mfrc522.SimpleMFRC522`, `RPi.GPIO`, cmus via `cmus_utils`. Acquires lock at `/tmp/pyrfid_jukebox.lock`, loads `server/rfid_map.json`, plays folder contents via cmus when RFID matches a mapped folder. Handles buttons/LEDs via `peripheral_helpers`.
 - `server/cmus_utils.py`, `server/logger.py`, `server/peripheral_helpers.py`: supporting modules.
 - Supervisor configs: `soundsprout_server.conf` runs Python `server/player.py` (autostart=false in config), `btconnect.conf`, `cmus_manager.conf`, `gitpull.conf`, `prepare_logs.conf`. Setup copies them to `/etc/supervisor/conf.d/`.
