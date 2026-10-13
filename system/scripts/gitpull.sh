@@ -20,7 +20,11 @@ echo "$(date '+%Y-%m-%d %H:%M:%S') Listing remote branches:"
 sudo -u pi git branch -r
 
 echo "$(date '+%Y-%m-%d %H:%M:%S') Fetching from remote..."
-sudo -u pi git fetch
+if ! sudo -u pi git fetch; then
+    echo "$(date '+%Y-%m-%d %H:%M:%S') Fetch failed (likely a transient network or DNS issue). Retrying in 5 minutes."
+    sleep 5m
+    exit 0
+fi
 
 branch=${PJ_DEFAULT_BRANCH:-main}
 
