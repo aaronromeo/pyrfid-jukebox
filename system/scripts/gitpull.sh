@@ -51,6 +51,7 @@ if [ "$repodiffs" = true ]; then
     GOCMD=/home/pi/.asdf/shims/go make build
     mv system/soundsprout/soundsprout-server /usr/local/bin/
     sudo supervisorctl restart btconnect
+    sudo supervisorctl restart portal
     /usr/local/bin/soundsprout-server templategen --output-dir /tmp
     bash /tmp/runner.sh
 fi

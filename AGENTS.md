@@ -17,7 +17,7 @@ This is a Raspberry Pi RFID jukebox (SoundSprout). The repo contains:
 make build  # builds soundsprout binary (go build ./cmd -> soundsprout-server)
 make test   # runs go tests with coverage (coverprofile in repo root, cover.html generated)
 make clean  # clean in soundsprout
-make install # installs to /usr/local/bin (GOBIN=/usr/local/bin)
+make install # builds soundsprout-server to /usr/local/bin (needs sudo; pass GOCMD=<go path> if go is not on root's PATH)
 make run    # runs local binary
 ```
 

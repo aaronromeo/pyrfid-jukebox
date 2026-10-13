@@ -27,7 +27,7 @@ clean:
 .PHONY: install
 install:
 	$(GOCLEAN)
-	GOBIN=/usr/local/bin/ $(GOINSTALL) ./cmd
+	$(GOBUILD) -o /usr/local/bin/$(BINARY_NAME) ./cmd
 
 .PHONY: run
 run:
