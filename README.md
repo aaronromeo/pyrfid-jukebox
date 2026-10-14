@@ -302,13 +302,16 @@ The required parts are
   make build && sudo mv system/soundsprout/soundsprout-server /usr/local/bin/
   ```
 
-### 14. Disable power management on the lan
+### 14. Disable power management on the wlan
 
-Run this!
+The Pi Zero W's WiFi power save lets the radio doze off, dropping SSH sessions and DNS lookups (a 13-second DNS blip once left `gitpull` FATAL for weeks). NetworkManager applies the powersave setting at connection activation, so set it on the profile and cycle the connection. The setting persists across reboots.
 
 ```bash
-sudo iwconfig wlan0 power off
+sudo nmcli connection modify preconfigured 802-11-wireless.powersave 2
+sudo nmcli device disconnect wlan0 && sudo nmcli connection up preconfigured
 ```
+
+`2` disables power save (`3` enables, `0` leaves the driver default). The older one-shot `sudo iwconfig wlan0 power off` needs wireless-tools installed and does not survive a reboot.
 
 ### 15. Install scripts
 
