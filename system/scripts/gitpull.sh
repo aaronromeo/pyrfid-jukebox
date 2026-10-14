@@ -30,7 +30,7 @@ branch=${PJ_DEFAULT_BRANCH:-main}
 
 pipinstall=false
 echo "$(date '+%Y-%m-%d %H:%M:%S') Checking for updates in requirements.txt..."
-if ! sudo -u pi git diff --quiet origin/$branch...HEAD -- requirements.txt; then
+if ! sudo -u pi git diff --quiet HEAD..origin/$branch -- requirements.txt; then
     echo "$(date '+%Y-%m-%d %H:%M:%S') New requirements found in requirements.txt"
     pipinstall=true
 else
@@ -62,7 +62,7 @@ fi
 
 if [ "$pipinstall" = true ]; then
     echo "$(date '+%Y-%m-%d %H:%M:%S') Installing requirements"
-    sudo -u pi pip3 install -r requirements.txt
+    sudo -u pi /home/pi/workspace/pyrfid-jukebox/env/bin/pip install -r requirements.txt
 fi
 
 if [ "$repodiffs" = true ]; then
