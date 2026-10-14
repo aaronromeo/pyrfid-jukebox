@@ -9,6 +9,10 @@ else
     exit 1
 fi
 
+if ! git config --global --get-all safe.directory 2>/dev/null | grep -qxF /home/pi/workspace/pyrfid-jukebox; then
+    git config --global --add safe.directory /home/pi/workspace/pyrfid-jukebox
+fi
+
 cp -R system/scripts ~
 rm /etc/supervisor/conf.d/*
 cp system/supervisor/conf.d/* /etc/supervisor/conf.d/
