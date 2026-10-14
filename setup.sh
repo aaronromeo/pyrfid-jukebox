@@ -9,8 +9,8 @@ else
     exit 1
 fi
 
-if ! git config --global --get-all safe.directory 2>/dev/null | grep -qxF /home/pi/workspace/pyrfid-jukebox; then
-    git config --global --add safe.directory /home/pi/workspace/pyrfid-jukebox
+if ! git config --file /root/.gitconfig --get-all safe.directory 2>/dev/null | grep -qxF /home/pi/workspace/pyrfid-jukebox; then
+    git config --file /root/.gitconfig --add safe.directory /home/pi/workspace/pyrfid-jukebox
 fi
 
 cp -R system/scripts ~
