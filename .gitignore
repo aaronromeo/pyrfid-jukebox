@@ -10,3 +10,4 @@ outputs/runner.sh
 cover.out
 test_output.txt
 cover.html
+system/soundsprout/soundsprout-server
