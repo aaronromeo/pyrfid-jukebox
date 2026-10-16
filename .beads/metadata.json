@@ -1,0 +1,7 @@
+{
+  "database": "dolt",
+  "backend": "dolt",
+  "dolt_mode": "server",
+  "dolt_database": "pyrfid_jukebox",
+  "project_id": "17717c59-27d0-4db8-bc7c-d7bb3da3b710"
+}
