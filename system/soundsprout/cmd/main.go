@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log/slog"
 	"net/http"
@@ -38,7 +39,7 @@ func main() {
 						bluetooth.OSRunner{},
 						logger,
 					)
-					err = connectService.Run()
+					err = connectService.Run(context.Background())
 					if err != nil {
 						logger.Error(
 							"btconnect failure",

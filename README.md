@@ -256,7 +256,7 @@ To enable and configure ALSA (Advanced Linux Sound Architecture) for Bluetooth a
 
 Bluetooth auto-reconnect is handled by the Go `btconnect` service (`system/soundsprout/btconnect/service.go`), managed by Supervisor via `system/supervisor/conf.d/btconnect.conf` (runs `/usr/local/bin/soundsprout-server btconnect` as user `pi`).
 
-It requires `PJ_BLUETOOTH_DEVICE` to be set (see step 16). Every 15s it checks `bluetoothctl info <device>` for `Connected: yes` and runs `bluetoothctl connect <device>` when disconnected.
+It requires `PJ_BLUETOOTH_DEVICE` to be set (see step 16). Every 15s it checks `bluetoothctl info <device>` for `Connected: yes` and runs `bluetoothctl connect <device>` when disconnected. Failed connect attempts are logged and retried with exponential backoff (15s doubling to a 300s cap, reset on success) instead of terminating the service, so the jukebox reconnects on its own when the speaker becomes available again.
 
 ### 11. Enable RDIF
 
