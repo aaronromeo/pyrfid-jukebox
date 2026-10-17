@@ -72,16 +72,20 @@ func (bt *Service) Run(ctx context.Context) error {
 				return err
 			}
 			failures++
-			bt.logger.Warn(
-				"bluetooth connect failed",
-				"error", err,
-				"failures", failures,
-			)
 		} else if failures > 0 {
 			bt.logger.Info("bluetooth reconnected", "failures", failures)
 			failures = 0
 		}
-		if sleepErr := bt.sleep(ctx, nextDelay(failures)); sleepErr != nil {
+		delay := nextDelay(failures)
+		if err != nil {
+			bt.logger.Warn(
+				"bluetooth connect failed",
+				"error", err,
+				"failures", failures,
+				"retry_in", delay,
+			)
+		}
+		if sleepErr := bt.sleep(ctx, delay); sleepErr != nil {
 			return sleepErr
 		}
 	}

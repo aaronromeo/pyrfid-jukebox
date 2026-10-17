@@ -117,9 +117,11 @@ func TestRunBackoffSequence(t *testing.T) {
 	}}
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
+	var logs bytes.Buffer
+	logger := slog.New(slog.NewTextHandler(&logs, nil))
 	s := &recordingSleep{stop: 6, cancel: cancel}
 	svc := btconnect.NewBtConnectService(
-		runner, newDiscardLogger(), btconnect.WithSleep(s.sleep),
+		runner, logger, btconnect.WithSleep(s.sleep),
 	)
 	err := svc.Run(ctx)
 	require.ErrorIs(t, err, context.Canceled)
@@ -132,6 +134,7 @@ func TestRunBackoffSequence(t *testing.T) {
 		300 * time.Second,
 	}, s.delays)
 	assert.Len(t, runner.runs, 6)
+	assert.Contains(t, logs.String(), "retry_in")
 }
 
 func TestRunResetsBackoffOnSuccess(t *testing.T) {
