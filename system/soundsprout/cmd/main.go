@@ -23,7 +23,7 @@ const readHeaderTimeout = 5 * time.Second
 func main() {
 	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
 
-	err := godotenv.Load("/home/pi/.soundsprout/conf")
+	err := godotenv.Overload("/home/pi/.soundsprout/conf")
 	if err != nil {
 		logger.Error("Error loading .env file")
 	}

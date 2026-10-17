@@ -243,7 +243,7 @@ Flask is listed in the README's "Parental Control Module" feature as "Remote man
 | `/home/pi/.soundsprout/conf` | dotenv for `PJ_BLUETOOTH_DEVICE` (loaded by Go CLI) |
 | `/tmp/pyrfid_jukebox.lock` | Player process lock |
 | `/home/pi/cmus-socket` | cmus Unix domain socket |
-| `/etc/environment` | System-wide env vars including `PJ_BLUETOOTH_DEVICE` |
+| `/etc/environment` | System env file; **not** used for `PJ_BLUETOOTH_DEVICE`/`PJ_DEFAULT_BRANCH` (they live only in the dotenv above) |
 | `/home/pi/logs/` | All supervisor log files |
 
 ---
