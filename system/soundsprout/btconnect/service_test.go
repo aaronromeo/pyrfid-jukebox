@@ -33,7 +33,9 @@ func (f *fakeRunner) Run(name string, args ...string) error {
 func TestCheckAndConnectMissingEnv(t *testing.T) {
 	t.Setenv("PJ_BLUETOOTH_DEVICE", "")
 	svc := btconnect.NewBtConnectService(&fakeRunner{}, nil)
-	require.Error(t, svc.CheckAndConnect())
+	err := svc.CheckAndConnect()
+	require.Error(t, err)
+	assert.ErrorIs(t, err, btconnect.ErrMissingDevice)
 }
 
 func TestCheckAndConnectConnects(t *testing.T) {

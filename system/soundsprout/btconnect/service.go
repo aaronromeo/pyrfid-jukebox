@@ -1,7 +1,7 @@
 package btconnect
 
 import (
-	"fmt"
+	"errors"
 	"log/slog"
 	"os"
 	"time"
@@ -10,6 +10,11 @@ import (
 )
 
 const DefaultSleepTime = 15
+
+// ErrMissingDevice reports that PJ_BLUETOOTH_DEVICE is not set. It is
+// fatal: the environment is loaded once at process start, so retrying
+// cannot help.
+var ErrMissingDevice = errors.New("env var PJ_BLUETOOTH_DEVICE not set")
 
 type Service struct {
 	runner bluetooth.Runner
@@ -34,7 +39,7 @@ func (bt *Service) Run() error {
 func (bt *Service) CheckAndConnect() error {
 	device := os.Getenv("PJ_BLUETOOTH_DEVICE")
 	if device == "" {
-		return fmt.Errorf("env var PJ_BLUETOOTH_DEVICE not set")
+		return ErrMissingDevice
 	}
 	connected, err := bluetooth.IsConnected(bt.runner, device)
 	if err != nil {
