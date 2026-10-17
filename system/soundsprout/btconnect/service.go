@@ -10,7 +10,10 @@ import (
 	"aaronromeo.com/soundsprout/bluetooth"
 )
 
-const DefaultSleepTime = 15
+const (
+	DefaultSleepTime = 15
+	maxSleepTime     = 300
+)
 
 // ErrMissingDevice reports that PJ_BLUETOOTH_DEVICE is not set. It is
 // fatal: the environment is loaded once at process start, so retrying
@@ -56,22 +59,46 @@ func sleepCtx(ctx context.Context, d time.Duration) error {
 
 // Run maintains the connection until ctx is canceled. A missing
 // PJ_BLUETOOTH_DEVICE is fatal; connect failures are logged and
-// retried.
+// retried with exponential backoff.
 func (bt *Service) Run(ctx context.Context) error {
+	failures := 0
 	for {
 		if err := ctx.Err(); err != nil {
 			return err
 		}
-		if err := bt.CheckAndConnect(); err != nil {
+		err := bt.CheckAndConnect()
+		if err != nil {
 			if errors.Is(err, ErrMissingDevice) {
 				return err
 			}
-			bt.logger.Warn("bluetooth connect failed", "error", err)
+			failures++
+			bt.logger.Warn(
+				"bluetooth connect failed",
+				"error", err,
+				"failures", failures,
+			)
+		} else if failures > 0 {
+			bt.logger.Info("bluetooth reconnected", "failures", failures)
+			failures = 0
 		}
-		if err := bt.sleep(ctx, DefaultSleepTime*time.Second); err != nil {
-			return err
+		if sleepErr := bt.sleep(ctx, nextDelay(failures)); sleepErr != nil {
+			return sleepErr
 		}
 	}
+}
+
+// nextDelay returns the backoff after n consecutive failures:
+// 15s, 30s, 60s, 120s, 240s, then capped at 300s. n <= 0 returns the
+// base interval.
+func nextDelay(failures int) time.Duration {
+	d := DefaultSleepTime * time.Second
+	for i := 1; i < failures && d < maxSleepTime*time.Second; i++ {
+		d *= 2
+	}
+	if d > maxSleepTime*time.Second {
+		return maxSleepTime * time.Second
+	}
+	return d
 }
 
 // CheckAndConnect performs one maintenance cycle for the configured device.
