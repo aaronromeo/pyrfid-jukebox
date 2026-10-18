@@ -120,18 +120,6 @@ def led_setup():
     GPIO.setup(REPEAT_LED_PIN, GPIO.OUT)
 
 
-def music_is_playing():
-    return cmus_status()[0]
-
-
-def music_is_shuffling():
-    return cmus_status()[1]
-
-
-def music_is_repeating():
-    return cmus_status()[2]
-
-
 def blink_play(times):
     for x in range(times):
         GPIO.output(PLAY_LED_PIN, GPIO.HIGH)
@@ -169,7 +157,9 @@ def led_update_loop_factory(exit_event):
         while not exit_event.is_set():
             # print(f"LED update loop 18 {GPIO.input(18)} ")
             try:
-                if music_is_playing():
+                is_playing, is_shuffle, is_repeat = cmus_status()
+
+                if is_playing:
                     GPIO.output(PLAY_LED_PIN, GPIO.HIGH)
                     time.sleep(0.5)  # LED is on for 0.5 seconds
                     GPIO.output(PLAY_LED_PIN, GPIO.LOW)
@@ -179,12 +169,12 @@ def led_update_loop_factory(exit_event):
                 else:
                     GPIO.output(PLAY_LED_PIN, GPIO.LOW)
 
-                if music_is_shuffling():
+                if is_shuffle:
                     GPIO.output(SHUFFLE_LED_PIN, GPIO.HIGH)
                 else:
                     GPIO.output(SHUFFLE_LED_PIN, GPIO.LOW)
 
-                if music_is_repeating():
+                if is_repeat:
                     GPIO.output(REPEAT_LED_PIN, GPIO.HIGH)
                 else:
                     GPIO.output(REPEAT_LED_PIN, GPIO.LOW)

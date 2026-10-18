@@ -33,7 +33,7 @@ def send_to_cmus_socket(commands):
 
             with socket.socket(socket.AF_UNIX, socket.SOCK_STREAM) as s:
                 try:
-                    Logger.info(f"Using CMUS socket path: {cmus_socket_path}")
+                    Logger.debug(f"Using CMUS socket path: {cmus_socket_path}")
                     s.settimeout(TIMEOUT_DURATION)
                     s.connect(cmus_socket_path)
                     s.send(cmd.encode() + b"\n")
@@ -57,7 +57,7 @@ def send_to_cmus_socket(commands):
                 finally:
                     s.close()
 
-                Logger.info(f"Completed command: {cmd}")
+                Logger.debug(f"Completed command: {cmd}")
 
         return data
 
