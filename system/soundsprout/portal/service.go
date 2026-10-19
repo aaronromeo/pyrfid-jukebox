@@ -7,7 +7,7 @@ import (
 )
 
 const (
-	DefaultMusicDir     = "/home/pi/workspace/pyrfid-jukebox/music"
+	DefaultMusicDir     = "/home/pi/mp3s"
 	DefaultMapFile      = "/home/pi/workspace/pyrfid-jukebox/server/rfid_map.json"
 	DefaultMapLock      = "/tmp/pyrfid_jukebox.map.lock"
 	DefaultSettingsFile = "/home/pi/.soundsprout/conf"

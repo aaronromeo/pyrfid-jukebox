@@ -8,7 +8,7 @@
 <h2>Unassigned cards</h2>
 {{if .Unassigned}}
 <table>
-  <tr><th>Card</th><th>Assign folder</th></tr>
+  <tr><th>Card</th><th>Assign folder</th><th></th></tr>
   {{range .Unassigned}}
   <tr>
     <td>{{.}}</td>
@@ -19,6 +19,12 @@
           {{range $.Folders}}<option value="{{.Name}}">{{.Name}} ({{.MP3Count}} mp3)</option>{{end}}
         </select>
         <button type="submit">Assign</button>
+      </form>
+    </td>
+    <td>
+      <form method="post" action="/cards/remove">
+        <input type="hidden" name="card_id" value="{{.}}">
+        <button type="submit">Remove</button>
       </form>
     </td>
   </tr>
