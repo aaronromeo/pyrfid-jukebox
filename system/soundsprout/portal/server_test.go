@@ -109,6 +109,20 @@ func TestRemoveDeletesCard(t *testing.T) {
 	assert.False(t, ok)
 }
 
+func TestCardsPageRendersRemoveFormForUnassignedCards(t *testing.T) {
+	srv, mapStore, _ := newTestServer(t)
+	require.NoError(t, mapStore.Assign("999", ""))
+
+	req := httptest.NewRequest(http.MethodGet, "/cards", nil)
+	rec := httptest.NewRecorder()
+	srv.Routes().ServeHTTP(rec, req)
+
+	assert.Equal(t, http.StatusOK, rec.Code)
+	unassignedSection := strings.SplitN(rec.Body.String(), "<h2>Mappings</h2>", 2)[0]
+	assert.Contains(t, unassignedSection, `action="/cards/remove"`)
+	assert.Contains(t, unassignedSection, `name="card_id" value="999"`)
+}
+
 func TestCSRFGuardRejectsCrossOrigin(t *testing.T) {
 	srv, mapStore, _ := newTestServer(t)
 	require.NoError(t, mapStore.Assign("999", ""))
