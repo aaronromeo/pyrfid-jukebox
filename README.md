@@ -223,7 +223,7 @@ To enable and configure ALSA (Advanced Linux Sound Architecture) for Bluetooth a
 
 1. `sudo apt-get install alsa-ucm-conf`
 
-1. Set `PJ_BLUETOOTH_DEVICE` to the MAC address of your Bluetooth audio device (see step 16).
+1. Set `PJ_BLUETOOTH_DEVICE` to the MAC address of your Bluetooth audio device (see step 16). It lives in the dotenv `/home/pi/.soundsprout/conf`.
 
 1. Generate the ALSA and cmus configs from templates (requires `PJ_BLUETOOTH_DEVICE`):
 
@@ -256,7 +256,7 @@ To enable and configure ALSA (Advanced Linux Sound Architecture) for Bluetooth a
 
 Bluetooth auto-reconnect is handled by the Go `btconnect` service (`system/soundsprout/btconnect/service.go`), managed by Supervisor via `system/supervisor/conf.d/btconnect.conf` (runs `/usr/local/bin/soundsprout-server btconnect` as user `pi`).
 
-It requires `PJ_BLUETOOTH_DEVICE` to be set (see step 16). Every 15s it checks `bluetoothctl info <device>` for `Connected: yes` and runs `bluetoothctl connect <device>` when disconnected.
+It requires `PJ_BLUETOOTH_DEVICE` to be set (see step 16). Every 15s it checks `bluetoothctl info <device>` for `Connected: yes` and runs `bluetoothctl connect <device>` when disconnected. Failed connect attempts are logged and retried with exponential backoff (15s doubling to a 300s cap, reset on success) instead of terminating the service, so the jukebox reconnects on its own when the speaker becomes available again.
 
 ### 11. Enable RDIF
 
@@ -321,12 +321,16 @@ sudo nmcli device disconnect wlan0 && sudo nmcli connection up preconfigured
 
 ### 16. Setup the env vars
 
-See `.env.sample` for the expected keys. `PJ_BLUETOOTH_DEVICE` is required by the Go `btconnect`/`templategen` commands; `PJ_DEFAULT_BRANCH` is used by `system/scripts/gitpull.sh` (defaults to `main`). Set them system-wide (`/etc/environment`, which `system/scripts/gitpull.sh` and `system/scripts/cmus.sh` source) and for the Go service (dotenv at `/home/pi/.soundsprout/conf` loaded by `soundsprout-server`):
+See `.env.sample` for the expected keys. `PJ_BLUETOOTH_DEVICE` is required by the Go `btconnect`/`templategen` commands; `PJ_DEFAULT_BRANCH` is used by `system/scripts/gitpull.sh` (defaults to `main`). Both live in the single dotenv `/home/pi/.soundsprout/conf`, which `soundsprout-server` loads and `system/scripts/gitpull.sh` sources. Do **not** also set them in `/etc/environment` — `setup.sh` strips them from there if found.
+
+The normal way to set the speaker is the web portal (`/bluetooth`), which writes the dotenv and the audio configs. To set it by hand instead:
 
 ```bash
-echo "PJ_BLUETOOTH_DEVICE=XX:XX:XX:XX:XX:XX" | sudo tee -a /etc/environment
-mkdir -p /home/pi/.soundsprout && printf "PJ_BLUETOOTH_DEVICE=XX:XX:XX:XX:XX:XX\n" > /home/pi/.soundsprout/conf
+mkdir -p /home/pi/.soundsprout
+printf "PJ_BLUETOOTH_DEVICE=XX:XX:XX:XX:XX:XX\n" > /home/pi/.soundsprout/conf
 ```
+
+`setup.sh` creates the dotenv if missing and warns when `PJ_BLUETOOTH_DEVICE` is unset.
 
 ## GPIO config
 

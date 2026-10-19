@@ -6,7 +6,7 @@
 
 ## TL;DR
 
-When an RFID card is scanned, `server/player.py` reads the card's numeric ID, looks it up in `server/rfid_map.json` (a simple `{ "RFID_ID": "/absolute/path/to/folder" }` map). If the ID exists and the folder is found, it stops cmus, clears the queue, adds every `.mp3` file from that folder (sorted alphabetically), and starts playback. Unknown cards are added to the map with an empty-string value (`""`), triggering a red-LED error blink. The map is gitignored, created on first run, and uses PID-based file locking to prevent concurrent instances. Bluetooth audio is routed via BlueALSA → ALSA (`.asoundrc`) → cmus, with a Go service polling `bluetoothctl` every 15s to auto-reconnect. Template generation (`templategen`) uses `PJ_BLUETOOTH_DEVICE` to produce `.asoundrc` and `cmus/rc` configs.
+When an RFID card is scanned, `server/player.py` reads the card's numeric ID, looks it up in `server/rfid_map.json` (a simple `{ "RFID_ID": "/absolute/path/to/folder" }` map). If the ID exists and the folder is found, it stops cmus, clears the queue, adds every `.mp3` file from that folder (sorted alphabetically), and starts playback. Unknown cards are added to the map with an empty-string value (`""`), triggering a red-LED error blink. The map is gitignored, created on first run, and uses PID-based file locking to prevent concurrent instances. Bluetooth audio is routed via BlueALSA → ALSA (`.asoundrc`) → cmus, with a Go service polling `bluetoothctl` (15s cadence, backing off to at most 5 minutes after repeated failures) to auto-reconnect. Template generation (`templategen`) uses `PJ_BLUETOOTH_DEVICE` to produce `.asoundrc` and `cmus/rc` configs.
 
 Individual SoundSprout instance (machine) names are deployment-specific and are deliberately not recorded in this repo.
 
@@ -137,11 +137,11 @@ Contains historical `cmus-remote` command history including an example: `cmus-re
 
 **Source**: [`system/soundsprout/btconnect/service.go`](system/soundsprout/btconnect/service.go)
 
-- Runs an infinite loop every 15 seconds ([`service.go:47-70`](system/soundsprout/btconnect/service.go#L47-L70)).
-- Reads `PJ_BLUETOOTH_DEVICE` env var (required) ([`service.go:48-51`](system/soundsprout/btconnect/service.go#L48-L51)).
-- Checks connection: runs `bluetoothctl info <MAC>` ([`service.go:74`](system/soundsprout/btconnect/service.go#L74)).
-- Parses output for `"Connected: yes"` lines ([`service.go:97-105`](system/soundsprout/btconnect/service.go#L97-L105)).
-- If not connected: runs `bluetoothctl connect <MAC>` ([`service.go:85-94`](system/soundsprout/btconnect/service.go#L85-L94)).
+- Runs a context-aware loop (default cadence 15 seconds).
+- Reads `PJ_BLUETOOTH_DEVICE` env var (required); a missing value is fatal (`ErrMissingDevice`) and stops the process.
+- Checks connection: runs `bluetoothctl info <MAC>`, parses output for `"Connected: yes"`.
+- If not connected: runs `bluetoothctl connect <MAC>`.
+- Connect failures are logged (Warn) and retried with exponential backoff — 15s doubling to a 300s cap, reset on success — instead of terminating the service. A recovery is logged at Info. This prevents an absent speaker from FATALing the service under supervisor (the 2026-10-16 outage: fast exit/restart cycles wedged the Pi's Bluetooth stack; see the runbook in the incident handoff for radio-wedge recovery).
 
 **Supervisor config**: [`system/supervisor/conf.d/btconnect.conf`](system/supervisor/conf.d/btconnect.conf) — runs `/usr/local/bin/soundsprout-server btconnect`, autostart=true, user=pi.
 
@@ -243,7 +243,7 @@ Flask is listed in the README's "Parental Control Module" feature as "Remote man
 | `/home/pi/.soundsprout/conf` | dotenv for `PJ_BLUETOOTH_DEVICE` (loaded by Go CLI) |
 | `/tmp/pyrfid_jukebox.lock` | Player process lock |
 | `/home/pi/cmus-socket` | cmus Unix domain socket |
-| `/etc/environment` | System-wide env vars including `PJ_BLUETOOTH_DEVICE` |
+| `/etc/environment` | System env file; **not** used for `PJ_BLUETOOTH_DEVICE`/`PJ_DEFAULT_BRANCH` (they live only in the dotenv above) |
 | `/home/pi/logs/` | All supervisor log files |
 
 ---

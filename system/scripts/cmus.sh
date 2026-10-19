@@ -5,8 +5,6 @@ set -xeuo pipefail
 echo
 echo "$(date '+%Y-%m-%d %H:%M:%S') - Script started"
 
-source /etc/environment
-
 export XDG_RUNTIME_DIR="/home/pi"
 socket_file=$XDG_RUNTIME_DIR/cmus-socket
 

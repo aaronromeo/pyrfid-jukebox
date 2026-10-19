@@ -28,3 +28,7 @@ visudo -cf /etc/sudoers.d/soundsprout-portal
 
 supervisorctl reread
 supervisorctl update
+
+# Seed/validate the dotenv (the single source of truth for PJ_BLUETOOTH_DEVICE)
+# and strip stale project keys from /etc/environment.
+bash system/scripts/seed_config.sh

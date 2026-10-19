@@ -5,7 +5,11 @@ set -euo pipefail
 echo
 echo "$(date '+%Y-%m-%d %H:%M:%S') - Script started"
 
-source /etc/environment
+if [ -f /home/pi/.soundsprout/conf ]; then
+    set -a
+    source /home/pi/.soundsprout/conf
+    set +a
+fi
 
 if [ "$(id -u)" -eq 0 ]; then
     echo "Running as root."

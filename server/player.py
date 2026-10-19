@@ -8,9 +8,9 @@ import os
 from mfrc522 import SimpleMFRC522
 import RPi.GPIO as GPIO
 import threading
-import warnings
 from logger import Logger
 import rfid_map_store
+from rfid_reader import poll_for_card
 
 from peripheral_helpers import (
     blink_play,
@@ -23,7 +23,6 @@ from peripheral_helpers import (
 )
 
 Logger.info("Script started")
-warnings.simplefilter("error")
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
 RFID_TO_MUSIC_MAP = os.path.join(script_dir, "rfid_map.json")
@@ -111,7 +110,7 @@ try:
 
         data = {}
 
-        Logger.info(f"Loading map file {RFID_TO_MUSIC_MAP}")
+        Logger.debug(f"Loading map file {RFID_TO_MUSIC_MAP}")
 
         # Create map file if it doesn't exist
         if not os.path.exists(RFID_TO_MUSIC_MAP):
@@ -119,7 +118,7 @@ try:
 
         try:
             # Check for RFID card
-            rfid_id, text = rfid_reader.read()
+            rfid_id, text = poll_for_card(rfid_reader)
             rfid_id = str(rfid_id)
             Logger.info("Received RFID card: %s" % rfid_id)
 

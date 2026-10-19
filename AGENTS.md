@@ -33,7 +33,7 @@ make run    # runs local binary
 - Tests: `python3 -m pytest` (config in `pyproject.toml`, tests under `server/tests/`)
 
 ## Code structure
-- `system/soundsprout/cmd/main.go`: CLI with commands `btconnect` (maintains BT connection, loops every 15s, needs `PJ_BLUETOOTH_DEVICE`) and `templategen` (generates cmus/asoundrc templates from embedded templates; writes runner script to output dir).
+- `system/soundsprout/cmd/main.go`: CLI with commands `btconnect` (maintains BT connection, 15s loop with exponential backoff up to 300s on failures, needs `PJ_BLUETOOTH_DEVICE`) and `templategen` (generates cmus/asoundrc templates from embedded templates; writes runner script to output dir).
 - `system/soundsprout/btconnect/service.go`: checks `bluetoothctl info <device>` for "Connected: yes", reconnects via `bluetoothctl connect <device>` if needed. Uses `exec.Command` (interface for testability).
 - `system/soundsprout/templategen/`: template generation. Templates in `templates/*.txt` use Go templates with `{{.PJ_BLUETOOTH_DEVICE}}`. Generates runner.sh with commands to create dirs, move generated files, chown pi, restart supervisor services (cmus_manager, btconnect), and run `alsactl restore` as needed.
 - `system/soundsprout/portal/`: Go web portal package (embedded HTML templates). Started
