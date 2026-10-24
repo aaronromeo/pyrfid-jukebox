@@ -101,7 +101,7 @@ deploy() {
     bash /tmp/runner.sh || return 1
     if [ "$pipinstall" = true ]; then
         echo "$(date '+%Y-%m-%d %H:%M:%S') Installing requirements"
-        if ! timeout 300 sudo -u pi /home/pi/workspace/pyrfid-jukebox/env/bin/pip install -r requirements.txt; then
+        if ! timeout 900 sudo -u pi /home/pi/workspace/pyrfid-jukebox/env/bin/pip install -r requirements.txt; then
             echo "$(date '+%Y-%m-%d %H:%M:%S') pip install failed; retried on the next requirements change." >&2
         fi
     fi
