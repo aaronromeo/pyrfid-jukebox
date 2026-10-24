@@ -79,6 +79,11 @@ fi
 
 # Every step must fail the whole deploy (|| return 1); relying on set -e
 # here is unreliable because the function is called from an `if` context.
+# timeout bounds each step (toolchain, supervisord, PyPI) so a hang fails
+# the deploy and retries next cycle instead of wedging the loop - an
+# unbounded pip once wedged the whole 5-minute cycle. pip itself is
+# non-fatal: requirements are usually already satisfied and a stalled
+# index must not block stamping the deployed binary.
 # Build as pi (like the git calls above): supervisor gives gitpull no HOME,
 # so a root build dies with "GOCACHE is not defined", and root's go build
 # also trips git's "dubious ownership" via VCS stamping. pi owns the repo,
@@ -87,18 +92,20 @@ fi
 deploy() {
     echo "$(date '+%Y-%m-%d %H:%M:%S') Running setup"
     bash setup.sh || return 1
-    sudo -u pi env HOME=/home/pi GOFLAGS=-buildvcs=false GOCMD=/home/pi/.asdf/shims/go make build || return 1
+    timeout 900 sudo -u pi env HOME=/home/pi GOFLAGS=-buildvcs=false GOCMD=/home/pi/.asdf/shims/go make build || return 1
     mv system/soundsprout/soundsprout-server /usr/local/bin/ || return 1
-    sudo supervisorctl restart btconnect || return 1
-    sudo supervisorctl restart portal || return 1
+    timeout 60 sudo supervisorctl restart btconnect || return 1
+    timeout 60 sudo supervisorctl restart portal || return 1
     rm -f /tmp/runner.sh
-    /usr/local/bin/soundsprout-server templategen --output-dir /tmp || return 1
+    timeout 60 /usr/local/bin/soundsprout-server templategen --output-dir /tmp || return 1
     bash /tmp/runner.sh || return 1
     if [ "$pipinstall" = true ]; then
         echo "$(date '+%Y-%m-%d %H:%M:%S') Installing requirements"
-        sudo -u pi /home/pi/workspace/pyrfid-jukebox/env/bin/pip install -r requirements.txt || return 1
+        if ! timeout 300 sudo -u pi /home/pi/workspace/pyrfid-jukebox/env/bin/pip install -r requirements.txt; then
+            echo "$(date '+%Y-%m-%d %H:%M:%S') pip install failed; retried on the next requirements change." >&2
+        fi
     fi
-    sudo supervisorctl restart soundsprout_server || return 1
+    timeout 60 sudo supervisorctl restart soundsprout_server || return 1
 }
 
 if [ "$repodiffs" = true ] || [ "$force" = true ]; then
