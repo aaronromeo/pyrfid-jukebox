@@ -79,13 +79,15 @@ fi
 
 # Every step must fail the whole deploy (|| return 1); relying on set -e
 # here is unreliable because the function is called from an `if` context.
-# GOFLAGS=-buildvcs=false: go build's VCS stamping runs git as root inside
-# the pi-owned repo and fails with "dubious ownership"; the deployed binary
-# does not use VCS stamping.
+# Build as pi (like the git calls above): supervisor gives gitpull no HOME,
+# so a root build dies with "GOCACHE is not defined", and root's go build
+# also trips git's "dubious ownership" via VCS stamping. pi owns the repo,
+# the asdf toolchain and a warm build cache; the deployed binary does not
+# use VCS stamping.
 deploy() {
     echo "$(date '+%Y-%m-%d %H:%M:%S') Running setup"
     bash setup.sh || return 1
-    GOFLAGS=-buildvcs=false GOCMD=/home/pi/.asdf/shims/go make build || return 1
+    sudo -u pi env HOME=/home/pi GOFLAGS=-buildvcs=false GOCMD=/home/pi/.asdf/shims/go make build || return 1
     mv system/soundsprout/soundsprout-server /usr/local/bin/ || return 1
     sudo supervisorctl restart btconnect || return 1
     sudo supervisorctl restart portal || return 1
